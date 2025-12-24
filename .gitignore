@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Image generation outputs
+images/*.png
+images/*.jpg
+images/*.jpeg
+!images/.gitkeep
+
+# Logs
+logs/*.log
+!logs/.gitkeep
+
+# Prompt cache
+prompt_cache/*.txt
+!prompt_cache/.gitkeep
+
+# Test outputs
+test_generation.png
+
+# HuggingFace model cache
+.cache/
+huggingface/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.bak

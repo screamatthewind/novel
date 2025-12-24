@@ -1,0 +1,46 @@
+"""
+Configuration settings for novel scene image generation system.
+"""
+
+import os
+
+# Paths
+CHAPTER_DIR = "."
+OUTPUT_DIR = "./images"
+LOG_DIR = "./logs"
+PROMPT_CACHE_DIR = "./prompt_cache"
+
+# Ensure directories exist
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(LOG_DIR, exist_ok=True)
+os.makedirs(PROMPT_CACHE_DIR, exist_ok=True)
+
+# Model settings
+DEFAULT_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
+DEVICE = "cuda"
+
+# Generation parameters
+DEFAULT_WIDTH = 1344
+DEFAULT_HEIGHT = 768
+DEFAULT_STEPS = 30
+DEFAULT_GUIDANCE = 7.5
+
+# Style template - Graphic novel style
+BASE_STYLE = "graphic novel illustration, comic book art style, detailed line work, professional comic art, dramatic shading, cel shading, sequential art, published graphic novel quality, high contrast lighting, expressive illustration"
+
+# Negative prompt - Avoid photorealism and low quality
+NEGATIVE_PROMPT = "photorealistic, photo, photograph, 3d render, blurry, low quality, distorted anatomy, extra limbs, deformed, ugly, oversaturated, watermark, signature, amateur, sketch, unfinished"
+
+# Chapter mapping (spelled-out to numeric)
+CHAPTER_NAMES = {
+    "One": 1,
+    "Two": 2,
+    "Three": 3,
+    "Four": 4,
+    "Five": 5,
+    "Six": 6,
+    "Seven": 7,
+    "Eight": 8,
+    "Nine": 9,
+    "Ten": 10
+}
