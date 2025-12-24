@@ -4,11 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a creative writing project for a novel titled "The Obsolescence". The repository contains Markdown documents organized as follows:
+This is a creative writing project for a novel titled "The Obsolescence". The repository contains:
 
-- **[The_Obsolescence_Novel_Bible.md](The_Obsolescence_Novel_Bible.md)** - World-building reference, character profiles, and core concepts
-- **[The_Obsolescence_Novel_Outline.md](The_Obsolescence_Novel_Outline.md)** - Story structure and chapter-by-chapter outline
-- **[The_Obsolescence_Chapter_One.md](The_Obsolescence_Chapter_One.md)** through **[The_Obsolescence_Chapter_Four.md](The_Obsolescence_Chapter_Four.md)** - Individual chapter manuscripts
+### Novel Documents
+- **[docs/reference/The_Obsolescence_Novel_Bible.md](docs/reference/The_Obsolescence_Novel_Bible.md)** - World-building reference, character profiles, and core concepts
+- **[docs/reference/The_Obsolescence_Novel_Outline.md](docs/reference/The_Obsolescence_Novel_Outline.md)** - Story structure and chapter-by-chapter outline
+- **[docs/manuscript/](docs/manuscript/)** - Individual chapter manuscripts (Chapter One through Chapter Four)
+
+### Image Generation System
+- **[src/](src/)** - Python scripts for generating scene images using Stable Diffusion XL
+- **[images/](images/)** - Generated scene images
+- **[docs/project/](docs/project/)** - Image generation documentation and implementation notes
 
 ## Working with This Project
 
@@ -20,9 +26,25 @@ When assisting with this novel:
 2. **Reference the Outline** - Check the outline to understand where each chapter fits in the overall story arc before making suggestions
 3. **Maintain continuity** - When editing or reviewing chapters, cross-reference earlier chapters to ensure consistency in character voices, plot details, and world-building
 
+### Directory Structure
+
+```
+novel/
+├── docs/
+│   ├── manuscript/          # Chapter files (The_Obsolescence_Chapter_*.md)
+│   ├── reference/           # Novel Bible and Outline
+│   └── project/             # Project documentation and plans
+├── src/                     # Python scripts for image generation
+├── images/                  # Generated scene images
+├── logs/                    # Generation logs
+├── prompt_cache/            # Cached image prompts
+└── venv/                    # Python virtual environment
+```
+
 ### File Naming Convention
 
 Chapter files follow the pattern: `The_Obsolescence_Chapter_[Name].md` where Name is the spelled-out number (One, Two, Three, Four, etc.)
+All chapter files are located in [docs/manuscript/](docs/manuscript/)
 
 ### Project Structure
 

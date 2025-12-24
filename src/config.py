@@ -4,11 +4,11 @@ Configuration settings for novel scene image generation system.
 
 import os
 
-# Paths
-CHAPTER_DIR = "."
-OUTPUT_DIR = "./images"
-LOG_DIR = "./logs"
-PROMPT_CACHE_DIR = "./prompt_cache"
+# Paths (relative to project root)
+CHAPTER_DIR = "../docs/manuscript"
+OUTPUT_DIR = "../images"
+LOG_DIR = "../logs"
+PROMPT_CACHE_DIR = "../prompt_cache"
 
 # Ensure directories exist
 os.makedirs(OUTPUT_DIR, exist_ok=True)
