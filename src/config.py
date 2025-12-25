@@ -55,7 +55,7 @@ CHAPTER_NAMES = {
     "09": 9,
     "10": 10,
     "11": 11,
-    "12": 12
+    "12": 12,
 }
 
 # Audio generation parameters
@@ -66,28 +66,28 @@ MAX_TTS_CHUNK_SIZE = 240  # Characters per TTS call (under 250 char limit for Co
 
 # Character-to-voice mapping (for voice cloning with reference files)
 CHARACTER_VOICES = {
-    "narrator": "voices/narrator_neutral.wav",
-    "emma": "voices/emma_american.wav",
-    "maxim": "voices/maxim_russian.wav",
-    "amara": "voices/amara_kenyan.wav",
-    "tyler": "voices/tyler_teen.wav",
-    "elena": "voices/elena_russian.wav",
-    # Secondary characters fall back to narrator
-    "mark": "voices/narrator_neutral.wav",
-    "diane": "voices/narrator_neutral.wav",
-    "ramirez": "voices/narrator_neutral.wav"
+    "narrator": "voices/male_young_friendly.wav",
+    "emma": "voices/male_young_friendly.wav",
+    "maxim": "voices/male_young_friendly.wav",
+    "amara": "voices/male_young_friendly.wav",
+    "tyler": "voices/male_young_friendly.wav",
+    "elena": "voices/male_young_friendly.wav",
+    # Secondary characters
+    "mark": "voices/male_young_friendly.wav",
+    "diane": "voices/male_young_friendly.wav",
+    "ramirez": "voices/male_young_friendly.wav",
 }
 
 # XTTS v2 built-in speaker mapping (used when voice files don't exist)
 # These are pre-trained speaker voices available in XTTS v2
 CHARACTER_SPEAKERS = {
-    "narrator": "Claribel Dervla",    # Young, upbeat female voice - energetic and clear
-    "emma": "Sofia Hellen",           # Warm, professional female - perfect for friendly manager
-    "maxim": "Viktor Eka",            # Deep, authoritative male voice
-    "amara": "Daisy Studious",        # Intelligent, warm female voice
-    "tyler": "Royston Min",           # Young, energetic male voice
-    "elena": "Elisabeth Whitmore",    # Mature, wise female voice
-    "mark": "Dionisio Schuyler",      # Neutral male voice
-    "diane": "Tanja Adelina",         # Professional female voice
-    "ramirez": "Claribel Dervla"      # Default voice
+    "narrator": "Claribel Dervla",  # Young, upbeat female voice - energetic and clear
+    "emma": "Sofia Hellen",  # Warm, professional female - perfect for friendly manager
+    "maxim": "Viktor Eka",  # Deep, authoritative male voice
+    "amara": "Daisy Studious",  # Intelligent, warm female voice
+    "tyler": "Royston Min",  # Young, energetic male voice
+    "elena": "Elisabeth Whitmore",  # Mature, wise female voice
+    "mark": "Dionisio Schuyler",  # Neutral male voice
+    "diane": "Tanja Adelina",  # Professional female voice
+    "ramirez": "Claribel Dervla",  # Default voice
 }

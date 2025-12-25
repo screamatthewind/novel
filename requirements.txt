@@ -1,5 +1,5 @@
 # ============================================================================
-# CRITICAL: CUDA INSTALLATION INSTRUCTIONS - DO NOT SKIP
+# CRITICAL: INSTALLATION INSTRUCTIONS - DO NOT SKIP
 # ============================================================================
 # STEP 1: Install PyTorch with CUDA 11.8 support FIRST:
 #
@@ -11,12 +11,13 @@
 #
 # ============================================================================
 # WARNINGS:
-# - Do NOT run "pip install chatterbox-tts" by itself - it will install incompatible PyTorch versions
+# - Do NOT run "pip install TTS" by itself - it will install incompatible PyTorch versions
 # - Do NOT install torch/torchvision/torchaudio without the --index-url flag
 # - Current working setup: PyTorch 2.7.1+cu118, TorchVision 0.22.1+cu118, TorchAudio 2.7.1+cu118
+# - XTTS v2 model does NOT require espeak-ng (older Coqui models might)
 # ============================================================================
 
-# NumPy version must be compatible with both PyTorch and Chatterbox
+# NumPy version must be compatible with both PyTorch and Coqui TTS
 numpy>=1.24.0,<1.26.0
 
 diffusers>=0.25.0
@@ -29,8 +30,8 @@ tqdm>=4.66.0
 # xformers must be installed separately after torch
 # See installation instructions in README_IMAGE_GEN.md
 
-# Text-to-Speech (Resemble AI Chatterbox TTS)
-chatterbox-tts>=0.1.6      # Resemble AI Chatterbox TTS (~350M-500M model download on first run)
+# Text-to-Speech (Coqui TTS)
+TTS>=0.22.0                # Coqui TTS for multi-voice narration
 pydub>=0.25.1              # Audio manipulation (WAV to MP3 conversion)
 soundfile>=0.12.1          # Audio file I/O
 scipy>=1.10.0              # Audio processing utilities

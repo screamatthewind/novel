@@ -64,6 +64,7 @@ class CoquiTTSGenerator:
         self.model_name = model_name
         self.model = None
         self.sample_rate = DEFAULT_SAMPLE_RATE
+        self.latent_cache = {}  # Cache for speaker latents (voice cloning)
 
         # Detect CUDA with diagnostics
         cuda_available, diagnostic_msg = check_cuda_availability()
@@ -137,6 +138,47 @@ class CoquiTTSGenerator:
             print(traceback.format_exc())
             return False
 
+    def get_speaker_latents(self, speaker_wav: str):
+        """
+        Compute or retrieve cached speaker latents for voice cloning.
+
+        Args:
+            speaker_wav: Path to reference audio file
+
+        Returns:
+            Tuple of (gpt_cond_latent, speaker_embedding)
+        """
+        print(f"[AUDIO_GEN] get_speaker_latents() called for: {speaker_wav}")
+
+        # Check cache first
+        if speaker_wav in self.latent_cache:
+            print(f"[AUDIO_GEN] [OK] Latents found in cache")
+            return self.latent_cache[speaker_wav]
+
+        # Compute latents from reference audio
+        print(f"[AUDIO_GEN] Computing speaker latents (not cached)...")
+        abs_path = os.path.abspath(speaker_wav)
+        print(f"[AUDIO_GEN] Absolute path: {abs_path}")
+        print(f"[AUDIO_GEN] File exists: {os.path.exists(speaker_wav)}")
+
+        if os.path.exists(speaker_wav):
+            file_size = os.path.getsize(speaker_wav)
+            print(f"[AUDIO_GEN] File size: {file_size} bytes")
+
+        # Access the underlying TTS model for XTTS-specific methods
+        print(f"[AUDIO_GEN] Calling synthesizer.tts_model.get_conditioning_latents()...")
+        gpt_cond_latent, speaker_embedding = self.model.synthesizer.tts_model.get_conditioning_latents(
+            audio_path=[speaker_wav]
+        )
+
+        print(f"[AUDIO_GEN] [OK] Latents computed successfully")
+        print(f"[AUDIO_GEN]   - GPT cond latent shape: {gpt_cond_latent.shape if hasattr(gpt_cond_latent, 'shape') else type(gpt_cond_latent)}")
+        print(f"[AUDIO_GEN]   - Speaker embedding shape: {speaker_embedding.shape if hasattr(speaker_embedding, 'shape') else type(speaker_embedding)}")
+
+        # Cache for future use
+        self.latent_cache[speaker_wav] = (gpt_cond_latent, speaker_embedding)
+        return gpt_cond_latent, speaker_embedding
+
     def generate_speech(
         self,
         text: str,
@@ -156,48 +198,103 @@ class CoquiTTSGenerator:
         Returns:
             Audio array or None if generation fails
         """
+        print(f"\n[AUDIO_GEN] ========== generate_speech() called ==========")
+        print(f"[AUDIO_GEN] Text preview: {text[:100]}...")
+        print(f"[AUDIO_GEN] Speaker WAV param: {speaker_wav}")
+        print(f"[AUDIO_GEN] Speaker name param: {speaker_name}")
+        print(f"[AUDIO_GEN] Language: {language}")
+
         if self.model is None:
-            print("Error: Model not loaded. Call load_model() first.")
+            print("[AUDIO_GEN] ✗ Error: Model not loaded. Call load_model() first.")
             return None
 
         if not text.strip():
+            print("[AUDIO_GEN] ✗ Error: Empty text provided")
             return None
 
         try:
             # Prioritize voice cloning if file path provided and exists
-            if speaker_wav and os.path.exists(speaker_wav):
-                # Voice cloning mode with provided speaker wav
-                audio = self.model.tts(
-                    text=text,
-                    speaker_wav=speaker_wav,
-                    language=language
-                )
+            if speaker_wav:
+                file_exists = os.path.exists(speaker_wav)
+                print(f"[AUDIO_GEN] Speaker WAV provided: {speaker_wav}")
+                print(f"[AUDIO_GEN] File exists: {file_exists}")
+
+                if file_exists:
+                    print(f"[AUDIO_GEN] >>> MODE: VOICE CLONING <<<")
+                    # Voice cloning mode - use latents for proper voice encoding
+                    gpt_cond_latent, speaker_embedding = self.get_speaker_latents(speaker_wav)
+
+                    print(f"[AUDIO_GEN] Calling TTS model inference API...")
+                    # Use the lower-level inference API with computed latents
+                    out = self.model.synthesizer.tts_model.inference(
+                        text=text,
+                        language=language,
+                        gpt_cond_latent=gpt_cond_latent,
+                        speaker_embedding=speaker_embedding
+                    )
+
+                    # XTTS returns waveform in 'wav' key
+                    audio = out["wav"]
+                    print(f"[AUDIO_GEN] [OK] Voice cloning synthesis complete")
+                else:
+                    print(f"[AUDIO_GEN] [ERROR] File doesn't exist, falling through to speaker mode")
+                    if speaker_name:
+                        print(f"[AUDIO_GEN] >>> MODE: BUILT-IN SPEAKER (fallback) <<<")
+                        audio = self.model.tts(
+                            text=text,
+                            speaker=speaker_name,
+                            language=language
+                        )
+                    else:
+                        print(f"[AUDIO_GEN] >>> MODE: DEFAULT SPEAKER (fallback) <<<")
+                        audio = self.model.tts(
+                            text=text,
+                            speaker="Claribel Dervla",
+                            language=language
+                        )
             elif speaker_name:
-                # Built-in speaker mode
+                # Built-in speaker mode - use high-level API
+                print(f"[AUDIO_GEN] >>> MODE: BUILT-IN SPEAKER <<<")
+                print(f"[AUDIO_GEN] Using speaker: {speaker_name}")
                 audio = self.model.tts(
                     text=text,
                     speaker=speaker_name,
                     language=language
                 )
+                print(f"[AUDIO_GEN] [OK] Built-in speaker synthesis complete")
             else:
                 # Fallback to default young, upbeat speaker
+                print(f"[AUDIO_GEN] >>> MODE: DEFAULT SPEAKER <<<")
+                print(f"[AUDIO_GEN] Using default speaker: Claribel Dervla")
                 audio = self.model.tts(
                     text=text,
                     speaker="Claribel Dervla",  # Young, upbeat default
                     language=language
                 )
+                print(f"[AUDIO_GEN] [OK] Default speaker synthesis complete")
 
             # Convert to numpy array if needed
             if isinstance(audio, list):
                 audio = np.array(audio, dtype=np.float32)
+                print(f"[AUDIO_GEN] Converted list to numpy array")
             elif torch.is_tensor(audio):
                 audio = audio.cpu().numpy().astype(np.float32)
+                print(f"[AUDIO_GEN] Converted tensor to numpy array")
+
+            print(f"[AUDIO_GEN] [OK] Audio generation SUCCESS")
+            print(f"[AUDIO_GEN] Audio shape: {audio.shape}")
+            print(f"[AUDIO_GEN] Audio duration: {len(audio) / self.sample_rate:.2f}s")
+            print(f"[AUDIO_GEN] ========================================\n")
 
             return audio
 
         except Exception as e:
-            print(f"Error generating speech: {e}")
-            print(f"Text preview: {text[:100]}...")
+            print(f"[AUDIO_GEN] *** ERROR generating speech ***")
+            print(f"[AUDIO_GEN] Error: {e}")
+            print(f"[AUDIO_GEN] Text preview: {text[:100]}...")
+            import traceback
+            print(traceback.format_exc())
+            print(f"[AUDIO_GEN] ========================================\n")
             return None
 
     def generate_speech_chunked(
@@ -313,6 +410,7 @@ class CoquiTTSGenerator:
         if self.model is not None:
             del self.model
             self.model = None
+            self.latent_cache.clear()  # Clear cached speaker latents
             self._cleanup_memory()
             print("Model unloaded successfully")
 
@@ -330,21 +428,32 @@ class CoquiTTSGenerator:
 
 
 if __name__ == "__main__":
-    # Test Coqui TTS model loading and generation
+    # Test Coqui TTS XTTS v2 model loading and generation
     print("Coqui TTS Generator Test")
     print("=" * 70)
 
-    # Use VCTK multi-speaker model for testing (or XTTS for voice cloning)
-    generator = CoquiTTSGenerator(model_name="tts_models/en/vctk/vits")
+    generator = CoquiTTSGenerator()
 
     print("\n1. Loading model...")
     if generator.load_model():
-        print("\n2. Generating test audio with built-in speaker...")
+        print("\n2. Generating test audio with voice cloning...")
+
+        # Use narrator voice for testing
+        voice_file = "../voices/male_calm_mature.wav"
+
+        if os.path.exists(voice_file):
+            print(f"   Using voice: {voice_file}")
+        else:
+            print(f"   WARNING: Voice file not found: {voice_file}")
+            print("   Using built-in speaker instead")
+            voice_file = None
 
         test_text = "Looking good, Ramirez. That modification you suggested for the bracket feed is working."
 
-        # For VCTK, use a speaker name (p225 = female, p226 = male, etc.)
-        audio = generator.generate_speech(test_text, speaker_name="p226")
+        if voice_file:
+            audio = generator.generate_speech(test_text, speaker_wav=voice_file)
+        else:
+            audio = generator.generate_speech(test_text, speaker_name="Claribel Dervla")
 
         if audio is not None:
             duration = generator.get_audio_duration(audio)
@@ -357,7 +466,7 @@ if __name__ == "__main__":
             if generator.save_audio(audio, test_output):
                 print(f"   Saved to: {test_output}")
 
-        print("\n3. Testing chunked generation...")
+        print("\n3. Testing chunked generation with voice cloning...")
         long_text = (
             "This is a longer piece of text that will be split into multiple chunks. "
             "Each chunk will be generated separately and then concatenated together. "
@@ -368,7 +477,8 @@ if __name__ == "__main__":
         chunked_audio = generator.generate_speech_chunked(
             long_text,
             max_chunk_size=100,
-            speaker_name="p226"
+            speaker_wav=voice_file if voice_file else None,
+            speaker_name=None if voice_file else "Claribel Dervla"
         )
 
         if chunked_audio is not None:

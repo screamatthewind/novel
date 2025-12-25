@@ -31,16 +31,28 @@ def get_voice_for_speaker(speaker_name: str) -> Dict[str, str]:
     """
     # Normalize speaker name to lowercase
     normalized_name = speaker_name.lower().strip()
+    print(f"\n[VOICE_CONFIG] Speaker: '{speaker_name}' (normalized: '{normalized_name}')")
 
     # Get voice file path from configuration
     voice_file = CHARACTER_VOICES.get(normalized_name, CHARACTER_VOICES.get("narrator"))
+    print(f"[VOICE_CONFIG] Voice file from config: {voice_file}")
 
     # Check if voice file exists for voice cloning
-    if voice_file and os.path.exists(voice_file):
-        return {'type': 'file', 'value': voice_file}
+    if voice_file:
+        file_exists = os.path.exists(voice_file)
+        abs_path = os.path.abspath(voice_file)
+        print(f"[VOICE_CONFIG] File exists check: {file_exists}")
+        print(f"[VOICE_CONFIG] Absolute path: {abs_path}")
+
+        if file_exists:
+            print(f"[VOICE_CONFIG] [OK] Using VOICE CLONING with file: {voice_file}")
+            return {'type': 'file', 'value': voice_file}
+        else:
+            print(f"[VOICE_CONFIG] [ERROR] File not found, falling back to built-in speaker")
 
     # Fall back to built-in XTTS speaker
     speaker = CHARACTER_SPEAKERS.get(normalized_name, CHARACTER_SPEAKERS.get("narrator", "Claribel Dervla"))
+    print(f"[VOICE_CONFIG] [OK] Using BUILT-IN SPEAKER: {speaker}")
     return {'type': 'speaker', 'value': speaker}
 
 
