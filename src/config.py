@@ -28,8 +28,9 @@ DEFAULT_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
 DEVICE = "cuda"
 
 # Generation parameters
-DEFAULT_WIDTH = 1344
-DEFAULT_HEIGHT = 768
+# 9:16 Vertical (Portrait) format - optimized for mobile viewing and YouTube Shorts
+DEFAULT_WIDTH = 1080
+DEFAULT_HEIGHT = 1920
 DEFAULT_STEPS = 30
 DEFAULT_GUIDANCE = 7.5
 
@@ -60,7 +61,7 @@ CHAPTER_NAMES = {
 DEFAULT_AUDIO_FORMAT = "wav"
 DEFAULT_SAMPLE_RATE = 22050
 DEFAULT_TTS_MODEL = "tts_models/multilingual/multi-dataset/xtts_v2"
-MAX_TTS_CHUNK_SIZE = 500  # Characters per TTS call
+MAX_TTS_CHUNK_SIZE = 240  # Characters per TTS call (under 250 char limit for Coqui TTS)
 
 # Character-to-voice mapping
 CHARACTER_VOICES = {

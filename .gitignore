@@ -25,6 +25,21 @@ logs/*.log
 prompt_cache/*.txt
 !prompt_cache/.gitkeep
 
+# Audio generation outputs
+audio/*.wav
+audio/*.mp3
+!audio/.gitkeep
+
+# Audio cache
+audio_cache/*.json
+!audio_cache/.gitkeep
+
+# Video generation outputs
+videos/*.mp4
+videos/*.avi
+videos/*.mov
+!videos/.gitkeep
+
 # Test outputs
 test_generation.png
 
@@ -39,6 +54,9 @@ huggingface/
 *.swo
 *~
 
+# Video files (anywhere in repo)
+*.mp4
+
 # OS
 .DS_Store
 Thumbs.db
@@ -47,3 +65,4 @@ desktop.ini
 # Temporary files
 *.tmp
 *.bak
+temp/

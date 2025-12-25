@@ -1,11 +1,20 @@
-# IMPORTANT: Install PyTorch with CUDA support FIRST:
-# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+# ============================================================================
+# CRITICAL: CUDA INSTALLATION INSTRUCTIONS - DO NOT SKIP
+# ============================================================================
+# STEP 1: Install PyTorch with CUDA 11.8 support FIRST:
 #
-# Then install other packages with:
-# pip install -r requirements.txt
+#   ./venv/Scripts/pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 #
-# WARNING: Do NOT run "pip install TTS" by itself, as it may replace
-# your CUDA PyTorch with the CPU-only version!
+# STEP 2: Then install other packages:
+#
+#   ./venv/Scripts/pip install -r requirements.txt
+#
+# ============================================================================
+# WARNINGS:
+# - Do NOT run "pip install TTS" by itself - it will replace CUDA PyTorch with CPU-only version
+# - Do NOT install torch/torchvision/torchaudio without the --index-url flag
+# - Current working setup: PyTorch 2.7.1+cu118, TorchVision 0.22.1+cu118, TorchAudio 2.7.1+cu118
+# ============================================================================
 
 # NumPy version must be <2.0 for PyTorch compatibility
 numpy<2.0.0
@@ -28,3 +37,12 @@ soundfile>=0.12.1        # Audio file I/O
 scipy>=1.10.0            # Audio processing utilities
 unidic-lite>=1.0.8       # MeCab dictionary for Japanese (TTS dependency)
 mecab-python3>=1.0.12    # Japanese language tokenizer (TTS dependency)
+
+# Video Generation (MoviePy)
+moviepy>=2.1.0           # Video editing library for creating YouTube videos (API v2.x)
+imageio>=2.31.1          # Image I/O for MoviePy
+imageio-ffmpeg>=0.6.0    # FFmpeg binaries for MoviePy
+python-dotenv>=1.0.0     # Environment variable management (MoviePy dependency)
+
+# Development Tools
+debugpy>=1.8.0           # VSCode Python debugger
