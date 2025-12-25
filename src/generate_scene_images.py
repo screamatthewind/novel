@@ -97,13 +97,15 @@ def process_sentence(
         True if successful, False if error occurred
     """
     # Generate prompt and filename
-    prompt = generate_prompt(sentence.content)
+    # Pass scene_context to ensure consistent setting across sentences in the scene
+    prompt = generate_prompt(sentence.content, scene_context=sentence.scene_context)
     negative_prompt = get_negative_prompt()
     filename = generate_filename(
         sentence.chapter_num,
         sentence.scene_num,
         sentence.content,
-        sentence.sentence_num
+        sentence.sentence_num,
+        scene_context=sentence.scene_context
     )
     output_path = os.path.join(OUTPUT_DIR, filename)
 

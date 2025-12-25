@@ -4,9 +4,9 @@ Handles voice profile selection and fallback logic.
 """
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Dict
 import os
-from config import CHARACTER_VOICES, VOICES_DIR
+from config import CHARACTER_VOICES, CHARACTER_SPEAKERS, VOICES_DIR
 
 
 @dataclass
@@ -17,15 +17,18 @@ class VoiceProfile:
     language: str = "en"
 
 
-def get_voice_for_speaker(speaker_name: str) -> str:
+def get_voice_for_speaker(speaker_name: str) -> Dict[str, str]:
     """
-    Get voice file path for a character. Falls back to narrator if not found.
+    Get voice configuration for a character.
+
+    Returns either a voice file path (for cloning) or a built-in speaker name.
+    Prioritizes voice files if they exist, otherwise uses built-in XTTS speakers.
 
     Args:
         speaker_name: Name of the character speaking
 
     Returns:
-        Path to voice reference audio file
+        Dictionary with 'type' ('file' or 'speaker') and 'value' (path or speaker name)
     """
     # Normalize speaker name to lowercase
     normalized_name = speaker_name.lower().strip()
@@ -33,11 +36,13 @@ def get_voice_for_speaker(speaker_name: str) -> str:
     # Get voice path from configuration
     voice_path = CHARACTER_VOICES.get(normalized_name, CHARACTER_VOICES["narrator"])
 
-    # If voice file doesn't exist, fall back to narrator
-    if not os.path.exists(voice_path):
-        return CHARACTER_VOICES["narrator"]
+    # If voice file exists, use voice cloning mode
+    if os.path.exists(voice_path):
+        return {'type': 'file', 'value': voice_path}
 
-    return voice_path
+    # Otherwise, use built-in XTTS speaker
+    speaker = CHARACTER_SPEAKERS.get(normalized_name, CHARACTER_SPEAKERS["narrator"])
+    return {'type': 'speaker', 'value': speaker}
 
 
 def get_all_characters() -> list[str]:

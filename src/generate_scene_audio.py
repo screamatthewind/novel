@@ -153,24 +153,32 @@ def process_sentence(
         start_time = datetime.now()
         log_message(log_file, f"⟳ Generating audio...")
 
-        # Use narrator voice by default (could be enhanced with dialogue detection later)
+        # Determine speaker and get voice configuration
         if args.single_voice:
-            speaker_wav = get_voice_for_speaker("narrator")
+            voice_info = get_voice_for_speaker("narrator")
         else:
             # Parse sentence to detect if it's dialogue and extract speaker
             segments = parse_scene_text(sentence.content)
             if segments and segments[0].segment_type == 'dialogue':
-                speaker_wav = get_voice_for_speaker(segments[0].speaker)
+                voice_info = get_voice_for_speaker(segments[0].speaker)
             else:
-                speaker_wav = get_voice_for_speaker("narrator")
+                voice_info = get_voice_for_speaker("narrator")
 
-        # Generate audio (with chunking if needed)
-        audio = generator.generate_speech_chunked(
-            text=sentence.content,
-            speaker_wav=speaker_wav if os.path.exists(speaker_wav) else None,
-            language="en",
-            max_chunk_size=MAX_TTS_CHUNK_SIZE
-        )
+        # Generate audio with appropriate voice (file or speaker name)
+        if voice_info['type'] == 'file':
+            audio = generator.generate_speech_chunked(
+                text=sentence.content,
+                speaker_wav=voice_info['value'],
+                language="en",
+                max_chunk_size=MAX_TTS_CHUNK_SIZE
+            )
+        else:  # type == 'speaker'
+            audio = generator.generate_speech_chunked(
+                text=sentence.content,
+                speaker_name=voice_info['value'],
+                language="en",
+                max_chunk_size=MAX_TTS_CHUNK_SIZE
+            )
 
         if audio is None:
             log_message(log_file, f"✗ ERROR: Failed to generate audio")

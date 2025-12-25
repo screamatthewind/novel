@@ -28,6 +28,7 @@ class Sentence:
     sentence_num: int
     content: str
     word_count: int
+    scene_context: str = ""  # Full scene text for context
 
 
 def extract_chapter_number(filename: str) -> int:
@@ -165,7 +166,8 @@ def parse_scene_sentences(scene: Scene) -> List[Sentence]:
             scene_num=scene.scene_num,
             sentence_num=i,
             content=sentence_text,
-            word_count=word_count
+            word_count=word_count,
+            scene_context=scene.content  # Include full scene for context
         )
         sentences.append(sentence)
 

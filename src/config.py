@@ -64,7 +64,7 @@ DEFAULT_SAMPLE_RATE = 22050
 DEFAULT_TTS_MODEL = "tts_models/multilingual/multi-dataset/xtts_v2"
 MAX_TTS_CHUNK_SIZE = 240  # Characters per TTS call (under 250 char limit for Coqui TTS)
 
-# Character-to-voice mapping
+# Character-to-voice mapping (for voice cloning with reference files)
 CHARACTER_VOICES = {
     "narrator": "voices/narrator_neutral.wav",
     "emma": "voices/emma_american.wav",
@@ -76,4 +76,18 @@ CHARACTER_VOICES = {
     "mark": "voices/narrator_neutral.wav",
     "diane": "voices/narrator_neutral.wav",
     "ramirez": "voices/narrator_neutral.wav"
+}
+
+# XTTS v2 built-in speaker mapping (used when voice files don't exist)
+# These are pre-trained speaker voices available in XTTS v2
+CHARACTER_SPEAKERS = {
+    "narrator": "Claribel Dervla",    # Young, upbeat female voice - energetic and clear
+    "emma": "Sofia Hellen",           # Warm, professional female - perfect for friendly manager
+    "maxim": "Viktor Eka",            # Deep, authoritative male voice
+    "amara": "Daisy Studious",        # Intelligent, warm female voice
+    "tyler": "Royston Min",           # Young, energetic male voice
+    "elena": "Elisabeth Whitmore",    # Mature, wise female voice
+    "mark": "Dionisio Schuyler",      # Neutral male voice
+    "diane": "Tanja Adelina",         # Professional female voice
+    "ramirez": "Alexander Wolfe"      # Working-class male voice
 }

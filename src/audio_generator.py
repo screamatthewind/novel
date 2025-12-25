@@ -134,6 +134,7 @@ class CoquiTTSGenerator:
         self,
         text: str,
         speaker_wav: Optional[str] = None,
+        speaker_name: Optional[str] = None,
         language: str = "en"
     ) -> Optional[np.ndarray]:
         """
@@ -142,6 +143,7 @@ class CoquiTTSGenerator:
         Args:
             text: Text to synthesize
             speaker_wav: Path to speaker reference audio (for voice cloning)
+            speaker_name: Built-in XTTS speaker name (alternative to speaker_wav)
             language: Language code
 
         Returns:
@@ -155,21 +157,26 @@ class CoquiTTSGenerator:
             return None
 
         try:
-            # For XTTS v2, we ALWAYS need a speaker_wav for voice reference
-            # If none provided, we'll use a default neutral voice
-            if not speaker_wav or not os.path.exists(speaker_wav):
-                # Use the model's default speaker by providing speaker_wav as None
-                # and setting speaker to a default value
-                audio = self.model.tts(
-                    text=text,
-                    speaker="Claribel Dervla",  # Default XTTS v2 speaker
-                    language=language
-                )
-            else:
+            # Prioritize voice cloning if file path provided and exists
+            if speaker_wav and os.path.exists(speaker_wav):
                 # Voice cloning mode with provided speaker wav
                 audio = self.model.tts(
                     text=text,
                     speaker_wav=speaker_wav,
+                    language=language
+                )
+            elif speaker_name:
+                # Built-in speaker mode
+                audio = self.model.tts(
+                    text=text,
+                    speaker=speaker_name,
+                    language=language
+                )
+            else:
+                # Fallback to default young, upbeat speaker
+                audio = self.model.tts(
+                    text=text,
+                    speaker="Claribel Dervla",  # Young, upbeat default
                     language=language
                 )
 
@@ -190,6 +197,7 @@ class CoquiTTSGenerator:
         self,
         text: str,
         speaker_wav: Optional[str] = None,
+        speaker_name: Optional[str] = None,
         language: str = "en",
         max_chunk_size: int = 500
     ) -> Optional[np.ndarray]:
@@ -199,6 +207,7 @@ class CoquiTTSGenerator:
         Args:
             text: Text to synthesize
             speaker_wav: Path to speaker reference audio
+            speaker_name: Built-in XTTS speaker name
             language: Language code
             max_chunk_size: Maximum characters per chunk
 
@@ -208,7 +217,7 @@ class CoquiTTSGenerator:
         from dialogue_parser import chunk_text
 
         if len(text) <= max_chunk_size:
-            return self.generate_speech(text, speaker_wav, language)
+            return self.generate_speech(text, speaker_wav, speaker_name, language)
 
         # Split into chunks
         chunks = chunk_text(text, max_chunk_size)
@@ -216,7 +225,7 @@ class CoquiTTSGenerator:
 
         for i, chunk in enumerate(chunks):
             print(f"  Generating chunk {i+1}/{len(chunks)} ({len(chunk)} chars)")
-            audio = self.generate_speech(chunk, speaker_wav, language)
+            audio = self.generate_speech(chunk, speaker_wav, speaker_name, language)
 
             if audio is not None:
                 audio_segments.append(audio)

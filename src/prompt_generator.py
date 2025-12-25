@@ -163,19 +163,24 @@ def extract_action(text: str) -> str:
     return ""
 
 
-def extract_key_words(text: str, max_words: int = 4) -> str:
+def extract_key_words(text: str, scene_context: str = None, max_words: int = 4) -> str:
     """
     Extract key visual words from scene for filename generation.
 
     Args:
-        text: Scene content
+        text: Sentence or scene content
+        scene_context: Optional full scene text for context (used for setting extraction)
         max_words: Maximum number of words to extract
 
     Returns:
         Underscore-separated key words
     """
-    # Get setting, characters, and action
-    setting = extract_setting(text)
+    # Get setting from scene context if provided, otherwise from text
+    # Use scene_context for setting to ensure consistency across sentences in the scene
+    context_text = scene_context if scene_context else text
+    setting = extract_setting(context_text)
+
+    # Get characters and action from the specific sentence text
     characters = extract_characters(text)
     action = extract_action(text)
 
@@ -201,23 +206,27 @@ def extract_key_words(text: str, max_words: int = 4) -> str:
     return "_".join(key_words)
 
 
-def generate_prompt(scene_content: str) -> str:
+def generate_prompt(scene_content: str, scene_context: str = None) -> str:
     """
     Generate SDXL image prompt from scene content.
 
     Uses natural language descriptions optimized for SDXL (not keyword lists).
 
     Args:
-        scene_content: The text content of the scene
+        scene_content: The text content of the sentence
+        scene_context: Optional full scene text for context (used for setting extraction)
 
     Returns:
         Complete image generation prompt in natural language
     """
     # Extract visual elements
+    # Use scene_context for setting/environment to ensure consistency across sentences
+    # Use scene_content for characters/action to focus on the specific sentence
     characters = extract_characters(scene_content)
-    setting = extract_setting(scene_content)
-    time_of_day = extract_time_of_day(scene_content)
-    mood = extract_mood(scene_content, time_of_day)
+    context_text = scene_context if scene_context else scene_content
+    setting = extract_setting(context_text)
+    time_of_day = extract_time_of_day(context_text)
+    mood = extract_mood(context_text, time_of_day)
     action = extract_action(scene_content)
 
     # Build natural language description
@@ -312,22 +321,23 @@ def validate_prompt_length(prompt: str, max_tokens: int = 77) -> Tuple[bool, int
     return is_valid, token_count
 
 
-def generate_filename(chapter_num: int, scene_num: int, scene_content: str, sentence_num: int = None) -> str:
+def generate_filename(chapter_num: int, scene_num: int, scene_content: str, sentence_num: int = None, scene_context: str = None) -> str:
     """
     Generate descriptive filename for scene image.
 
     Args:
         chapter_num: Chapter number
         scene_num: Scene number within chapter
-        scene_content: Scene text content
+        scene_content: Sentence or scene text content
         sentence_num: Optional sentence number within scene
+        scene_context: Optional full scene text for context (used for setting extraction)
 
     Returns:
         Filename like 'chapter_01_scene_02_sent_03_emma_factory_reading.png'
         or 'chapter_01_scene_02_emma_factory_reading.png' if sentence_num not provided
     """
-    # Extract key words
-    key_words = extract_key_words(scene_content)
+    # Extract key words, using scene context for setting if provided
+    key_words = extract_key_words(scene_content, scene_context=scene_context)
 
     # Format with zero-padded numbers
     if sentence_num is not None:
