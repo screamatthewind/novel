@@ -11,13 +11,13 @@
 #
 # ============================================================================
 # WARNINGS:
-# - Do NOT run "pip install TTS" by itself - it will replace CUDA PyTorch with CPU-only version
+# - Do NOT run "pip install chatterbox-tts" by itself - it will install incompatible PyTorch versions
 # - Do NOT install torch/torchvision/torchaudio without the --index-url flag
 # - Current working setup: PyTorch 2.7.1+cu118, TorchVision 0.22.1+cu118, TorchAudio 2.7.1+cu118
 # ============================================================================
 
-# NumPy version must be <2.0 for PyTorch compatibility
-numpy<2.0.0
+# NumPy version must be compatible with both PyTorch and Chatterbox
+numpy>=1.24.0,<1.26.0
 
 diffusers>=0.25.0
 transformers>=4.36.0
@@ -29,20 +29,17 @@ tqdm>=4.66.0
 # xformers must be installed separately after torch
 # See installation instructions in README_IMAGE_GEN.md
 
-# Text-to-Speech (Coqui TTS with XTTS v2)
-TTS>=0.22.0              # Coqui TTS (~2GB model download on first run)
-transformers<4.41.0      # Must be <4.41 for TTS compatibility (BeamSearchScorer)
-pydub>=0.25.1            # Audio manipulation (WAV to MP3 conversion)
-soundfile>=0.12.1        # Audio file I/O
-scipy>=1.10.0            # Audio processing utilities
-unidic-lite>=1.0.8       # MeCab dictionary for Japanese (TTS dependency)
-mecab-python3>=1.0.12    # Japanese language tokenizer (TTS dependency)
+# Text-to-Speech (Resemble AI Chatterbox TTS)
+chatterbox-tts>=0.1.6      # Resemble AI Chatterbox TTS (~350M-500M model download on first run)
+pydub>=0.25.1              # Audio manipulation (WAV to MP3 conversion)
+soundfile>=0.12.1          # Audio file I/O
+scipy>=1.10.0              # Audio processing utilities
 
 # Video Generation (MoviePy)
-moviepy>=2.1.0           # Video editing library for creating YouTube videos (API v2.x)
-imageio>=2.31.1          # Image I/O for MoviePy
-imageio-ffmpeg>=0.6.0    # FFmpeg binaries for MoviePy
-python-dotenv>=1.0.0     # Environment variable management (MoviePy dependency)
+moviepy>=2.1.0             # Video editing library for creating YouTube videos (API v2.x)
+imageio>=2.31.1            # Image I/O for MoviePy
+imageio-ffmpeg>=0.6.0      # FFmpeg binaries for MoviePy
+python-dotenv>=1.0.0       # Environment variable management (MoviePy dependency)
 
 # Development Tools
-debugpy>=1.8.0           # VSCode Python debugger
+debugpy>=1.8.0             # VSCode Python debugger

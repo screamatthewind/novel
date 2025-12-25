@@ -234,7 +234,7 @@ Create a playlist to organize all chapter videos:
 Since this is original content:
 - You own the copyright
 - Choose appropriate license (Standard YouTube License or Creative Commons)
-- Add credits for any tools used (Stable Diffusion XL, Coqui TTS, etc.)
+- Add credits for any tools used (Stable Diffusion XL, Resemble AI Chatterbox TTS, etc.)
 
 ## Example Workflow
 
@@ -243,8 +243,8 @@ Complete workflow for generating and uploading a chapter:
 ```bash
 # 1. Ensure images and audio are generated
 cd src
-../venv/Scripts/python generate_scene_images.py --chapter 1
-../venv/Scripts/python generate_scene_audio.py --chapter 1
+../venv/Scripts/python generate_scene_images.py --chapters 1
+../venv/Scripts/python generate_scene_audio.py --chapters 1
 
 # 2. Generate video
 ../venv/Scripts/python generate_video.py --chapter 1

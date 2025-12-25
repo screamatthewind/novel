@@ -20,7 +20,7 @@ This is a creative writing project for a novel titled "The Obsolescence". The re
 - **[docs/manuscript/](docs/manuscript/)** - Individual chapter manuscripts (All 12 chapters complete)
 
 ### Image Generation, Audio & Video System
-- **[src/](src/)** - Python scripts for generating scene images (Stable Diffusion XL), audio (Coqui TTS), and videos (MoviePy)
+- **[src/](src/)** - Python scripts for generating scene images (Stable Diffusion XL), audio (Chatterbox TTS), and videos (MoviePy)
 - **[images/](images/)** - Generated scene images
 - **[audio/](audio/)** - Generated scene audio files
 - **[videos/](videos/)** - Generated YouTube-ready videos

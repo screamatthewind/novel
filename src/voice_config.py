@@ -1,12 +1,12 @@
 """
-Voice configuration and management for TTS audio generation.
-Handles voice profile selection and fallback logic.
+Voice configuration and management for Chatterbox TTS audio generation.
+Handles voice profile selection and reference audio management.
 """
 
 from dataclasses import dataclass
 from typing import Optional, Dict
 import os
-from config import CHARACTER_VOICES, CHARACTER_SPEAKERS, VOICES_DIR
+from config import CHARACTER_VOICES, VOICES_DIR
 
 
 @dataclass
@@ -21,14 +21,14 @@ def get_voice_for_speaker(speaker_name: str) -> Dict[str, str]:
     """
     Get voice configuration for a character.
 
-    Returns either a voice file path (for cloning) or a built-in speaker name.
-    Prioritizes voice files if they exist, otherwise uses built-in XTTS speakers.
+    Returns a voice file path for Chatterbox voice cloning.
+    Chatterbox requires reference audio files for all voices.
 
     Args:
         speaker_name: Name of the character speaking
 
     Returns:
-        Dictionary with 'type' ('file' or 'speaker') and 'value' (path or speaker name)
+        Dictionary with 'type' ('file') and 'value' (path to reference audio)
     """
     # Normalize speaker name to lowercase
     normalized_name = speaker_name.lower().strip()
@@ -36,13 +36,8 @@ def get_voice_for_speaker(speaker_name: str) -> Dict[str, str]:
     # Get voice path from configuration
     voice_path = CHARACTER_VOICES.get(normalized_name, CHARACTER_VOICES["narrator"])
 
-    # If voice file exists, use voice cloning mode
-    if os.path.exists(voice_path):
-        return {'type': 'file', 'value': voice_path}
-
-    # Otherwise, use built-in XTTS speaker
-    speaker = CHARACTER_SPEAKERS.get(normalized_name, CHARACTER_SPEAKERS["narrator"])
-    return {'type': 'speaker', 'value': speaker}
+    # Return the voice file path (Chatterbox always uses files)
+    return {'type': 'file', 'value': voice_path}
 
 
 def get_all_characters() -> list[str]:
@@ -69,8 +64,8 @@ def validate_voice_files() -> dict[str, bool]:
 
 
 if __name__ == "__main__":
-    # Test voice configuration
-    print("Voice Configuration Test")
+    # Test voice configuration for Chatterbox
+    print("Chatterbox Voice Configuration Test")
     print("=" * 50)
 
     print("\nConfigured characters:")
@@ -80,12 +75,14 @@ if __name__ == "__main__":
     print("\nVoice file status:")
     status = validate_voice_files()
     for character, exists in status.items():
-        status_str = "✓ EXISTS" if exists else "✗ MISSING"
+        status_str = "✓ EXISTS" if exists else "✗ MISSING (required for Chatterbox)"
         voice_path = CHARACTER_VOICES[character]
-        print(f"  {character:15} {status_str:10} {voice_path}")
+        print(f"  {character:15} {status_str:35} {voice_path}")
 
     print("\nTesting voice selection:")
     test_speakers = ["Emma", "maxim", "RAMIREZ", "unknown_character"]
     for speaker in test_speakers:
         voice = get_voice_for_speaker(speaker)
-        print(f"  {speaker:20} -> {voice}")
+        exists = os.path.exists(voice['value'])
+        status = "✓" if exists else "✗"
+        print(f"  {speaker:20} -> {status} {voice['value']}")
