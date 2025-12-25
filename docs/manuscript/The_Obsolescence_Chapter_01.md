@@ -118,6 +118,10 @@ The numbers didn't just describe a shift. They described a *takeover.*
 
 And underneath it all, threading through every article: robots. Automation. AI management systems. The systematic replacement of human work with machines that didn't need sleep or healthcare or to watch their kids' basketball games.
 
+The TV was still on—muted, showing the evening news. Christmas around the world: swimmers in icy waters off Scotland, candlelight services filling stadiums across Southeast Asia, crowds in Shanghai's shopping districts. The world, celebrating.
+
+She turned back to her laptop. To articles about automation and displacement. To statistics that didn't care about holidays.
+
 Emma sat back. The kitchen was dark except for the laptop's glow. Through the window, she could see their street—quiet, suburban, normal. Houses full of people who probably had no idea how fast the ground was shifting under them.
 
 She thought about Tyler, sixteen, two years from college. What was she supposed to tell him to study?
