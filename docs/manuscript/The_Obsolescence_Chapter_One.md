@@ -1,6 +1,6 @@
 CHAPTER ONE
 
-The Layoff
+Ahead of Schedule
 
 Emma Chen checked the line supervisor's tablet and smiled. Production was ahead of schedule. The new automated welding stations on Line 3 had been finicky when they first arrived—temperamental in ways the old equipment never was—but she'd worked with the operators to dial in the settings, adjust the timing, make the machines dance with the people instead of against them.
 

@@ -22,7 +22,7 @@ The novel follows a complete emotional journey designed to avoid one-note dystop
 
 **Emotional trajectory: Security → Disruption → Discovery → Cautious Hope**
 
-### Chapter 1: The Layoff
+### Chapter 1: Ahead of Schedule
 
 **Emotional arc:** Competent life → sharp disruption → intriguing mystery → hopeful contact
 

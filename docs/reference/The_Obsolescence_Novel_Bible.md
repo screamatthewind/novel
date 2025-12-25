@@ -32,7 +32,7 @@ PART ONE: THE AWAKENING
 
 Emma Chen's journey from layoff to understanding.
 
-Chapter 1: "The Layoff"
+Chapter 1: "Ahead of Schedule"
 
 Emma Chen, 12-year operations manager at Hartwell Manufacturing, receives a layoff email at 4:47 PM on a Thursday. Despite the company's record profits, she's been 'optimized' away. At 2 AM, unable to sleep, she falls down a rabbit hole: a video of robots dancing at a Chinese concert catches her eye—they're incredible, almost beautiful. Then another video autoplays: humanoid robots on a factory floor. She can't tell if they're the same model. More scrolling: articles about Belt and Road debt, something about Russia. None of it connects yet, but she can't stop clicking. She contacts Elena Volkov, author of 'The Last Factory,' and books train tickets to DC for herself and her son Tyler.
 
@@ -482,7 +482,18 @@ CHAPTER STRUCTURE
 
 Chapters are scene-based with clear breaks (* * *).
 
-Each chapter has a small-caps title reflecting theme (The Layoff, The Map, The Bet, The Junior Partner).
+Each chapter has a small-caps title reflecting theme (Ahead of Schedule, The Map, The Bet, The Junior Partner).
+
+IMPORTANT - CHAPTER TITLE PRINCIPLE:
+Chapter titles must follow the "seduce first, betray later" principle. NEVER use titles that telegraph negative outcomes before the reader experiences the setup.
+
+✗ BAD: "The Layoff" - announces doom upfront
+✓ GOOD: "Ahead of Schedule" - shows competence, ironic in retrospect
+
+Title checklist:
+- Does it emphasize what's working/valuable BEFORE disruption?
+- Does it invite curiosity rather than dread?
+- Does it follow the emotional contrast technique?
 
 Time/location stamps when jumping (Togliatti — Two Years Earlier).
 

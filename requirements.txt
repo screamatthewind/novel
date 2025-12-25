@@ -1,5 +1,11 @@
-# torch and torchvision installed via:
-# pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+# IMPORTANT: Install PyTorch with CUDA support FIRST:
+# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+#
+# Then install other packages with:
+# pip install -r requirements.txt
+#
+# WARNING: Do NOT run "pip install TTS" by itself, as it may replace
+# your CUDA PyTorch with the CPU-only version!
 
 # NumPy version must be <2.0 for PyTorch compatibility
 numpy<2.0.0
@@ -13,3 +19,12 @@ tqdm>=4.66.0
 
 # xformers must be installed separately after torch
 # See installation instructions in README_IMAGE_GEN.md
+
+# Text-to-Speech (Coqui TTS with XTTS v2)
+TTS>=0.22.0              # Coqui TTS (~2GB model download on first run)
+transformers<4.41.0      # Must be <4.41 for TTS compatibility (BeamSearchScorer)
+pydub>=0.25.1            # Audio manipulation (WAV to MP3 conversion)
+soundfile>=0.12.1        # Audio file I/O
+scipy>=1.10.0            # Audio processing utilities
+unidic-lite>=1.0.8       # MeCab dictionary for Japanese (TTS dependency)
+mecab-python3>=1.0.12    # Japanese language tokenizer (TTS dependency)
