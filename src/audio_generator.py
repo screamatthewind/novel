@@ -148,32 +148,14 @@ class CoquiTTSGenerator:
         Returns:
             Tuple of (gpt_cond_latent, speaker_embedding)
         """
-        print(f"[AUDIO_GEN] get_speaker_latents() called for: {speaker_wav}")
-
         # Check cache first
         if speaker_wav in self.latent_cache:
-            print(f"[AUDIO_GEN] [OK] Latents found in cache")
             return self.latent_cache[speaker_wav]
 
         # Compute latents from reference audio
-        print(f"[AUDIO_GEN] Computing speaker latents (not cached)...")
-        abs_path = os.path.abspath(speaker_wav)
-        print(f"[AUDIO_GEN] Absolute path: {abs_path}")
-        print(f"[AUDIO_GEN] File exists: {os.path.exists(speaker_wav)}")
-
-        if os.path.exists(speaker_wav):
-            file_size = os.path.getsize(speaker_wav)
-            print(f"[AUDIO_GEN] File size: {file_size} bytes")
-
-        # Access the underlying TTS model for XTTS-specific methods
-        print(f"[AUDIO_GEN] Calling synthesizer.tts_model.get_conditioning_latents()...")
         gpt_cond_latent, speaker_embedding = self.model.synthesizer.tts_model.get_conditioning_latents(
             audio_path=[speaker_wav]
         )
-
-        print(f"[AUDIO_GEN] [OK] Latents computed successfully")
-        print(f"[AUDIO_GEN]   - GPT cond latent shape: {gpt_cond_latent.shape if hasattr(gpt_cond_latent, 'shape') else type(gpt_cond_latent)}")
-        print(f"[AUDIO_GEN]   - Speaker embedding shape: {speaker_embedding.shape if hasattr(speaker_embedding, 'shape') else type(speaker_embedding)}")
 
         # Cache for future use
         self.latent_cache[speaker_wav] = (gpt_cond_latent, speaker_embedding)
@@ -198,103 +180,58 @@ class CoquiTTSGenerator:
         Returns:
             Audio array or None if generation fails
         """
-        print(f"\n[AUDIO_GEN] ========== generate_speech() called ==========")
-        print(f"[AUDIO_GEN] Text preview: {text[:100]}...")
-        print(f"[AUDIO_GEN] Speaker WAV param: {speaker_wav}")
-        print(f"[AUDIO_GEN] Speaker name param: {speaker_name}")
-        print(f"[AUDIO_GEN] Language: {language}")
-
         if self.model is None:
-            print("[AUDIO_GEN] ✗ Error: Model not loaded. Call load_model() first.")
+            print("Error: Model not loaded. Call load_model() first.")
             return None
 
         if not text.strip():
-            print("[AUDIO_GEN] ✗ Error: Empty text provided")
+            print("Error: Empty text provided")
             return None
 
         try:
             # Prioritize voice cloning if file path provided and exists
-            if speaker_wav:
-                file_exists = os.path.exists(speaker_wav)
-                print(f"[AUDIO_GEN] Speaker WAV provided: {speaker_wav}")
-                print(f"[AUDIO_GEN] File exists: {file_exists}")
+            if speaker_wav and os.path.exists(speaker_wav):
+                # Voice cloning mode - use latents for proper voice encoding
+                gpt_cond_latent, speaker_embedding = self.get_speaker_latents(speaker_wav)
 
-                if file_exists:
-                    print(f"[AUDIO_GEN] >>> MODE: VOICE CLONING <<<")
-                    # Voice cloning mode - use latents for proper voice encoding
-                    gpt_cond_latent, speaker_embedding = self.get_speaker_latents(speaker_wav)
+                # Use the lower-level inference API with computed latents
+                out = self.model.synthesizer.tts_model.inference(
+                    text=text,
+                    language=language,
+                    gpt_cond_latent=gpt_cond_latent,
+                    speaker_embedding=speaker_embedding
+                )
 
-                    print(f"[AUDIO_GEN] Calling TTS model inference API...")
-                    # Use the lower-level inference API with computed latents
-                    out = self.model.synthesizer.tts_model.inference(
-                        text=text,
-                        language=language,
-                        gpt_cond_latent=gpt_cond_latent,
-                        speaker_embedding=speaker_embedding
-                    )
-
-                    # XTTS returns waveform in 'wav' key
-                    audio = out["wav"]
-                    print(f"[AUDIO_GEN] [OK] Voice cloning synthesis complete")
-                else:
-                    print(f"[AUDIO_GEN] [ERROR] File doesn't exist, falling through to speaker mode")
-                    if speaker_name:
-                        print(f"[AUDIO_GEN] >>> MODE: BUILT-IN SPEAKER (fallback) <<<")
-                        audio = self.model.tts(
-                            text=text,
-                            speaker=speaker_name,
-                            language=language
-                        )
-                    else:
-                        print(f"[AUDIO_GEN] >>> MODE: DEFAULT SPEAKER (fallback) <<<")
-                        audio = self.model.tts(
-                            text=text,
-                            speaker="Claribel Dervla",
-                            language=language
-                        )
+                # XTTS returns waveform in 'wav' key
+                audio = out["wav"]
             elif speaker_name:
                 # Built-in speaker mode - use high-level API
-                print(f"[AUDIO_GEN] >>> MODE: BUILT-IN SPEAKER <<<")
-                print(f"[AUDIO_GEN] Using speaker: {speaker_name}")
                 audio = self.model.tts(
                     text=text,
                     speaker=speaker_name,
                     language=language
                 )
-                print(f"[AUDIO_GEN] [OK] Built-in speaker synthesis complete")
             else:
                 # Fallback to default young, upbeat speaker
-                print(f"[AUDIO_GEN] >>> MODE: DEFAULT SPEAKER <<<")
-                print(f"[AUDIO_GEN] Using default speaker: Claribel Dervla")
                 audio = self.model.tts(
                     text=text,
                     speaker="Claribel Dervla",  # Young, upbeat default
                     language=language
                 )
-                print(f"[AUDIO_GEN] [OK] Default speaker synthesis complete")
 
             # Convert to numpy array if needed
             if isinstance(audio, list):
                 audio = np.array(audio, dtype=np.float32)
-                print(f"[AUDIO_GEN] Converted list to numpy array")
             elif torch.is_tensor(audio):
                 audio = audio.cpu().numpy().astype(np.float32)
-                print(f"[AUDIO_GEN] Converted tensor to numpy array")
-
-            print(f"[AUDIO_GEN] [OK] Audio generation SUCCESS")
-            print(f"[AUDIO_GEN] Audio shape: {audio.shape}")
-            print(f"[AUDIO_GEN] Audio duration: {len(audio) / self.sample_rate:.2f}s")
-            print(f"[AUDIO_GEN] ========================================\n")
 
             return audio
 
         except Exception as e:
-            print(f"[AUDIO_GEN] *** ERROR generating speech ***")
-            print(f"[AUDIO_GEN] Error: {e}")
-            print(f"[AUDIO_GEN] Text preview: {text[:100]}...")
+            print(f"ERROR generating speech: {e}")
+            print(f"Text preview: {text[:100]}...")
             import traceback
             print(traceback.format_exc())
-            print(f"[AUDIO_GEN] ========================================\n")
             return None
 
     def generate_speech_chunked(

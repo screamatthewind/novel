@@ -11,7 +11,8 @@ def generate_audio_filename(
     scene_num: int,
     scene_content: str,
     ext: str = "wav",
-    sentence_num: int = None
+    sentence_num: int = None,
+    scene_context: str = None
 ) -> str:
     """
     Generate descriptive filename for scene audio.
@@ -24,13 +25,15 @@ def generate_audio_filename(
         scene_content: Scene text content
         ext: File extension (default: wav)
         sentence_num: Optional sentence number within scene
+        scene_context: Optional full scene text for context (ensures consistent location tags)
 
     Returns:
         Filename like 'chapter_01_scene_02_sent_03_emma_factory_reading.wav'
         or 'chapter_01_scene_02_emma_factory_reading.wav' if sentence_num not provided
     """
     # Extract key words using same function as image generator
-    key_words = extract_key_words(scene_content)
+    # Pass scene_context to ensure consistent setting across sentences in the scene
+    key_words = extract_key_words(scene_content, scene_context=scene_context)
 
     # Format with zero-padded numbers
     if sentence_num is not None:

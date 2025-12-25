@@ -126,7 +126,8 @@ def process_sentence(
         sentence.scene_num,
         sentence.content,
         ext=args.audio_format,
-        sentence_num=sentence.sentence_num
+        sentence_num=sentence.sentence_num,
+        scene_context=sentence.scene_context
     )
     output_path = os.path.join(AUDIO_DIR, filename)
 
@@ -154,30 +155,19 @@ def process_sentence(
         log_message(log_file, f"⟳ Generating audio...")
 
         # Determine speaker and get voice configuration
-        print(f"\n[SCENE_AUDIO] ========== Processing Sentence ==========")
-        print(f"[SCENE_AUDIO] Chapter {sentence.chapter_num}, Scene {sentence.scene_num}, Sentence {sentence.sentence_num}")
-        print(f"[SCENE_AUDIO] Text preview: {sentence.content[:100]}...")
-
         if args.single_voice:
-            print(f"[SCENE_AUDIO] Mode: SINGLE VOICE (narrator for all)")
             voice_info = get_voice_for_speaker("narrator")
         else:
-            print(f"[SCENE_AUDIO] Mode: MULTI-VOICE (detecting speaker)")
             # Parse sentence to detect if it's dialogue and extract speaker
             segments = parse_scene_text(sentence.content)
             if segments and segments[0].segment_type == 'dialogue':
                 speaker = segments[0].speaker
-                print(f"[SCENE_AUDIO] Detected dialogue from: {speaker}")
                 voice_info = get_voice_for_speaker(speaker)
             else:
-                print(f"[SCENE_AUDIO] Narration detected, using narrator voice")
                 voice_info = get_voice_for_speaker("narrator")
-
-        print(f"[SCENE_AUDIO] Voice info returned: type={voice_info['type']}, value={voice_info['value']}")
 
         # Generate audio with appropriate voice (file or speaker name)
         if voice_info['type'] == 'file':
-            print(f"[SCENE_AUDIO] Calling generate_speech_chunked with SPEAKER_WAV")
             audio = generator.generate_speech_chunked(
                 text=sentence.content,
                 speaker_wav=voice_info['value'],
@@ -185,7 +175,6 @@ def process_sentence(
                 max_chunk_size=MAX_TTS_CHUNK_SIZE
             )
         else:  # type == 'speaker'
-            print(f"[SCENE_AUDIO] Calling generate_speech_chunked with SPEAKER_NAME")
             audio = generator.generate_speech_chunked(
                 text=sentence.content,
                 speaker_name=voice_info['value'],

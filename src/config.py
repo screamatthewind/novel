@@ -3,6 +3,7 @@ Configuration settings for novel scene image generation system.
 """
 
 import os
+from pathlib import Path
 
 # Paths (relative to project root)
 CHAPTER_DIR = "../docs/manuscript"
@@ -72,10 +73,13 @@ DEFAULT_SAMPLE_RATE = 22050
 DEFAULT_TTS_MODEL = "tts_models/multilingual/multi-dataset/xtts_v2"
 MAX_TTS_CHUNK_SIZE = 240  # Characters per TTS call (under 250 char limit for Coqui TTS)
 
-# Character-to-voice mapping (for voice cloning with reference files)
-CHARACTER_VOICES = {
+# Get project root (parent of src/) for absolute path resolution
+PROJECT_ROOT = Path(__file__).parent.parent
+
+# Character-to-voice mapping (relative paths, will be converted to absolute)
+_VOICE_FILES = {
     "narrator": "voices/male_young_friendly.wav",
-    "emma": "voices/male_young_friendly.wav",
+    "emma": "voices/female_young_bright.wav",
     "maxim": "voices/male_young_friendly.wav",
     "amara": "voices/male_young_friendly.wav",
     "tyler": "voices/male_young_friendly.wav",
@@ -84,6 +88,13 @@ CHARACTER_VOICES = {
     "mark": "voices/male_young_friendly.wav",
     "diane": "voices/male_young_friendly.wav",
     "ramirez": "voices/male_young_friendly.wav",
+}
+
+# Convert all voice file paths to absolute paths
+# This ensures voice cloning works regardless of current working directory
+CHARACTER_VOICES = {
+    char: str(PROJECT_ROOT / path)
+    for char, path in _VOICE_FILES.items()
 }
 
 # XTTS v2 built-in speaker mapping (used when voice files don't exist)
