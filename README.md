@@ -35,18 +35,18 @@ novel/
 │
 ├── docs/
 │   ├── manuscript/ (ALL 12 CHAPTERS ✅)
-│   │   ├── The_Obsolescence_Chapter_One.md - Ahead of Schedule
-│   │   ├── The_Obsolescence_Chapter_Two.md - The Map
-│   │   ├── The_Obsolescence_Chapter_Three.md - The Bet
-│   │   ├── The_Obsolescence_Chapter_Four.md - The Junior Partner
-│   │   ├── The_Obsolescence_Chapter_Five.md - The Chains ✨
-│   │   ├── The_Obsolescence_Chapter_Six.md - The Deployment ✨
-│   │   ├── The_Obsolescence_Chapter_Seven.md - The Engineer ✨
-│   │   ├── The_Obsolescence_Chapter_Eight.md - The Defection ✨
-│   │   ├── The_Obsolescence_Chapter_Nine.md - The Severance ✨
-│   │   ├── The_Obsolescence_Chapter_Ten.md - The Remainder ✨
-│   │   ├── The_Obsolescence_Chapter_Eleven.md - The Meaning ✨
-│   │   └── The_Obsolescence_Chapter_Twelve.md - The Children ✨
+│   │   ├── The_Obsolescence_Chapter_01.md - Ahead of Schedule
+│   │   ├── The_Obsolescence_Chapter_02.md - The Map
+│   │   ├── The_Obsolescence_Chapter_03.md - The Bet
+│   │   ├── The_Obsolescence_Chapter_04.md - The Junior Partner
+│   │   ├── The_Obsolescence_Chapter_05.md - The Chains ✨
+│   │   ├── The_Obsolescence_Chapter_06.md - The Deployment ✨
+│   │   ├── The_Obsolescence_Chapter_07.md - The Engineer ✨
+│   │   ├── The_Obsolescence_Chapter_08.md - The Defection ✨
+│   │   ├── The_Obsolescence_Chapter_09.md - The Severance ✨
+│   │   ├── The_Obsolescence_Chapter_10.md - The Remainder ✨
+│   │   ├── The_Obsolescence_Chapter_11.md - The Meaning ✨
+│   │   └── The_Obsolescence_Chapter_12.md - The Children ✨
 │   │
 │   ├── reference/
 │   │   ├── The_Obsolescence_Novel_Bible.md

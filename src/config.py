@@ -39,18 +39,21 @@ BASE_STYLE = "graphic novel art, detailed linework, cel shading, dramatic lighti
 # Negative prompt - Avoid photorealism and low quality
 NEGATIVE_PROMPT = "photorealistic, photo, photograph, 3d render, blurry, low quality, distorted anatomy, extra limbs, deformed, ugly, oversaturated, watermark, signature, amateur, sketch, unfinished"
 
-# Chapter mapping (spelled-out to numeric)
+# Chapter mapping (zero-padded numeric strings to integers)
+# Format: "01" -> 1, "02" -> 2, etc.
 CHAPTER_NAMES = {
-    "One": 1,
-    "Two": 2,
-    "Three": 3,
-    "Four": 4,
-    "Five": 5,
-    "Six": 6,
-    "Seven": 7,
-    "Eight": 8,
-    "Nine": 9,
-    "Ten": 10
+    "01": 1,
+    "02": 2,
+    "03": 3,
+    "04": 4,
+    "05": 5,
+    "06": 6,
+    "07": 7,
+    "08": 8,
+    "09": 9,
+    "10": 10,
+    "11": 11,
+    "12": 12
 }
 
 # Audio generation parameters

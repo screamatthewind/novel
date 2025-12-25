@@ -22,7 +22,7 @@ class Scene:
 
 def extract_chapter_number(filename: str) -> int:
     """
-    Extract chapter number from filename like 'The_Obsolescence_Chapter_One.md'.
+    Extract chapter number from filename like 'The_Obsolescence_Chapter_01.md'.
 
     Args:
         filename: Full path or filename of the chapter
@@ -33,12 +33,12 @@ def extract_chapter_number(filename: str) -> int:
     # Extract just the filename from the path
     basename = filename.split('\\')[-1].split('/')[-1]
 
-    # Match pattern: The_Obsolescence_Chapter_[Name].md
-    match = re.search(r'Chapter_([A-Za-z]+)\.md', basename)
+    # Match pattern: The_Obsolescence_Chapter_[Number].md
+    match = re.search(r'Chapter_(\d+)\.md', basename)
     if match:
-        chapter_name = match.group(1)
-        if chapter_name in CHAPTER_NAMES:
-            return CHAPTER_NAMES[chapter_name]
+        chapter_num_str = match.group(1)
+        if chapter_num_str in CHAPTER_NAMES:
+            return CHAPTER_NAMES[chapter_num_str]
 
     raise ValueError(f"Could not extract chapter number from filename: {filename}")
 

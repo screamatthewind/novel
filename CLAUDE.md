@@ -9,7 +9,7 @@ This is a creative writing project for a novel titled "The Obsolescence". The re
 ### Novel Documents
 - **[docs/reference/The_Obsolescence_Novel_Bible.md](docs/reference/The_Obsolescence_Novel_Bible.md)** - World-building reference, character profiles, and core concepts
 - **[docs/reference/The_Obsolescence_Novel_Outline.md](docs/reference/The_Obsolescence_Novel_Outline.md)** - Story structure and chapter-by-chapter outline
-- **[docs/manuscript/](docs/manuscript/)** - Individual chapter manuscripts (Chapter One through Chapter Four)
+- **[docs/manuscript/](docs/manuscript/)** - Individual chapter manuscripts (All 12 chapters complete)
 
 ### Image Generation System
 - **[src/](src/)** - Python scripts for generating scene images using Stable Diffusion XL
@@ -43,16 +43,16 @@ novel/
 
 ### File Naming Convention
 
-Chapter files follow the pattern: `The_Obsolescence_Chapter_[Name].md` where Name is the spelled-out number (One, Two, Three, Four, etc.)
+Chapter files follow the pattern: `The_Obsolescence_Chapter_[NN].md` where NN is the zero-padded chapter number (01, 02, 03, ..., 12).
 All chapter files are located in [docs/manuscript/](docs/manuscript/)
 
 ### Project Structure
 
 The novel is organized in four parts:
-- **Part One: The Awakening** - Emma Chen's journey from layoff to understanding (Chapters 1-3, drafted)
-- **Part Two: The Pattern** - Global perspectives: Maxim Orlov (Russia), Amara Okafor (Kenya) (Chapter 4 drafted, Chapter 5 outlined)
-- **Part Three: The Machines** - Time jump to 2029, humanoid robot deployment, Wei Chen's perspective (outlined)
-- **Part Four: The Obsolescence** - Speculative future 2032-2045, the Remainder communities (outlined)
+- **Part One: The Awakening** - Emma Chen's journey from layoff to understanding (Chapters 1-3)
+- **Part Two: The Pattern** - Global perspectives: Maxim Orlov (Russia), Amara Okafor (Kenya) (Chapters 4-5)
+- **Part Three: The Machines** - Time jump to 2029, humanoid robot deployment, Wei Chen's perspective (Chapters 6-9)
+- **Part Four: The Obsolescence** - Speculative future 2032-2045, the Remainder communities (Chapters 10-12)
 
 ### Key Considerations
 

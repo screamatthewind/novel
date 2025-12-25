@@ -180,14 +180,14 @@ All new chapters written following the established creative principles:
 
 ### New Chapter Files
 All in `docs/manuscript/`:
-- The_Obsolescence_Chapter_Five.md
-- The_Obsolescence_Chapter_Six.md
-- The_Obsolescence_Chapter_Seven.md
-- The_Obsolescence_Chapter_Eight.md
-- The_Obsolescence_Chapter_Nine.md
-- The_Obsolescence_Chapter_Ten.md
-- The_Obsolescence_Chapter_Eleven.md
-- The_Obsolescence_Chapter_Twelve.md
+- The_Obsolescence_Chapter_05.md
+- The_Obsolescence_Chapter_06.md
+- The_Obsolescence_Chapter_07.md
+- The_Obsolescence_Chapter_08.md
+- The_Obsolescence_Chapter_09.md
+- The_Obsolescence_Chapter_10.md
+- The_Obsolescence_Chapter_11.md
+- The_Obsolescence_Chapter_12.md
 
 ### Reference Documents
 - PROJECT_STATUS.md (comprehensive project overview)
