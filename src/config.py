@@ -25,8 +25,8 @@ DEFAULT_HEIGHT = 768
 DEFAULT_STEPS = 30
 DEFAULT_GUIDANCE = 7.5
 
-# Style template - Graphic novel style
-BASE_STYLE = "graphic novel illustration, comic book art style, detailed line work, professional comic art, dramatic shading, cel shading, sequential art, published graphic novel quality, high contrast lighting, expressive illustration"
+# Style template - Graphic novel style (optimized for 77-token limit)
+BASE_STYLE = "graphic novel art, detailed linework, cel shading, dramatic lighting"
 
 # Negative prompt - Avoid photorealism and low quality
 NEGATIVE_PROMPT = "photorealistic, photo, photograph, 3d render, blurry, low quality, distorted anatomy, extra limbs, deformed, ugly, oversaturated, watermark, signature, amateur, sketch, unfinished"

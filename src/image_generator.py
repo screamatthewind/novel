@@ -65,11 +65,11 @@ class SDXLGenerator:
         print("  ✓ Model CPU offload enabled")
 
         # 3. Enable VAE slicing (process images in slices)
-        self.pipe.enable_vae_slicing()
+        self.pipe.vae.enable_slicing()
         print("  ✓ VAE slicing enabled")
 
         # 4. Enable VAE tiling (allows higher resolutions)
-        self.pipe.enable_vae_tiling()
+        self.pipe.vae.enable_tiling()
         print("  ✓ VAE tiling enabled")
 
         # 5. Use fast DPM++ scheduler

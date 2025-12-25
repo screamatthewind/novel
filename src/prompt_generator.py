@@ -9,12 +9,13 @@ from config import BASE_STYLE, NEGATIVE_PROMPT
 
 
 # Character descriptions for visual consistency
+# Optimized for SDXL 77-token limit while maintaining consistency
 CHARACTER_DESCRIPTIONS = {
-    "emma": "professional woman in her 40s, Asian American, professional attire",
-    "maxim": "factory worker man, Eastern European, work clothes",
-    "elena": "older woman in her 60s, Eastern European",
-    "tyler": "teenage boy, casual clothing",
-    "amara": "young African woman, professional attire"
+    "emma": "Asian American woman 40s, dark hair, business attire, analytical",
+    "maxim": "Eastern European man 40s, factory work clothes, tired resilient",
+    "elena": "woman 60s, gray hair, sharp eyes, Eastern European, analytical",
+    "tyler": "Asian American teen 16, casual clothes, earbuds, phone",
+    "amara": "African woman 50s, Kenyan, professional attire, fierce"
 }
 
 # Setting keywords to detect
@@ -108,8 +109,8 @@ def extract_time_of_day(text: str) -> str:
     return "daytime"
 
 
-def extract_mood(text: str) -> str:
-    """Extract dominant mood/atmosphere from scene text."""
+def extract_mood(text: str, time_of_day: str = "daytime") -> str:
+    """Extract dominant mood/atmosphere from scene text and combine with lighting."""
     text_lower = text.lower()
 
     # Count keyword matches for each mood
@@ -119,19 +120,28 @@ def extract_mood(text: str) -> str:
         if score > 0:
             mood_scores[mood] = score
 
-    # Return mood with highest score
+    # Time-based lighting descriptors
+    time_lighting = {
+        "morning": "soft morning light",
+        "afternoon": "bright daylight",
+        "evening": "warm evening tones",
+        "night": "dark tones, nighttime"
+    }
+    lighting = time_lighting.get(time_of_day, "natural lighting")
+
+    # Return mood with highest score, combined with lighting
     if mood_scores:
         mood = max(mood_scores, key=mood_scores.get)
         mood_descriptors = {
-            "shock": "shocked expression, tense atmosphere, dramatic shadows",
-            "warmth": "warm atmosphere, soft shading, inviting composition",
-            "tension": "tense atmosphere, high contrast lighting, dramatic angles",
-            "reflection": "contemplative mood, thoughtful expression, balanced composition",
-            "urgency": "dynamic composition, motion lines, intense energy"
+            "shock": f"shocked expression, dramatic shadows, {lighting}",
+            "warmth": f"warm atmosphere, soft shading, {lighting}",
+            "tension": f"tense atmosphere, high contrast, {lighting}",
+            "reflection": f"contemplative mood, balanced composition, {lighting}",
+            "urgency": f"dynamic composition, intense energy, {lighting}"
         }
-        return mood_descriptors.get(mood, "balanced lighting, neutral mood")
+        return mood_descriptors.get(mood, f"neutral mood, {lighting}")
 
-    return "balanced lighting, neutral mood"
+    return f"neutral mood, {lighting}"
 
 
 def extract_action(text: str) -> str:
@@ -199,13 +209,13 @@ def generate_prompt(scene_content: str) -> str:
         scene_content: The text content of the scene
 
     Returns:
-        Complete image generation prompt
+        Complete image generation prompt (optimized for 77-token limit)
     """
     # Extract visual elements
     characters = extract_characters(scene_content)
     setting = extract_setting(scene_content)
     time_of_day = extract_time_of_day(scene_content)
-    mood = extract_mood(scene_content)
+    mood = extract_mood(scene_content, time_of_day)  # Pass time to consolidate lighting
     action = extract_action(scene_content)
 
     # Build prompt components
@@ -225,22 +235,72 @@ def generate_prompt(scene_content: str) -> str:
     if action:
         components.append(action)
 
-    # Mood
+    # Mood (now includes lighting)
     components.append(mood)
 
-    # Time lighting - adapted for graphic novel style
-    time_lighting = {
-        "morning": "soft morning lighting, gentle shadows",
-        "afternoon": "bright daylight, clear definition",
-        "evening": "warm evening tones, long shadows",
-        "night": "dark tones, dramatic contrast, nighttime scene"
-    }
-    components.append(time_lighting.get(time_of_day, "natural lighting, clear linework"))
+    # Add character consistency tokens if characters present
+    consistency_tokens = ""
+    if characters:
+        consistency_tokens = "consistent character, model sheet, "
 
     # Combine with base style
-    prompt = ", ".join(components) + ", " + BASE_STYLE
+    prompt = ", ".join(components) + ", " + consistency_tokens + BASE_STYLE
 
     return prompt
+
+
+def count_tokens(prompt: str) -> int:
+    """
+    Count the number of CLIP tokens in a prompt.
+
+    Args:
+        prompt: The text prompt to tokenize
+
+    Returns:
+        Number of tokens (SDXL has a 77-token limit)
+    """
+    try:
+        from transformers import CLIPTokenizer
+
+        # Load SDXL's CLIP tokenizer
+        tokenizer = CLIPTokenizer.from_pretrained(
+            "openai/clip-vit-large-patch14"
+        )
+
+        # Tokenize the prompt
+        tokens = tokenizer(prompt, truncation=False, add_special_tokens=True)
+        token_count = len(tokens["input_ids"])
+
+        return token_count
+
+    except ImportError:
+        # If transformers not available, estimate based on words
+        # Rough estimate: ~1.3 tokens per word on average
+        word_count = len(prompt.split())
+        estimated_tokens = int(word_count * 1.3)
+        print(f"  ⚠ transformers library not available, estimating {estimated_tokens} tokens")
+        return estimated_tokens
+
+
+def validate_prompt_length(prompt: str, max_tokens: int = 77) -> Tuple[bool, int]:
+    """
+    Validate that a prompt is within SDXL's token limit.
+
+    Args:
+        prompt: The prompt to validate
+        max_tokens: Maximum allowed tokens (default: 77 for SDXL)
+
+    Returns:
+        Tuple of (is_valid, token_count)
+    """
+    token_count = count_tokens(prompt)
+    is_valid = token_count <= max_tokens
+
+    if not is_valid:
+        print(f"  ⚠ WARNING: Prompt has {token_count} tokens (limit: {max_tokens})")
+        print(f"  Prompt will be truncated by SDXL!")
+
+    return is_valid, token_count
 
 
 def generate_filename(chapter_num: int, scene_num: int, scene_content: str) -> str:
@@ -285,6 +345,15 @@ def main():
     prompt = generate_prompt(sample_scene)
     print("Generated Prompt (Graphic Novel Style):")
     print(prompt)
+    print("\n" + "="*80 + "\n")
+
+    # Validate token count
+    is_valid, token_count = validate_prompt_length(prompt)
+    print(f"Token Count: {token_count}/77")
+    if is_valid:
+        print("OK - Prompt is within SDXL token limit")
+    else:
+        print("ERROR - Prompt EXCEEDS token limit and will be truncated!")
     print("\n" + "="*80 + "\n")
 
     print("Negative Prompt:")
