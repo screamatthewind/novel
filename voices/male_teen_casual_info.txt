@@ -1,0 +1,8 @@
+Voice: male_teen_casual
+Source: REAL HUMAN - LibriSpeech
+Description: Youthful casual male speaker
+Duration: 10.00s
+Sample Rate: 24000 Hz
+Files: 3
+Dataset: LibriSpeech dev-clean
+License: Public domain

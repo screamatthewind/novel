@@ -335,11 +335,21 @@ if __name__ == "__main__":
 
     print("\n1. Loading model...")
     if generator.load_model():
-        print("\n2. Generating test audio...")
+        print("\n2. Generating test audio with voice cloning...")
+
+        # Use male_calm_mature voice for testing
+        voice_file = "../voices/male_calm_mature.wav"
+
+        if os.path.exists(voice_file):
+            print(f"   Using voice: {voice_file}")
+        else:
+            print(f"   WARNING: Voice file not found: {voice_file}")
+            print("   Using default voice instead")
+            voice_file = None
 
         test_text = "Looking good, Ramirez. That modification you suggested for the bracket feed is working."
 
-        audio = generator.generate_speech(test_text)
+        audio = generator.generate_speech(test_text, speaker_wav=voice_file)
 
         if audio is not None:
             duration = generator.get_audio_duration(audio)
@@ -352,7 +362,7 @@ if __name__ == "__main__":
             if generator.save_audio(audio, test_output):
                 print(f"   Saved to: {test_output}")
 
-        print("\n3. Testing chunked generation...")
+        print("\n3. Testing chunked generation with voice cloning...")
         long_text = (
             "This is a longer piece of text that will be split into multiple chunks. "
             "Each chunk will be generated separately and then concatenated together. "
@@ -360,7 +370,11 @@ if __name__ == "__main__":
             "between chunks to make the audio sound more natural."
         )
 
-        chunked_audio = generator.generate_speech_chunked(long_text, max_chunk_size=100)
+        chunked_audio = generator.generate_speech_chunked(
+            long_text,
+            max_chunk_size=100,
+            speaker_wav=voice_file
+        )
 
         if chunked_audio is not None:
             duration = generator.get_audio_duration(chunked_audio)

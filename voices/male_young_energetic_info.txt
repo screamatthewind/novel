@@ -1,0 +1,8 @@
+Voice: male_young_energetic
+Source: REAL HUMAN - LibriSpeech
+Description: Young energetic male speaker from audiobook
+Duration: 10.00s
+Sample Rate: 24000 Hz
+Files: 1
+Dataset: LibriSpeech dev-clean
+License: Public domain

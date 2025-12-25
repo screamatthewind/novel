@@ -1,0 +1,8 @@
+Voice: male_young_friendly
+Source: REAL HUMAN - LibriSpeech
+Description: Friendly young male speaker
+Duration: 10.00s
+Sample Rate: 24000 Hz
+Files: 2
+Dataset: LibriSpeech dev-clean
+License: Public domain

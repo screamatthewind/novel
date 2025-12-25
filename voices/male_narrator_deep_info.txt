@@ -1,0 +1,8 @@
+Voice: male_narrator_deep
+Source: REAL HUMAN - LibriSpeech
+Description: Deep male narrator voice
+Duration: 10.00s
+Sample Rate: 24000 Hz
+Files: 3
+Dataset: LibriSpeech dev-clean
+License: Public domain

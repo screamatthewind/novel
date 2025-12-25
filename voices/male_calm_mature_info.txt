@@ -1,0 +1,8 @@
+Voice: male_calm_mature
+Source: REAL HUMAN - LibriSpeech
+Description: Calm mature male speaker
+Duration: 10.00s
+Sample Rate: 24000 Hz
+Files: 3
+Dataset: LibriSpeech dev-clean
+License: Public domain

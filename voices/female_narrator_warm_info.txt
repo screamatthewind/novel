@@ -1,0 +1,8 @@
+Voice: female_narrator_warm
+Source: REAL HUMAN - LibriSpeech
+Description: Warm female narrator
+Duration: 10.00s
+Sample Rate: 24000 Hz
+Files: 3
+Dataset: LibriSpeech dev-clean
+License: Public domain

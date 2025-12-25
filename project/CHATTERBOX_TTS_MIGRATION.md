@@ -5,8 +5,9 @@
 This document describes the migration from Coqui TTS XTTS v2 to Resemble AI Chatterbox TTS for audio generation in The Obsolescence novel project.
 
 **Migration Date:** December 25, 2025
-**Status:** ✅ Complete and Tested
+**Status:** ✅ Complete and Tested - Voice Cloning Configured
 **License Change:** Coqui Public License (Non-commercial) → MIT License (Commercial use allowed)
+**Voice Setup:** ✅ 8 real human voices downloaded (5 male + 3 female + teens)
 
 ## Why We Migrated
 
@@ -127,7 +128,13 @@ generator = ChatterboxTTSGenerator(model_name="turbo")  # or "chatterbox" or "mu
 
 ## Voice Cloning Requirements
 
-**IMPORTANT:** Unlike Coqui TTS, Chatterbox does NOT have built-in speaker voices. All characters require reference audio files.
+**IMPORTANT CORRECTION:** Chatterbox HAS a default voice built into the model, but does NOT provide a downloadable voice library.
+
+### Voice Options:
+1. **Default Voice** (built-in, no files needed) - Works immediately, single voice
+2. **Voice Cloning** (requires reference audio files) - For character differentiation
+
+**NOTE:** Chatterbox does NOT provide downloadable voice files. To use multiple distinct voices, you must provide your own 10-second reference audio samples.
 
 ### Reference Audio Specifications
 
@@ -137,37 +144,79 @@ generator = ChatterboxTTSGenerator(model_name="turbo")  # or "chatterbox" or "mu
 - **Content:** Natural speech from the target speaker
 - **Location:** `voices/` directory
 
-### Voice File Structure
+### Voice File Structure (OPTIONAL - for voice cloning)
 
 ```
 novel/
 ├── voices/
-│   ├── narrator_neutral.wav       # Required
-│   ├── emma_american.wav
-│   ├── maxim_russian.wav
-│   ├── amara_kenyan.wav
-│   ├── tyler_teen.wav
-│   └── elena_russian.wav
+│   ├── narrator_neutral.wav       # Optional (default voice used if missing)
+│   ├── emma_american.wav          # Optional
+│   ├── maxim_russian.wav          # Optional
+│   ├── amara_kenyan.wav           # Optional
+│   ├── tyler_teen.wav             # Optional
+│   └── elena_russian.wav          # Optional
 ```
 
-### Creating Reference Audio
+### How to Get Multiple Voices
 
-If you don't have existing voice samples:
+**Chatterbox does NOT provide downloadable voice files.** You have these options:
 
-1. **Use Existing TTS to Generate References:**
-   ```python
-   # Generate 10-second samples with Coqui TTS (before migration)
-   # Save as reference audio for Chatterbox
-   ```
+#### Option 1: Download Free Public Domain Voice Datasets (RECOMMENDED) ⭐
 
-2. **Record Your Own Voice:**
-   - Record yourself reading a passage
-   - Save as WAV file in `voices/` directory
-   - Chatterbox will clone your voice characteristics
+Use existing high-quality voice recordings from public datasets:
 
-3. **Use Online Voice Actors:**
-   - Hire voice actors to record 10-second samples
-   - Ensure you have rights to use the voice
+1. **VCTK Corpus** - 110 speakers with various English accents (BEST OPTION)
+   - Download: https://datashare.ed.ac.uk/handle/10283/3443
+   - Hugging Face: https://huggingface.co/datasets/CSTR-Edinburgh/vctk
+   - Size: ~11GB, Format: 48kHz WAV/FLAC, License: Creative Commons 4.0
+   - Perfect for: Character voices (includes American, Russian, Indian, African accents)
+   - Character matching: Emma (American female), Maxim (Eastern European male), Amara (African female), etc.
+
+2. **LibriSpeech** - 1000 hours from audiobooks
+   - Download: https://www.openslr.org/12 (dev-clean subset is only 337MB)
+   - Format: 16kHz WAV, License: Public domain
+   - Perfect for: Narrator voices from professional audiobook readers
+
+3. **LJSpeech** - Professional female narrator
+   - Download: https://keithito.com/LJ-Speech-Dataset/
+   - Direct link: http://data.keithito.com/data/speech/LJSpeech-1.1.tar.bz2
+   - Format: 22.05kHz WAV, License: Public domain
+   - Perfect for: High-quality female narrator
+
+4. **Mozilla Common Voice** - 32,000+ hours, 104 languages
+   - Download: https://commonvoice.mozilla.org/en/datasets
+   - Hugging Face: https://huggingface.co/datasets/mozilla-foundation/common_voice_17_0
+   - Format: MP3, License: CC0
+   - Perfect for: Multilingual voices and accent diversity
+
+**How to use dataset voices:**
+1. Download one of the datasets above
+2. Extract 10-second audio clips from different speakers
+3. Resample to 24kHz WAV (Chatterbox's sample rate)
+4. Save to `voices/` directory with appropriate names
+5. Use voice extractor script (see below)
+
+#### Option 2: Use Default Voice (Simplest)
+- No setup required
+- Audio generation works immediately
+- Single voice for all narration
+- Command: `cd src && ../venv/Scripts/python generate_scene_audio.py --chapters 1 --single-voice`
+
+#### Option 3: Record Custom Audio
+1. **Record Your Own Voice:**
+   - Record yourself or friends reading passages
+   - Each character needs unique 10-second sample
+   - Free but time-consuming
+
+2. **Hire Voice Actors:**
+   - Services like Fiverr for professional recordings
+   - Costs money but professional quality
+   - Ensure you have commercial rights
+
+#### Option 4: Switch to Commercial TTS
+- **ElevenLabs** - Has pre-made voice library (costs money, requires API key)
+- **Azure Cognitive Services** - Has neural voice library (costs money)
+- **Google Cloud TTS** - Has voice selection (costs money)
 
 ## Features
 
@@ -309,7 +358,7 @@ rmdir /s %USERPROFILE%\.cache\huggingface
 - [x] Update requirements.txt
 - [x] Test model loading and audio generation
 - [x] Update documentation
-- [ ] Create/obtain reference audio files for all characters
+- [x] Create/obtain reference audio files for all characters (Dec 25: Downloaded 8 real human voices - 5 male + 3 female, including teens, from LibriSpeech dataset)
 - [ ] Generate full chapter audio with Chatterbox
 - [ ] Compare quality with previous Coqui TTS output
 
@@ -325,6 +374,20 @@ rmdir /s %USERPROFILE%\.cache\huggingface
 | Emotion Control | No | Yes ([laugh], [cough], etc.) |
 | Model Size | ~2GB | 350M-500M |
 | Quality | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+
+## Voice Dataset Resources
+
+### Free Voice Datasets
+- [VCTK Corpus (University of Edinburgh)](https://datashare.ed.ac.uk/handle/10283/3443)
+- [VCTK on Hugging Face](https://huggingface.co/datasets/CSTR-Edinburgh/vctk)
+- [LibriSpeech (OpenSLR)](https://www.openslr.org/12)
+- [LJSpeech Dataset](https://keithito.com/LJ-Speech-Dataset/)
+- [Mozilla Common Voice](https://commonvoice.mozilla.org/en/datasets)
+- [Common Voice on Hugging Face](https://huggingface.co/datasets/mozilla-foundation/common_voice_17_0)
+
+### Voice Dataset Collections
+- [GitHub: 95+ Voice Datasets](https://github.com/jim-schwoebel/voice_datasets)
+- [40 Open-Source Audio Datasets for ML](https://towardsdatascience.com/40-open-source-audio-datasets-for-ml-59dc39d48f06/)
 
 ## References
 

@@ -1,0 +1,8 @@
+Voice: female_teen_energetic
+Source: REAL HUMAN - LibriSpeech
+Description: Energetic young female speaker
+Duration: 10.00s
+Sample Rate: 24000 Hz
+Files: 2
+Dataset: LibriSpeech dev-clean
+License: Public domain
