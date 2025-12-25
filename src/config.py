@@ -60,25 +60,34 @@ CHAPTER_NAMES = {
 
 # Audio generation parameters
 DEFAULT_AUDIO_FORMAT = "wav"
-DEFAULT_SAMPLE_RATE = 24000  # Chatterbox uses 24kHz
-DEFAULT_TTS_MODEL = "turbo"  # Options: "chatterbox", "multilingual", "turbo"
-MAX_TTS_CHUNK_SIZE = 500  # Characters per TTS call (Chatterbox can handle longer chunks)
+DEFAULT_SAMPLE_RATE = 22050
+DEFAULT_TTS_MODEL = "tts_models/multilingual/multi-dataset/xtts_v2"
+MAX_TTS_CHUNK_SIZE = 240  # Characters per TTS call (under 250 char limit for Coqui TTS)
 
 # Character-to-voice mapping (for voice cloning with reference files)
-# Chatterbox TTS uses reference audio files for voice cloning
-# Requires 10-second reference audio clips for best results
 CHARACTER_VOICES = {
-    "narrator": os.path.join(VOICES_DIR, "narrator_neutral.wav"),
-    "emma": os.path.join(VOICES_DIR, "emma_american.wav"),
-    "maxim": os.path.join(VOICES_DIR, "maxim_russian.wav"),
-    "amara": os.path.join(VOICES_DIR, "amara_kenyan.wav"),
-    "tyler": os.path.join(VOICES_DIR, "tyler_teen.wav"),
-    "elena": os.path.join(VOICES_DIR, "elena_russian.wav"),
+    "narrator": "voices/narrator_neutral.wav",
+    "emma": "voices/emma_american.wav",
+    "maxim": "voices/maxim_russian.wav",
+    "amara": "voices/amara_kenyan.wav",
+    "tyler": "voices/tyler_teen.wav",
+    "elena": "voices/elena_russian.wav",
     # Secondary characters fall back to narrator
-    "mark": os.path.join(VOICES_DIR, "narrator_neutral.wav"),
-    "diane": os.path.join(VOICES_DIR, "narrator_neutral.wav"),
-    "ramirez": os.path.join(VOICES_DIR, "narrator_neutral.wav")
+    "mark": "voices/narrator_neutral.wav",
+    "diane": "voices/narrator_neutral.wav",
+    "ramirez": "voices/narrator_neutral.wav"
 }
 
-# Note: Chatterbox does not use built-in speakers like Coqui TTS
-# All voices require reference audio files for cloning
+# XTTS v2 built-in speaker mapping (used when voice files don't exist)
+# These are pre-trained speaker voices available in XTTS v2
+CHARACTER_SPEAKERS = {
+    "narrator": "Claribel Dervla",    # Young, upbeat female voice - energetic and clear
+    "emma": "Sofia Hellen",           # Warm, professional female - perfect for friendly manager
+    "maxim": "Viktor Eka",            # Deep, authoritative male voice
+    "amara": "Daisy Studious",        # Intelligent, warm female voice
+    "tyler": "Royston Min",           # Young, energetic male voice
+    "elena": "Elisabeth Whitmore",    # Mature, wise female voice
+    "mark": "Dionisio Schuyler",      # Neutral male voice
+    "diane": "Tanja Adelina",         # Professional female voice
+    "ramirez": "Claribel Dervla"      # Default voice
+}

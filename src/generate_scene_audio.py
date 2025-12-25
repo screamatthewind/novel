@@ -2,7 +2,7 @@
 Main CLI script for generating scene audio from novel chapters.
 
 Parses markdown chapters, extracts scenes, converts dialogue to speech,
-and creates multi-voice audio files using Resemble AI Chatterbox TTS.
+and creates multi-voice audio files using Coqui TTS.
 """
 
 import argparse
@@ -15,7 +15,7 @@ from pathlib import Path
 from scene_parser import parse_all_chapters, Scene, parse_scene_sentences, Sentence
 from dialogue_parser import parse_scene_text, DialogueSegment
 from audio_filename_generator import generate_audio_filename
-from audio_generator import ChatterboxTTSGenerator
+from audio_generator import CoquiTTSGenerator
 from voice_config import get_voice_for_speaker
 from config import (
     AUDIO_DIR,
@@ -102,7 +102,7 @@ def save_metadata_to_cache(filename: str, metadata: dict):
 
 def process_sentence(
     sentence: Sentence,
-    generator: ChatterboxTTSGenerator,
+    generator: CoquiTTSGenerator,
     log_file: str,
     args: argparse.Namespace,
     dry_run: bool = False
@@ -331,12 +331,12 @@ def main():
         return
 
     # Load TTS model
-    log_message(log_file, "\nLoading Chatterbox TTS model...")
-    generator = ChatterboxTTSGenerator()
+    log_message(log_file, "\nLoading Coqui TTS model...")
+    generator = CoquiTTSGenerator()
 
     if not generator.load_model():
         log_message(log_file, "ERROR: Failed to load TTS model")
-        log_message(log_file, "Please install chatterbox-tts: pip install chatterbox-tts")
+        log_message(log_file, "Please install Coqui TTS: pip install TTS")
         log_message(log_file, "Note: Ensure PyTorch with CUDA is installed first!")
         sys.exit(1)
 

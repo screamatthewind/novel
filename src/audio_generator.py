@@ -1,5 +1,5 @@
 """
-Audio generator using Resemble AI Chatterbox TTS for multi-voice narration.
+Audio generator using Coqui TTS for multi-voice narration.
 Handles TTS model loading, speech generation, and GPU memory management.
 """
 
@@ -47,9 +47,9 @@ def check_cuda_availability() -> tuple[bool, str]:
     return True, f"CUDA detected: {device_name} (CUDA {cuda_version})"
 
 
-class ChatterboxTTSGenerator:
+class CoquiTTSGenerator:
     """
-    Wrapper for Resemble AI Chatterbox TTS models.
+    Wrapper for Coqui TTS models.
     Manages model loading, speech generation, and memory cleanup.
     """
 
@@ -58,7 +58,7 @@ class ChatterboxTTSGenerator:
         Initialize TTS generator.
 
         Args:
-            model_name: TTS model identifier (chatterbox, multilingual, or turbo)
+            model_name: TTS model identifier (e.g., 'tts_models/en/vctk/vits' or 'tts_models/multilingual/multi-dataset/xtts_v2')
             device: Device to use ('cuda' or 'cpu')
         """
         self.model_name = model_name
@@ -93,54 +93,46 @@ class ChatterboxTTSGenerator:
             True if successful, False otherwise
         """
         try:
-            print(f"\nLoading Chatterbox TTS model: {self.model_name}")
+            # Patch TTS library to use weights_only=False for PyTorch 2.6+
+            import TTS.utils.io
+            original_load = TTS.utils.io.torch.load
+            def patched_load(*args, **kwargs):
+                kwargs['weights_only'] = False
+                return original_load(*args, **kwargs)
+            TTS.utils.io.torch.load = patched_load
+
+            from TTS.api import TTS
+            import warnings
+
+            # Suppress MeCab warnings for English-only usage
+            warnings.filterwarnings('ignore', message='.*MeCab.*')
+            warnings.filterwarnings('ignore', message='.*mecab.*')
+
+            print(f"\nLoading TTS model: {self.model_name}")
             print(f"Target device: {self.device}")
 
-            # Import the appropriate Chatterbox model
-            if self.model_name == "turbo":
-                from chatterbox.tts_turbo import ChatterboxTurboTTS
+            # Initialize TTS model
+            self.model = TTS(self.model_name).to(self.device)
 
-                # Get Hugging Face token from environment if available
-                hf_token = os.environ.get("HF_TOKEN")
+            # Verify model is on expected device
+            if hasattr(self.model, 'synthesizer') and hasattr(self.model.synthesizer, 'tts_model'):
+                model_device = next(self.model.synthesizer.tts_model.parameters()).device
+                print(f"Model device: {model_device}")
+                if str(model_device) != self.device and not (self.device == "cuda" and "cuda" in str(model_device)):
+                    print(f"WARNING: Model on {model_device} but expected {self.device}")
 
-                if hf_token:
-                    print("Using Hugging Face token from environment")
-                    self.model = ChatterboxTurboTTS.from_pretrained(
-                        device=self.device,
-                        token=hf_token
-                    )
-                else:
-                    # Try without token (model might be public)
-                    try:
-                        self.model = ChatterboxTurboTTS.from_pretrained(device=self.device)
-                    except Exception as token_error:
-                        if "token" in str(token_error).lower():
-                            print("\n[INFO] Chatterbox Turbo requires authentication.")
-                            print("Please set HF_TOKEN environment variable or use standard model.")
-                            print("Falling back to standard Chatterbox model...")
-                            from chatterbox.tts import ChatterboxTTS
-                            self.model = ChatterboxTTS.from_pretrained(device=self.device)
-                        else:
-                            raise
-
-            elif self.model_name == "multilingual":
-                from chatterbox.tts import ChatterboxTTS
-                self.model = ChatterboxTTS.from_pretrained(
-                    model_id="ResembleAI/chatterbox-multilingual",
-                    device=self.device
-                )
-            else:  # Default to standard chatterbox
-                from chatterbox.tts import ChatterboxTTS
-                self.model = ChatterboxTTS.from_pretrained(device=self.device)
-
-            # Get sample rate from model (Chatterbox uses 24kHz)
-            self.sample_rate = 24000
+            # Get actual sample rate from model config
+            if hasattr(self.model, 'synthesizer') and hasattr(self.model.synthesizer, 'output_sample_rate'):
+                self.sample_rate = self.model.synthesizer.output_sample_rate
+            else:
+                # Default for XTTS v2
+                self.sample_rate = 24000
 
             print(f"[OK] Model loaded successfully! Sample rate: {self.sample_rate} Hz\n")
             return True
 
         except Exception as e:
-            print(f"\n[ERROR] Error loading Chatterbox TTS model: {e}")
+            print(f"\n[ERROR] Error loading TTS model: {e}")
             import traceback
             print(traceback.format_exc())
             return False
@@ -158,7 +150,7 @@ class ChatterboxTTSGenerator:
         Args:
             text: Text to synthesize
             speaker_wav: Path to speaker reference audio (for voice cloning)
-            speaker_name: Built-in speaker name (not used in Chatterbox)
+            speaker_name: Built-in XTTS speaker name (alternative to speaker_wav)
             language: Language code
 
         Returns:
@@ -172,36 +164,40 @@ class ChatterboxTTSGenerator:
             return None
 
         try:
-            # Chatterbox requires a reference audio for voice cloning
+            # Prioritize voice cloning if file path provided and exists
             if speaker_wav and os.path.exists(speaker_wav):
                 # Voice cloning mode with provided speaker wav
-                audio = self.model.generate(
+                audio = self.model.tts(
                     text=text,
-                    audio_prompt_path=speaker_wav
+                    speaker_wav=speaker_wav,
+                    language=language
+                )
+            elif speaker_name:
+                # Built-in speaker mode
+                audio = self.model.tts(
+                    text=text,
+                    speaker=speaker_name,
+                    language=language
                 )
             else:
-                # No reference audio - use default generation
-                # Note: Chatterbox performs best with reference audio
-                print(f"Warning: No reference audio provided for '{text[:50]}...'. Using default voice.")
-                audio = self.model.generate(text=text)
+                # Fallback to default young, upbeat speaker
+                audio = self.model.tts(
+                    text=text,
+                    speaker="Claribel Dervla",  # Young, upbeat default
+                    language=language
+                )
 
-            # Chatterbox returns a torch tensor, convert to numpy
-            if torch.is_tensor(audio):
-                audio = audio.cpu().numpy().astype(np.float32)
-            elif isinstance(audio, list):
+            # Convert to numpy array if needed
+            if isinstance(audio, list):
                 audio = np.array(audio, dtype=np.float32)
-
-            # Ensure audio is 1D array
-            if len(audio.shape) > 1:
-                audio = audio.squeeze()
+            elif torch.is_tensor(audio):
+                audio = audio.cpu().numpy().astype(np.float32)
 
             return audio
 
         except Exception as e:
             print(f"Error generating speech: {e}")
             print(f"Text preview: {text[:100]}...")
-            import traceback
-            print(traceback.format_exc())
             return None
 
     def generate_speech_chunked(
@@ -218,7 +214,7 @@ class ChatterboxTTSGenerator:
         Args:
             text: Text to synthesize
             speaker_wav: Path to speaker reference audio
-            speaker_name: Built-in speaker name (not used)
+            speaker_name: Built-in speaker name
             language: Language code
             max_chunk_size: Maximum characters per chunk
 
@@ -334,29 +330,21 @@ class ChatterboxTTSGenerator:
 
 
 if __name__ == "__main__":
-    # Test Chatterbox TTS model loading and generation
-    print("Chatterbox TTS Generator Test")
+    # Test Coqui TTS model loading and generation
+    print("Coqui TTS Generator Test")
     print("=" * 70)
 
-    generator = ChatterboxTTSGenerator(model_name="turbo")
+    # Use VCTK multi-speaker model for testing (or XTTS for voice cloning)
+    generator = CoquiTTSGenerator(model_name="tts_models/en/vctk/vits")
 
     print("\n1. Loading model...")
     if generator.load_model():
-        print("\n2. Generating test audio with voice cloning...")
-
-        # Use male_calm_mature voice for testing
-        voice_file = "../voices/male_calm_mature.wav"
-
-        if os.path.exists(voice_file):
-            print(f"   Using voice: {voice_file}")
-        else:
-            print(f"   WARNING: Voice file not found: {voice_file}")
-            print("   Using default voice instead")
-            voice_file = None
+        print("\n2. Generating test audio with built-in speaker...")
 
         test_text = "Looking good, Ramirez. That modification you suggested for the bracket feed is working."
 
-        audio = generator.generate_speech(test_text, speaker_wav=voice_file)
+        # For VCTK, use a speaker name (p225 = female, p226 = male, etc.)
+        audio = generator.generate_speech(test_text, speaker_name="p226")
 
         if audio is not None:
             duration = generator.get_audio_duration(audio)
@@ -369,7 +357,7 @@ if __name__ == "__main__":
             if generator.save_audio(audio, test_output):
                 print(f"   Saved to: {test_output}")
 
-        print("\n3. Testing chunked generation with voice cloning...")
+        print("\n3. Testing chunked generation...")
         long_text = (
             "This is a longer piece of text that will be split into multiple chunks. "
             "Each chunk will be generated separately and then concatenated together. "
@@ -380,7 +368,7 @@ if __name__ == "__main__":
         chunked_audio = generator.generate_speech_chunked(
             long_text,
             max_chunk_size=100,
-            speaker_wav=voice_file
+            speaker_name="p226"
         )
 
         if chunked_audio is not None:
@@ -391,8 +379,8 @@ if __name__ == "__main__":
         generator.unload_model()
 
     else:
-        print("Failed to load model. Make sure chatterbox-tts is installed:")
-        print("  pip install chatterbox-tts")
+        print("Failed to load model. Make sure Coqui TTS is installed:")
+        print("  pip install TTS")
         print("Note: Ensure PyTorch with CUDA is installed first!")
 
     print("\n" + "=" * 70)
