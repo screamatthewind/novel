@@ -81,25 +81,25 @@ class VideoGenerator:
         logger.info(f"Output directory: {self.output_dir}")
         logger.info(f"Temp directory: {self.temp_dir}")
 
-    def find_scene_pairs(self, chapter_num: int) -> List[Tuple[Path, Path]]:
+    def find_sentence_pairs(self, chapter_num: int) -> List[Tuple[Path, Path]]:
         """
-        Find matching image and audio file pairs for a chapter.
+        Find matching image and audio file pairs for a chapter (sentence-level).
 
         Args:
             chapter_num: Chapter number (1-12)
 
         Returns:
-            List of (image_path, audio_path) tuples, sorted by scene number
+            List of (image_path, audio_path) tuples, sorted by scene and sentence number
         """
         chapter_str = f"chapter_{chapter_num:02d}"
         pairs = []
 
-        # Find all audio files for this chapter
-        audio_files = sorted(self.audio_dir.glob(f"{chapter_str}_scene_*.wav"))
+        # Find all audio files for this chapter (sentence-level files have "sent_" in the name)
+        audio_files = sorted(self.audio_dir.glob(f"{chapter_str}_scene_*_sent_*.wav"))
 
         for audio_file in audio_files:
             # Construct corresponding image filename
-            # chapter_01_scene_01_description.wav -> chapter_01_scene_01_description.png
+            # chapter_01_scene_01_sent_001_description.wav -> chapter_01_scene_01_sent_001_description.png
             image_file = self.images_dir / audio_file.name.replace('.wav', '.png')
 
             if image_file.exists():
@@ -108,7 +108,7 @@ class VideoGenerator:
             else:
                 logger.warning(f"Missing image for audio: {audio_file.name}")
 
-        logger.info(f"Found {len(pairs)} scene pairs for chapter {chapter_num}")
+        logger.info(f"Found {len(pairs)} sentence pairs for chapter {chapter_num}")
         return pairs
 
     def resize_image_to_fit(self, image_path: Path) -> ImageClip:
@@ -188,18 +188,18 @@ class VideoGenerator:
         """
         logger.info(f"Generating video for Chapter {chapter_num}")
 
-        # Find all scene pairs for this chapter
-        scene_pairs = self.find_scene_pairs(chapter_num)
+        # Find all sentence pairs for this chapter
+        sentence_pairs = self.find_sentence_pairs(chapter_num)
 
-        if not scene_pairs:
-            logger.error(f"No scene pairs found for chapter {chapter_num}")
-            raise ValueError(f"No scenes found for chapter {chapter_num}")
+        if not sentence_pairs:
+            logger.error(f"No sentence pairs found for chapter {chapter_num}")
+            raise ValueError(f"No sentences found for chapter {chapter_num}")
 
-        # Create clips for each scene
+        # Create clips for each sentence
         clips = []
-        logger.info(f"Creating {len(scene_pairs)} scene clips...")
+        logger.info(f"Creating {len(sentence_pairs)} sentence clips...")
 
-        for image_path, audio_path in tqdm(scene_pairs, desc="Creating clips"):
+        for image_path, audio_path in tqdm(sentence_pairs, desc="Creating clips"):
             try:
                 clip = self.create_scene_clip(image_path, audio_path)
                 clips.append(clip)
@@ -259,15 +259,15 @@ class VideoGenerator:
         all_clips = []
 
         for chapter_num in chapter_nums:
-            scene_pairs = self.find_scene_pairs(chapter_num)
+            sentence_pairs = self.find_sentence_pairs(chapter_num)
 
-            if not scene_pairs:
-                logger.warning(f"No scene pairs found for chapter {chapter_num}, skipping")
+            if not sentence_pairs:
+                logger.warning(f"No sentence pairs found for chapter {chapter_num}, skipping")
                 continue
 
-            logger.info(f"Adding {len(scene_pairs)} scenes from Chapter {chapter_num}")
+            logger.info(f"Adding {len(sentence_pairs)} sentences from Chapter {chapter_num}")
 
-            for image_path, audio_path in tqdm(scene_pairs, desc=f"Chapter {chapter_num}"):
+            for image_path, audio_path in tqdm(sentence_pairs, desc=f"Chapter {chapter_num}"):
                 try:
                     clip = self.create_scene_clip(image_path, audio_path)
                     all_clips.append(clip)
@@ -277,7 +277,7 @@ class VideoGenerator:
 
         if not all_clips:
             logger.error("No clips created for any chapter")
-            raise ValueError("No scenes found for specified chapters")
+            raise ValueError("No sentences found for specified chapters")
 
         # Concatenate all clips
         logger.info(f"Concatenating {len(all_clips)} total clips...")
@@ -382,8 +382,8 @@ def main():
                     generator.generate_chapter_video(chapter_num)
 
         elif args.all:
-            # Find all available chapters
-            audio_files = sorted(generator.audio_dir.glob("chapter_*_scene_*.wav"))
+            # Find all available chapters (looking for sentence-level files)
+            audio_files = sorted(generator.audio_dir.glob("chapter_*_scene_*_sent_*.wav"))
             available_chapters = sorted(set(
                 int(f.name.split('_')[1]) for f in audio_files
             ))

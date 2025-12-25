@@ -11,7 +11,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-from scene_parser import parse_all_chapters, Scene
+from scene_parser import parse_all_chapters, Scene, parse_scene_sentences, Sentence
 from prompt_generator import generate_prompt, generate_filename, get_negative_prompt
 from config import (
     OUTPUT_DIR,
@@ -76,18 +76,18 @@ def save_prompt_to_cache(filename: str, prompt: str, negative_prompt: str):
         f.write(negative_prompt)
 
 
-def process_scene(
-    scene: Scene,
+def process_sentence(
+    sentence: Sentence,
     generator,  # SDXLGenerator or None for dry-run
     log_file: str,
     args: argparse.Namespace,
     dry_run: bool = False
 ) -> bool:
     """
-    Process a single scene: generate prompt, create image, save files.
+    Process a single sentence: generate prompt, create image, save files.
 
     Args:
-        scene: Scene object to process
+        sentence: Sentence object to process
         generator: Initialized SDXL generator
         log_file: Path to log file
         args: Command-line arguments
@@ -97,15 +97,20 @@ def process_scene(
         True if successful, False if error occurred
     """
     # Generate prompt and filename
-    prompt = generate_prompt(scene.content)
+    prompt = generate_prompt(sentence.content)
     negative_prompt = get_negative_prompt()
-    filename = generate_filename(scene.chapter_num, scene.scene_num, scene.content)
+    filename = generate_filename(
+        sentence.chapter_num,
+        sentence.scene_num,
+        sentence.content,
+        sentence.sentence_num
+    )
     output_path = os.path.join(OUTPUT_DIR, filename)
 
-    # Log scene info
+    # Log sentence info
     log_message(
         log_file,
-        f"\n{'='*80}\nChapter {scene.chapter_num}, Scene {scene.scene_num} ({scene.word_count} words)"
+        f"\n{'='*80}\nChapter {sentence.chapter_num}, Scene {sentence.scene_num}, Sentence {sentence.sentence_num} ({sentence.word_count} words)"
     )
     log_message(log_file, f"Filename: {filename}")
     log_message(log_file, f"Prompt: {prompt}")
@@ -125,8 +130,8 @@ def process_scene(
         start_time = datetime.now()
         log_message(log_file, f"⟳ Generating image...")
 
-        # Calculate seed based on chapter and scene for variety
-        seed = 42 + (scene.chapter_num * 100) + scene.scene_num
+        # Calculate seed based on chapter, scene, and sentence for variety
+        seed = 42 + (sentence.chapter_num * 1000) + (sentence.scene_num * 100) + sentence.sentence_num
 
         image = generator.generate_image(
             prompt=prompt,
@@ -246,27 +251,36 @@ def main():
         log_message(log_file, "ERROR: No scenes found to process")
         sys.exit(1)
 
-    log_message(log_file, f"Found {len(scenes)} scenes to process")
+    log_message(log_file, f"Found {len(scenes)} scenes")
 
-    # Filter scenes if resuming
+    # Parse scenes into sentences
+    log_message(log_file, "Parsing sentences from scenes...")
+    all_sentences = []
+    for scene in scenes:
+        sentences = parse_scene_sentences(scene)
+        all_sentences.extend(sentences)
+
+    log_message(log_file, f"Found {len(all_sentences)} sentences to process")
+
+    # Filter sentences if resuming
     if args.resume:
         resume_chapter, resume_scene = args.resume
-        scenes = [
-            s for s in scenes
+        all_sentences = [
+            s for s in all_sentences
             if (s.chapter_num > resume_chapter) or
                (s.chapter_num == resume_chapter and s.scene_num >= resume_scene)
         ]
         log_message(
             log_file,
-            f"Resuming from Chapter {resume_chapter}, Scene {resume_scene} ({len(scenes)} scenes)"
+            f"Resuming from Chapter {resume_chapter}, Scene {resume_scene} ({len(all_sentences)} sentences)"
         )
 
     # Dry run mode - just show prompts
     if args.dry_run:
         log_message(log_file, "\n=== DRY RUN MODE ===\n")
-        for scene in scenes:
-            process_scene(scene, None, log_file, args, dry_run=True)
-        log_message(log_file, f"\nDry run complete. Would generate {len(scenes)} images.")
+        for sentence in all_sentences[:10]:  # Show first 10 sentences
+            process_sentence(sentence, None, log_file, args, dry_run=True)
+        log_message(log_file, f"\nDry run complete. Would generate {len(all_sentences)} images.")
         return
 
     # Load SDXL model
@@ -275,18 +289,18 @@ def main():
     generator = SDXLGenerator()
     generator.load_model()
 
-    # Process scenes
-    log_message(log_file, f"\nProcessing {len(scenes)} scenes...")
-    log_message(log_file, f"Estimated time: {len(scenes) * 6 / 60:.1f} hours\n")
+    # Process sentences
+    log_message(log_file, f"\nProcessing {len(all_sentences)} sentences...")
+    log_message(log_file, f"Estimated time: {len(all_sentences) * 6 / 60:.1f} hours\n")
 
     success_count = 0
     error_count = 0
 
     try:
-        for i, scene in enumerate(scenes, start=1):
-            log_message(log_file, f"\n--- Scene {i}/{len(scenes)} ---")
+        for i, sentence in enumerate(all_sentences, start=1):
+            log_message(log_file, f"\n--- Sentence {i}/{len(all_sentences)} ---")
 
-            success = process_scene(scene, generator, log_file, args)
+            success = process_sentence(sentence, generator, log_file, args)
 
             if success:
                 success_count += 1
@@ -305,7 +319,7 @@ def main():
         log_message(log_file, "\n" + "="*80)
         log_message(log_file, "Generation Summary")
         log_message(log_file, "="*80)
-        log_message(log_file, f"Total scenes: {len(scenes)}")
+        log_message(log_file, f"Total sentences: {len(all_sentences)}")
         log_message(log_file, f"Successful: {success_count}")
         log_message(log_file, f"Errors: {error_count}")
         log_message(log_file, f"Images saved to: {OUTPUT_DIR}")

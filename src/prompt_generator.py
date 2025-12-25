@@ -205,48 +205,57 @@ def generate_prompt(scene_content: str) -> str:
     """
     Generate SDXL image prompt from scene content.
 
+    Uses natural language descriptions optimized for SDXL (not keyword lists).
+
     Args:
         scene_content: The text content of the scene
 
     Returns:
-        Complete image generation prompt (optimized for 77-token limit)
+        Complete image generation prompt in natural language
     """
     # Extract visual elements
     characters = extract_characters(scene_content)
     setting = extract_setting(scene_content)
     time_of_day = extract_time_of_day(scene_content)
-    mood = extract_mood(scene_content, time_of_day)  # Pass time to consolidate lighting
+    mood = extract_mood(scene_content, time_of_day)
     action = extract_action(scene_content)
 
-    # Build prompt components
-    components = []
+    # Build natural language description
+    prompt_parts = []
 
-    # Characters
+    # Start with scene description
     if characters:
-        char_descriptions = [CHARACTER_DESCRIPTIONS.get(char, char) for char in characters[:2]]
-        components.append(", ".join(char_descriptions))
+        # Get character descriptions
+        char_descs = [CHARACTER_DESCRIPTIONS.get(char, char) for char in characters[:1]]  # Focus on one character
+        char_desc = char_descs[0] if char_descs else "a person"
+
+        # Build natural sentence
+        if action:
+            prompt_parts.append(f"A {char_desc} {action.replace('in conversation', 'talking').replace('working with equipment or tools', 'working')}")
+        else:
+            prompt_parts.append(f"A {char_desc}")
+
+        prompt_parts.append(f"in a {setting}")
     else:
-        components.append("person")
+        # No specific character
+        if action:
+            prompt_parts.append(f"A scene showing someone {action.replace('in conversation', 'talking')}")
+        else:
+            prompt_parts.append(f"A view of a {setting}")
 
-    # Setting
-    components.append(f"in {setting}")
+    # Add mood/atmosphere
+    if mood:
+        # Extract just the key mood descriptor
+        mood_clean = mood.split(',')[0]  # Get first part before comma
+        prompt_parts.append(f"with {mood_clean}")
 
-    # Action
-    if action:
-        components.append(action)
+    # Combine into natural language prompt
+    base_description = " ".join(prompt_parts) + "."
 
-    # Mood (now includes lighting)
-    components.append(mood)
+    # Add style specification
+    full_prompt = f"{base_description} {BASE_STYLE}"
 
-    # Add character consistency tokens if characters present
-    consistency_tokens = ""
-    if characters:
-        consistency_tokens = "consistent character, model sheet, "
-
-    # Combine with base style
-    prompt = ", ".join(components) + ", " + consistency_tokens + BASE_STYLE
-
-    return prompt
+    return full_prompt
 
 
 def count_tokens(prompt: str) -> int:
@@ -303,7 +312,7 @@ def validate_prompt_length(prompt: str, max_tokens: int = 77) -> Tuple[bool, int
     return is_valid, token_count
 
 
-def generate_filename(chapter_num: int, scene_num: int, scene_content: str) -> str:
+def generate_filename(chapter_num: int, scene_num: int, scene_content: str, sentence_num: int = None) -> str:
     """
     Generate descriptive filename for scene image.
 
@@ -311,15 +320,20 @@ def generate_filename(chapter_num: int, scene_num: int, scene_content: str) -> s
         chapter_num: Chapter number
         scene_num: Scene number within chapter
         scene_content: Scene text content
+        sentence_num: Optional sentence number within scene
 
     Returns:
-        Filename like 'chapter_01_scene_02_emma_factory_reading.png'
+        Filename like 'chapter_01_scene_02_sent_03_emma_factory_reading.png'
+        or 'chapter_01_scene_02_emma_factory_reading.png' if sentence_num not provided
     """
     # Extract key words
     key_words = extract_key_words(scene_content)
 
     # Format with zero-padded numbers
-    filename = f"chapter_{chapter_num:02d}_scene_{scene_num:02d}_{key_words}.png"
+    if sentence_num is not None:
+        filename = f"chapter_{chapter_num:02d}_scene_{scene_num:02d}_sent_{sentence_num:03d}_{key_words}.png"
+    else:
+        filename = f"chapter_{chapter_num:02d}_scene_{scene_num:02d}_{key_words}.png"
 
     return filename
 

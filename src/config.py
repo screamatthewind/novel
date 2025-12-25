@@ -28,17 +28,18 @@ DEFAULT_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
 DEVICE = "cuda"
 
 # Generation parameters
-# 9:16 Vertical (Portrait) format - optimized for mobile viewing and YouTube Shorts
-DEFAULT_WIDTH = 1080
-DEFAULT_HEIGHT = 1920
-DEFAULT_STEPS = 30
+# SDXL is trained on 1024x1024 - deviating too far causes distortion
+# Using 1024x1024 for best quality, will be letterboxed in video if needed
+DEFAULT_WIDTH = 1024
+DEFAULT_HEIGHT = 1024
+DEFAULT_STEPS = 35  # Increased for better quality (was 30)
 DEFAULT_GUIDANCE = 7.5
 
-# Style template - Graphic novel style (optimized for 77-token limit)
-BASE_STYLE = "graphic novel art, detailed linework, cel shading, dramatic lighting"
+# Style template - Graphic novel style with clarity focus
+BASE_STYLE = "clean graphic novel illustration, professional comic book art, sharp focus, highly detailed, clear composition, bold clean lines, single subject focus, uncluttered background, high contrast"
 
-# Negative prompt - Avoid photorealism and low quality
-NEGATIVE_PROMPT = "photorealistic, photo, photograph, 3d render, blurry, low quality, distorted anatomy, extra limbs, deformed, ugly, oversaturated, watermark, signature, amateur, sketch, unfinished"
+# Negative prompt - Avoid clutter and distortion
+NEGATIVE_PROMPT = "cluttered, messy, chaotic, multiple subjects, busy background, blurry, out of focus, low quality, distorted, disfigured, ugly, amateur, unclear, confusing composition, extra limbs, deformed anatomy, watermark, signature, text, oversaturated"
 
 # Chapter mapping (zero-padded numeric strings to integers)
 # Format: "01" -> 1, "02" -> 2, etc.
