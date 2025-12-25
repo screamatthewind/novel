@@ -11,6 +11,9 @@ ENV/
 dist/
 build/
 
+# Environment variables
+.env
+
 # Image generation outputs
 images/*.png
 images/*.jpg

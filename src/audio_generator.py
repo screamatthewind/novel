@@ -9,8 +9,15 @@ import soundfile as sf
 from typing import Optional, List
 import os
 import gc
+from pathlib import Path
+from dotenv import load_dotenv
 
 from config import DEFAULT_TTS_MODEL, DEFAULT_SAMPLE_RATE, DEVICE
+
+# Load environment variables from .env file
+# Look for .env in project root (parent of src directory)
+env_path = Path(__file__).parent.parent / '.env'
+load_dotenv(dotenv_path=env_path)
 
 
 def check_cuda_availability() -> tuple[bool, str]:
