@@ -343,8 +343,8 @@ def main():
     parser.add_argument(
         '--output-dir',
         type=str,
-        default='../videos',
-        help='Output directory for generated videos (default: ../videos)'
+        default='videos',
+        help='Output directory for generated videos (default: videos)'
     )
     parser.add_argument(
         '--output-filename',

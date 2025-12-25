@@ -8,26 +8,28 @@ echo "==========================================================================
 echo "The Obsolescence - Full Generation Pipeline"
 echo "================================================================================"
 echo ""
-echo "This script will run the following steps:"
-echo "  1. Cleanup all generated files"
-echo "  2. Generate scene images"
-echo "  3. Generate scene audio"
-echo "  4. Generate video"
-echo ""
-echo "WARNING: This will delete all existing generated files!"
-echo ""
-
 # Get chapter selection ONCE at the beginning
 read -p "Enter chapter numbers to process (e.g., 1 2 3) or press Enter for all: " CHAPTERS
 
 echo ""
 if [ -z "$CHAPTERS" ]; then
     echo "Selected: ALL chapters"
-    read -p "Continue with full pipeline for ALL chapters? (y/N): " CONFIRM
 else
     echo "Selected: Chapters $CHAPTERS"
-    read -p "Continue with full pipeline for chapters $CHAPTERS? (y/N): " CONFIRM
 fi
+
+echo ""
+read -p "Cleanup existing generated files before starting? (y/N): " CLEANUP_CONFIRM
+
+echo ""
+if [[ "$CLEANUP_CONFIRM" =~ ^[Yy]$ ]]; then
+    echo "Pipeline will: CLEANUP, then generate images, audio, and video"
+else
+    echo "Pipeline will: Generate images, audio, and video (keeping existing files)"
+fi
+
+echo ""
+read -p "Continue? (y/N): " CONFIRM
 
 if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
     echo "Pipeline cancelled."
@@ -35,16 +37,24 @@ if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
 fi
 
 echo ""
-echo "Starting pipeline - will run to completion without further prompts..."
-echo ""
 
-echo "================================================================================"
-echo "Step 1: Cleanup"
-echo "================================================================================"
-echo ""
+if [[ "$CLEANUP_CONFIRM" =~ ^[Yy]$ ]]; then
+    echo "================================================================================"
+    echo "Step 1: Cleanup"
+    echo "================================================================================"
+    echo ""
 
-# Run cleanup script with --yes flag to skip confirmation
-../venv/Scripts/python cleanup.py --yes
+    # Run cleanup script with --yes flag to skip confirmation
+    ../venv/Scripts/python cleanup.py --yes
+
+    echo ""
+else
+    echo "Skipping cleanup - will use/overwrite existing files as needed"
+    echo ""
+fi
+
+echo "Starting pipeline..."
+echo ""
 
 echo ""
 echo "================================================================================"
