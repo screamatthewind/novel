@@ -68,4 +68,5 @@ desktop.ini
 # Temporary files
 *.tmp
 *.bak
-temp/
+temp/*
+!temp/.gitkeep

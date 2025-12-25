@@ -15,6 +15,12 @@ AUDIO_DIR = "../audio"
 AUDIO_CACHE_DIR = "../audio_cache"
 VOICES_DIR = "../voices"
 
+# Video directories
+VIDEO_DIR = "../videos"
+
+# Temporary directories
+TEMP_DIR = "../temp"
+
 # Ensure directories exist
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(LOG_DIR, exist_ok=True)
@@ -22,6 +28,8 @@ os.makedirs(PROMPT_CACHE_DIR, exist_ok=True)
 os.makedirs(AUDIO_DIR, exist_ok=True)
 os.makedirs(AUDIO_CACHE_DIR, exist_ok=True)
 os.makedirs(VOICES_DIR, exist_ok=True)
+os.makedirs(VIDEO_DIR, exist_ok=True)
+os.makedirs(TEMP_DIR, exist_ok=True)
 
 # Model settings
 DEFAULT_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
