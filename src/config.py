@@ -139,9 +139,9 @@ IMAGE_MAPPING_DIR = "../audio_cache"  # Directory for image-audio mapping metada
 
 # IP-Adapter settings (for character consistency)
 CHARACTER_REFERENCES_DIR = "../character_references"
-IP_ADAPTER_MODEL = "h94/IP-Adapter"
-IP_ADAPTER_SUBFOLDER = "sdxl_models"
-IP_ADAPTER_WEIGHT_NAME = "ip-adapter-plus-face_sdxl_vit-h.safetensors"
+IP_ADAPTER_MODEL = "h94/IP-Adapter-FaceID"
+IP_ADAPTER_SUBFOLDER = ""  # FaceID weights are in root directory
+IP_ADAPTER_WEIGHT_NAME = "ip-adapter-faceid-plusv2_sdxl.bin"  # Correct weight file for FaceID Plus V2 SDXL
 IP_ADAPTER_SCALE_DEFAULT = 0.75  # How strongly to apply IP-Adapter (0.0-1.0)
 FACEID_SCALE_DEFAULT = 0.6  # How strongly to apply FaceID guidance (0.0-1.0)
 ENABLE_IP_ADAPTER = True  # Enable by default for character consistency

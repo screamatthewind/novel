@@ -210,11 +210,15 @@ class SDXLGenerator:
             from huggingface_hub import hf_hub_download
 
             # Download IP-Adapter weights to get full path
-            ip_ckpt_path = hf_hub_download(
-                repo_id=IP_ADAPTER_MODEL,
-                filename=IP_ADAPTER_WEIGHT_NAME,
-                subfolder=IP_ADAPTER_SUBFOLDER
-            )
+            download_kwargs = {
+                "repo_id": IP_ADAPTER_MODEL,
+                "filename": IP_ADAPTER_WEIGHT_NAME
+            }
+            # Only add subfolder if it's not empty
+            if IP_ADAPTER_SUBFOLDER:
+                download_kwargs["subfolder"] = IP_ADAPTER_SUBFOLDER
+
+            ip_ckpt_path = hf_hub_download(**download_kwargs)
 
             # Create IP-Adapter instance with correct parameters
             self.ip_adapter = IPAdapterFaceIDPlusXL(
@@ -222,7 +226,7 @@ class SDXLGenerator:
                 "laion/CLIP-ViT-H-14-laion2B-s32B-b79K",  # CLIP image encoder for SDXL
                 ip_ckpt_path,  # Full path to downloaded weights
                 self.device,  # Positional argument
-                num_tokens=16  # SDXL uses 16 tokens (not 4)
+                num_tokens=4  # FaceID Plus V2 uses 4 tokens (not 16)
             )
 
             print("  [OK] IP-Adapter FaceID loaded")
@@ -249,13 +253,13 @@ class SDXLGenerator:
 
     def get_character_reference(self, character_name: str) -> dict:
         """
-        Load character reference metadata and image path.
+        Load character reference metadata, image paths, and PIL Images.
 
         Args:
             character_name: Name of character (emma, tyler, etc.)
 
         Returns:
-            Dictionary with 'image_path', 'ip_adapter_scale', 'faceid_scale'
+            Dictionary with 'image_paths', 'pil_images', 'ip_adapter_scale', 'faceid_scale'
             Returns None if character reference not found
         """
         try:
@@ -276,22 +280,30 @@ class SDXLGenerator:
             # Load up to MAX_REFERENCE_IMAGES references
             reference_image_files = metadata['reference_images'][:MAX_REFERENCE_IMAGES]
             reference_image_paths = []
+            pil_images = []
 
             for img_file in reference_image_files:
                 img_path = Path(CHARACTER_REFERENCES_DIR) / character_name / img_file
                 if img_path.exists():
                     reference_image_paths.append(str(img_path))
+                    # Load as PIL Image for IP-Adapter
+                    try:
+                        img = Image.open(img_path).convert('RGB')
+                        pil_images.append(img)
+                    except Exception as e:
+                        print(f"  [WARNING] Failed to load PIL image {img_path}: {e}")
                 else:
                     print(f"  [WARNING] Reference image not found: {img_path}")
 
-            if not reference_image_paths:
+            if not reference_image_paths or not pil_images:
                 print(f"  [WARNING] No valid reference images found for character: {character_name}")
                 return None
 
-            print(f"  [OK] Loaded {len(reference_image_paths)} reference images for {character_name}")
+            print(f"  [OK] Loaded {len(pil_images)} reference images for {character_name}")
 
             return {
-                'image_paths': reference_image_paths,  # Changed from 'image_path' to 'image_paths' (plural)
+                'image_paths': reference_image_paths,
+                'pil_images': pil_images,  # PIL Images for IP-Adapter CLIP encoding
                 'ip_adapter_scale': metadata.get('ip_adapter_scale', IP_ADAPTER_SCALE_DEFAULT),
                 'faceid_scale': metadata.get('faceid_scale', FACEID_SCALE_DEFAULT)
             }
@@ -432,24 +444,31 @@ class SDXLGenerator:
             # Generate face embedding from multiple references (or single if only one available)
             face_embedding = self.generate_face_embeddings(char_ref['image_paths'])
 
+            # Get reference PIL images for IP-Adapter CLIP encoding
+            # Use first reference image (IP-Adapter expects single image or batch of same person)
+            reference_image = char_ref['pil_images'][0]
+
             # Set random seed
             generator = torch.Generator(device=self.device).manual_seed(seed)
 
-            # Generate with IP-Adapter FaceID
+            # Generate with IP-Adapter FaceID Plus
+            # CRITICAL: Must pass BOTH face_image AND faceid_embeds for proper character consistency
             print(f"  [INFO] IP-Adapter scale: {ip_scale}, FaceID scale: {face_scale}")
 
             image = self.ip_adapter.generate(
                 prompt=prompt,
                 negative_prompt=negative_prompt,
-                faceid_embeds=face_embedding,
+                face_image=reference_image,  # CRITICAL: Pass PIL Image for CLIP encoding
+                faceid_embeds=face_embedding,  # CRITICAL: Pass FaceID embedding for face structure
+                scale=ip_scale,  # CRITICAL: IP-Adapter scale (controls image embedding influence)
+                s_scale=face_scale,  # FaceID scale (controls face structure influence)
                 width=width,
                 height=height,
                 num_inference_steps=num_inference_steps,
                 guidance_scale=guidance_scale,
-                s_scale=face_scale,  # FaceID scale (was ip_scale)
                 num_samples=1,
                 seed=seed,
-                shortcut=True  # Enable FaceID shortcut
+                shortcut=True  # Enable FaceID shortcut for better face consistency
             )[0]
 
             # Clean up memory
