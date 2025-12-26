@@ -144,4 +144,8 @@ IP_ADAPTER_SUBFOLDER = "sdxl_models"
 IP_ADAPTER_WEIGHT_NAME = "ip-adapter-plus-face_sdxl_vit-h.safetensors"
 IP_ADAPTER_SCALE_DEFAULT = 0.75  # How strongly to apply IP-Adapter (0.0-1.0)
 FACEID_SCALE_DEFAULT = 0.6  # How strongly to apply FaceID guidance (0.0-1.0)
-ENABLE_IP_ADAPTER = False  # Opt-in initially, set to True once validated
+ENABLE_IP_ADAPTER = True  # Enable by default for character consistency
+
+# Multi-reference settings (for improved character consistency)
+MAX_REFERENCE_IMAGES = 5  # Use up to 5 references (research-backed optimum)
+REFERENCE_EMBEDDING_AVERAGING = True  # Average multiple reference embeddings for robust representation

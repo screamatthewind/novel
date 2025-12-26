@@ -1,16 +1,17 @@
 {
   "character_name": "wei",
   "full_name": "Wei Chen",
-  "description": "Chinese man, strategist at state-connected think tank, brilliant and analytical appearance",
-  "reference_images": [
-    "wei_ref_01.png",
-    "wei_ref_02.png"
-  ],
+  "description": "Chinese man, intellectual strategist appearance, brilliant analytical demeanor, professional business attire, cold analytical expression",
   "ip_adapter_scale": 0.75,
   "faceid_scale": 0.6,
-  "physical_details": {
-    "ethnicity": "Chinese",
-    "demeanor": "brilliant, coldly analytical, capable of suppressing empathy, ultimately haunted"
-  },
-  "notes": "Chinese strategist. Part Three character. Limited physical description in outline."
+  "reference_images": [
+    "wei_ref_01.png",
+    "wei_ref_02.png",
+    "wei_ref_03.png",
+    "wei_ref_04.png",
+    "wei_ref_05.png",
+    "wei_ref_06.png",
+    "wei_ref_07.png",
+    "wei_ref_08.png"
+  ]
 }

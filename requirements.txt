@@ -43,6 +43,7 @@ imageio-ffmpeg>=0.6.0      # FFmpeg binaries for MoviePy
 python-dotenv>=1.0.0       # Environment variable management (MoviePy dependency)
 
 # IP-Adapter FaceID for character consistency
+ip-adapter @ git+https://github.com/tencent-ailab/IP-Adapter.git  # IP-Adapter core library with FaceID support
 insightface>=0.7.3         # Face detection and embedding for IP-Adapter
 onnxruntime-gpu>=1.16.0    # ONNX Runtime GPU support for InsightFace
 

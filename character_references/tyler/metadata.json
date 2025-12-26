@@ -1,18 +1,17 @@
 {
   "character_name": "tyler",
   "full_name": "Tyler Chen",
-  "description": "Asian American teenage boy, 16 years old, typical teenager appearance with slouch, earbuds, casual clothing",
-  "reference_images": [
-    "tyler_ref_01.png",
-    "tyler_ref_02.png"
-  ],
+  "description": "Asian American teenage boy age 16, casual clothing, slouched posture, intelligent but initially disengaged expression, modern teenager with earbuds",
   "ip_adapter_scale": 0.75,
   "faceid_scale": 0.6,
-  "physical_details": {
-    "age": "16",
-    "ethnicity": "Asian American",
-    "style": "slouch, earbuds, phone always present, casual teenage clothing",
-    "demeanor": "initially disengaged, reveals intelligence when engaged"
-  },
-  "notes": "Typical teenage appearance in early chapters. Son of Emma Chen."
+  "reference_images": [
+    "tyler_ref_01.png",
+    "tyler_ref_02.png",
+    "tyler_ref_03.png",
+    "tyler_ref_04.png",
+    "tyler_ref_05.png",
+    "tyler_ref_06.png",
+    "tyler_ref_07.png",
+    "tyler_ref_08.png"
+  ]
 }

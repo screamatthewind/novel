@@ -1,18 +1,17 @@
 {
   "character_name": "maxim",
   "full_name": "Maxim Orlov",
-  "description": "Russian working-class man in his mid-40s, hands that know labor, practical working-class appearance",
-  "reference_images": [
-    "maxim_ref_01.png",
-    "maxim_ref_02.png"
-  ],
+  "description": "Russian working-class man mid-40s, hands that know labor, practical working-class appearance, resilient and weathered features, factory worker",
   "ip_adapter_scale": 0.75,
   "faceid_scale": 0.6,
-  "physical_details": {
-    "age": "mid-40s",
-    "ethnicity": "Russian",
-    "appearance": "working-class, hands that know labor, not extensively described",
-    "demeanor": "practical, observant, quietly bitter, resilient"
-  },
-  "notes": "Third-generation factory worker from Togliatti. Working-class Russian appearance."
+  "reference_images": [
+    "maxim_ref_01.png",
+    "maxim_ref_02.png",
+    "maxim_ref_03.png",
+    "maxim_ref_04.png",
+    "maxim_ref_05.png",
+    "maxim_ref_06.png",
+    "maxim_ref_07.png",
+    "maxim_ref_08.png"
+  ]
 }

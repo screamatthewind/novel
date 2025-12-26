@@ -40,9 +40,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# YouTube recommended specs
-YOUTUBE_WIDTH = 1920
-YOUTUBE_HEIGHT = 1080
+# Video output specs (portrait format for vertical video)
+# Images are 1024x1024, will be centered on 1080x1920 canvas with black bars
+YOUTUBE_WIDTH = 1080
+YOUTUBE_HEIGHT = 1920
 YOUTUBE_FPS = 30
 VIDEO_CODEC = 'libx264'
 AUDIO_CODEC = 'aac'

@@ -1,20 +1,17 @@
 {
   "character_name": "elena",
   "full_name": "Elena Volkov",
-  "description": "Russian-American woman approximately 60 years old, short gray hair, sharp eyes that take in everything at once, slight frame",
-  "reference_images": [
-    "elena_ref_01.png",
-    "elena_ref_02.png"
-  ],
+  "description": "Russian American woman approximately 60 years old, short gray hair, sharp penetrating eyes that take in everything, slight frame, intellectually rigorous appearance, analytical demeanor",
   "ip_adapter_scale": 0.75,
   "faceid_scale": 0.6,
-  "physical_details": {
-    "age": "approximately 60",
-    "ethnicity": "Russian-American (Russian-born)",
-    "hair": "short gray hair",
-    "build": "slight frame",
-    "eyes": "sharp eyes that take in everything at once",
-    "demeanor": "intellectually rigorous, warm beneath analytical exterior"
-  },
-  "notes": "Russian-born economist. Sharp, analytical appearance."
+  "reference_images": [
+    "elena_ref_01.png",
+    "elena_ref_02.png",
+    "elena_ref_03.png",
+    "elena_ref_04.png",
+    "elena_ref_05.png",
+    "elena_ref_06.png",
+    "elena_ref_07.png",
+    "elena_ref_08.png"
+  ]
 }

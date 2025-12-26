@@ -1,17 +1,17 @@
 {
   "character_name": "amara",
   "full_name": "Amara Okafor",
-  "description": "Kenyan woman late 40s to 50s, former government minister, fierce and pragmatic appearance",
-  "reference_images": [
-    "amara_ref_01.png",
-    "amara_ref_02.png"
-  ],
+  "description": "Kenyan woman late 40s to early 50s, former government minister, fierce and pragmatic appearance, professional attire, carries weight of responsibility",
   "ip_adapter_scale": 0.75,
   "faceid_scale": 0.6,
-  "physical_details": {
-    "age": "late 40s to 50s",
-    "ethnicity": "Kenyan",
-    "demeanor": "fierce, pragmatic, carries guilt, channeled anger"
-  },
-  "notes": "Former Kenyan infrastructure minister. Chapter 5 not yet drafted - limited physical description."
+  "reference_images": [
+    "amara_ref_01.png",
+    "amara_ref_02.png",
+    "amara_ref_03.png",
+    "amara_ref_04.png",
+    "amara_ref_05.png",
+    "amara_ref_06.png",
+    "amara_ref_07.png",
+    "amara_ref_08.png"
+  ]
 }

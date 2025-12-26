@@ -24,7 +24,9 @@ from config import (
     IP_ADAPTER_WEIGHT_NAME,
     IP_ADAPTER_SCALE_DEFAULT,
     FACEID_SCALE_DEFAULT,
-    ENABLE_IP_ADAPTER
+    ENABLE_IP_ADAPTER,
+    MAX_REFERENCE_IMAGES,
+    REFERENCE_EMBEDDING_AVERAGING
 )
 
 
@@ -72,27 +74,27 @@ class SDXLGenerator:
         # 1. Enable xFormers for flash attention (reduces VRAM significantly)
         try:
             self.pipe.enable_xformers_memory_efficient_attention()
-            print("  ✓ xFormers memory efficient attention enabled")
+            print("  [OK] xFormers memory efficient attention enabled")
         except Exception as e:
-            print(f"  ⚠ Could not enable xFormers: {e}")
+            print(f"  [WARNING] Could not enable xFormers: {e}")
 
         # 2. Enable model CPU offload (moves UNet to CPU when idle)
         self.pipe.enable_model_cpu_offload()
-        print("  ✓ Model CPU offload enabled")
+        print("  [OK] Model CPU offload enabled")
 
         # 3. Enable VAE slicing (process images in slices)
         self.pipe.vae.enable_slicing()
-        print("  ✓ VAE slicing enabled")
+        print("  [OK] VAE slicing enabled")
 
         # 4. Enable VAE tiling (allows higher resolutions)
         self.pipe.vae.enable_tiling()
-        print("  ✓ VAE tiling enabled")
+        print("  [OK] VAE tiling enabled")
 
         # 5. Use fast DPM++ scheduler
         self.pipe.scheduler = DPMSolverMultistepScheduler.from_config(
             self.pipe.scheduler.config
         )
-        print("  ✓ DPM++ scheduler configured")
+        print("  [OK] DPM++ scheduler configured")
 
         # 6. Load IP-Adapter if enabled
         if self.enable_ip_adapter:
@@ -161,7 +163,7 @@ class SDXLGenerator:
 
         except RuntimeError as e:
             if "out of memory" in str(e):
-                print("\n⚠ CUDA Out of Memory Error!")
+                print("\n[WARNING] CUDA Out of Memory Error!")
                 print("Trying with reduced resolution...")
 
                 # Clear memory
@@ -204,18 +206,26 @@ class SDXLGenerator:
 
             # Load IP-Adapter for SDXL
             from diffusers import StableDiffusionXLPipeline
-            from ip_adapter import IPAdapterFaceIDPlus
+            from ip_adapter.ip_adapter_faceid import IPAdapterFaceIDPlusXL  # Use XL variant for SDXL
+            from huggingface_hub import hf_hub_download
 
-            # Create IP-Adapter instance
-            self.ip_adapter = IPAdapterFaceIDPlus(
-                self.pipe,
-                IP_ADAPTER_MODEL,
-                IP_ADAPTER_SUBFOLDER,
-                IP_ADAPTER_WEIGHT_NAME,
-                device=self.device
+            # Download IP-Adapter weights to get full path
+            ip_ckpt_path = hf_hub_download(
+                repo_id=IP_ADAPTER_MODEL,
+                filename=IP_ADAPTER_WEIGHT_NAME,
+                subfolder=IP_ADAPTER_SUBFOLDER
             )
 
-            print("  ✓ IP-Adapter FaceID loaded")
+            # Create IP-Adapter instance with correct parameters
+            self.ip_adapter = IPAdapterFaceIDPlusXL(
+                self.pipe,
+                "laion/CLIP-ViT-H-14-laion2B-s32B-b79K",  # CLIP image encoder for SDXL
+                ip_ckpt_path,  # Full path to downloaded weights
+                self.device,  # Positional argument
+                num_tokens=16  # SDXL uses 16 tokens (not 4)
+            )
+
+            print("  [OK] IP-Adapter FaceID loaded")
 
             # Load InsightFace for face embeddings (keep on CPU to save VRAM)
             from insightface.app import FaceAnalysis
@@ -226,14 +236,14 @@ class SDXLGenerator:
             )
             self.face_encoder.prepare(ctx_id=-1)  # -1 = CPU
 
-            print("  ✓ InsightFace face encoder loaded (CPU)")
-            print("  ℹ Face encoder kept on CPU to save VRAM")
+            print("  [OK] InsightFace face encoder loaded (CPU)")
+            print("  [INFO] Face encoder kept on CPU to save VRAM")
 
             self.ip_adapter_loaded = True
 
         except Exception as e:
-            print(f"  ⚠ Failed to load IP-Adapter: {e}")
-            print("  ℹ Falling back to standard SDXL generation")
+            print(f"  [WARNING] Failed to load IP-Adapter: {e}")
+            print("  [INFO] Falling back to standard SDXL generation")
             self.enable_ip_adapter = False
             self.ip_adapter_loaded = False
 
@@ -252,35 +262,45 @@ class SDXLGenerator:
             # Load metadata
             metadata_path = Path(CHARACTER_REFERENCES_DIR) / character_name / "metadata.json"
             if not metadata_path.exists():
-                print(f"  ⚠ No metadata found for character: {character_name}")
+                print(f"  [WARNING] No metadata found for character: {character_name}")
                 return None
 
             with open(metadata_path, 'r') as f:
                 metadata = json.load(f)
 
-            # Get first reference image
+            # Get multiple reference images (up to MAX_REFERENCE_IMAGES)
             if not metadata.get('reference_images'):
-                print(f"  ⚠ No reference images for character: {character_name}")
+                print(f"  [WARNING] No reference images for character: {character_name}")
                 return None
 
-            image_filename = metadata['reference_images'][0]
-            image_path = Path(CHARACTER_REFERENCES_DIR) / character_name / image_filename
+            # Load up to MAX_REFERENCE_IMAGES references
+            reference_image_files = metadata['reference_images'][:MAX_REFERENCE_IMAGES]
+            reference_image_paths = []
 
-            if not image_path.exists():
-                print(f"  ⚠ Reference image not found: {image_path}")
+            for img_file in reference_image_files:
+                img_path = Path(CHARACTER_REFERENCES_DIR) / character_name / img_file
+                if img_path.exists():
+                    reference_image_paths.append(str(img_path))
+                else:
+                    print(f"  [WARNING] Reference image not found: {img_path}")
+
+            if not reference_image_paths:
+                print(f"  [WARNING] No valid reference images found for character: {character_name}")
                 return None
+
+            print(f"  [OK] Loaded {len(reference_image_paths)} reference images for {character_name}")
 
             return {
-                'image_path': str(image_path),
+                'image_paths': reference_image_paths,  # Changed from 'image_path' to 'image_paths' (plural)
                 'ip_adapter_scale': metadata.get('ip_adapter_scale', IP_ADAPTER_SCALE_DEFAULT),
                 'faceid_scale': metadata.get('faceid_scale', FACEID_SCALE_DEFAULT)
             }
 
         except Exception as e:
-            print(f"  ⚠ Error loading character reference for {character_name}: {e}")
+            print(f"  [WARNING] Error loading character reference for {character_name}: {e}")
             return None
 
-    def generate_face_embedding(self, reference_image_path: str) -> np.ndarray:
+    def generate_face_embedding(self, reference_image_path: str):
         """
         Generate FaceID embedding from reference image.
         Uses cache to avoid recomputation.
@@ -289,7 +309,7 @@ class SDXLGenerator:
             reference_image_path: Path to character reference portrait
 
         Returns:
-            Face embedding as numpy array
+            Face embedding as torch.Tensor for IP-Adapter FaceID
         """
         # Check cache first
         if reference_image_path in self.character_embeddings_cache:
@@ -306,16 +326,53 @@ class SDXLGenerator:
             if len(faces) == 0:
                 raise ValueError(f"No face detected in reference image: {reference_image_path}")
 
-            # Get embedding from first/largest face
-            face_embedding = faces[0].embedding
+            # Get face embedding (512-dim vector from normed_embedding)
+            faceid_embed = torch.from_numpy(faces[0].normed_embedding).unsqueeze(0)
+            faceid_embed = faceid_embed.to(self.device, dtype=torch.float16)
 
             # Cache for future use
-            self.character_embeddings_cache[reference_image_path] = face_embedding
+            self.character_embeddings_cache[reference_image_path] = faceid_embed
 
-            return face_embedding
+            return faceid_embed
 
         except Exception as e:
             raise RuntimeError(f"Failed to generate face embedding: {e}")
+
+    def generate_face_embeddings(self, reference_image_paths: list):
+        """
+        Generate averaged face embedding from multiple reference images.
+        Uses cache to avoid recomputation for individual images.
+
+        Args:
+            reference_image_paths: List of paths to character reference portraits
+
+        Returns:
+            Averaged face embedding as torch.Tensor for IP-Adapter FaceID
+        """
+        if not REFERENCE_EMBEDDING_AVERAGING or len(reference_image_paths) == 1:
+            # If averaging is disabled or only one reference, use single embedding method
+            return self.generate_face_embedding(reference_image_paths[0])
+
+        try:
+            embeddings = []
+
+            for path in reference_image_paths:
+                # Use single embedding method which handles caching
+                embedding = self.generate_face_embedding(path)
+                embeddings.append(embedding)
+
+            if len(embeddings) == 0:
+                raise ValueError("No valid face embeddings generated from reference images")
+
+            # Average all embeddings for robust representation
+            averaged_embedding = torch.mean(torch.stack(embeddings), dim=0)
+
+            print(f"  [OK] Generated averaged embedding from {len(embeddings)} reference images")
+
+            return averaged_embedding
+
+        except Exception as e:
+            raise RuntimeError(f"Failed to generate averaged face embeddings: {e}")
 
     def generate_with_character_ref(
         self,
@@ -359,7 +416,7 @@ class SDXLGenerator:
         # Get character reference
         char_ref = self.get_character_reference(character_name)
         if char_ref is None:
-            print(f"  ℹ Falling back to standard generation for {character_name}")
+            print(f"  [INFO] Falling back to standard generation for {character_name}")
             return self.generate_image(
                 prompt, negative_prompt, width, height,
                 num_inference_steps, guidance_scale, seed
@@ -372,14 +429,14 @@ class SDXLGenerator:
             ip_scale = ip_adapter_scale if ip_adapter_scale is not None else char_ref['ip_adapter_scale']
             face_scale = faceid_scale if faceid_scale is not None else char_ref['faceid_scale']
 
-            # Generate face embedding
-            face_embedding = self.generate_face_embedding(char_ref['image_path'])
+            # Generate face embedding from multiple references (or single if only one available)
+            face_embedding = self.generate_face_embeddings(char_ref['image_paths'])
 
             # Set random seed
             generator = torch.Generator(device=self.device).manual_seed(seed)
 
             # Generate with IP-Adapter FaceID
-            print(f"  ℹ IP-Adapter scale: {ip_scale}, FaceID scale: {face_scale}")
+            print(f"  [INFO] IP-Adapter scale: {ip_scale}, FaceID scale: {face_scale}")
 
             image = self.ip_adapter.generate(
                 prompt=prompt,
@@ -389,9 +446,10 @@ class SDXLGenerator:
                 height=height,
                 num_inference_steps=num_inference_steps,
                 guidance_scale=guidance_scale,
-                s_scale=ip_scale,
-                shortcut=faceid_scale > 0,
-                generator=generator
+                s_scale=face_scale,  # FaceID scale (was ip_scale)
+                num_samples=1,
+                seed=seed,
+                shortcut=True  # Enable FaceID shortcut
             )[0]
 
             # Clean up memory
@@ -400,8 +458,8 @@ class SDXLGenerator:
             return image
 
         except Exception as e:
-            print(f"  ⚠ Error generating with character reference: {e}")
-            print(f"  ℹ Falling back to standard generation")
+            print(f"  [WARNING] Error generating with character reference: {e}")
+            print(f"  [INFO] Falling back to standard generation")
             return self.generate_image(
                 prompt, negative_prompt, width, height,
                 num_inference_steps, guidance_scale, seed
@@ -471,7 +529,7 @@ def main():
     # Save test image
     output_path = "test_generation.png"
     image.save(output_path)
-    print(f"\n✓ Test image saved to: {output_path}")
+    print(f"\n[OK] Test image saved to: {output_path}")
 
     # Unload model
     generator.unload_model()
