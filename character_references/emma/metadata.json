@@ -1,0 +1,19 @@
+{
+  "character_name": "emma",
+  "full_name": "Emma Chen",
+  "description": "Asian American woman in her mid-40s, practical and professional appearance with sensible shoes, dark hair, analytical expression",
+  "reference_images": [
+    "emma_ref_01.png",
+    "emma_ref_02.png"
+  ],
+  "ip_adapter_scale": 0.75,
+  "faceid_scale": 0.6,
+  "physical_details": {
+    "age": "mid-40s",
+    "ethnicity": "Asian American",
+    "hair": "dark",
+    "style": "practical, professional, sensible shoes",
+    "demeanor": "emotionally controlled, analytical"
+  },
+  "notes": "Practical professional appearance. Not extensively described in novel. Focus on competent, professional woman."
+}

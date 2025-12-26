@@ -29,7 +29,6 @@ ENV/
 images/
 audio/
 videos/
-character_references/
 output/
 
 # Cache directories
