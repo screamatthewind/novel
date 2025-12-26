@@ -77,6 +77,8 @@ def extract_characters(text: str) -> list:
         characters.append("tyler")
     if "amara" in text_lower:
         characters.append("amara")
+    if "wei" in text_lower:
+        characters.append("wei")
 
     return characters
 

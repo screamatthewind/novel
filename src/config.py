@@ -28,6 +28,9 @@ VIDEO_DIR = "../videos"
 # Temporary directories
 TEMP_DIR = "../temp"
 
+# Character reference directories
+CHARACTER_REFERENCES_DIR = "../character_references"
+
 # Ensure directories exist
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(LOG_DIR, exist_ok=True)
@@ -37,6 +40,7 @@ os.makedirs(AUDIO_CACHE_DIR, exist_ok=True)
 os.makedirs(VOICES_DIR, exist_ok=True)
 os.makedirs(VIDEO_DIR, exist_ok=True)
 os.makedirs(TEMP_DIR, exist_ok=True)
+os.makedirs(CHARACTER_REFERENCES_DIR, exist_ok=True)
 
 # Model settings
 DEFAULT_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
@@ -138,7 +142,6 @@ FORCE_NEW_IMAGE_AT_SCENE_START = True  # Always generate new image at scene boun
 IMAGE_MAPPING_DIR = "../audio_cache"  # Directory for image-audio mapping metadata
 
 # IP-Adapter settings (for character consistency)
-CHARACTER_REFERENCES_DIR = "../character_references"
 IP_ADAPTER_MODEL = "h94/IP-Adapter-FaceID"
 IP_ADAPTER_SUBFOLDER = ""  # FaceID weights are in root directory
 IP_ADAPTER_WEIGHT_NAME = "ip-adapter-faceid-plusv2_sdxl.bin"  # Correct weight file for FaceID Plus V2 SDXL

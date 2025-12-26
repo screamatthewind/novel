@@ -9,7 +9,7 @@ import json
 import argparse
 from pathlib import Path
 from image_generator import SDXLGenerator
-from config import DEFAULT_MODEL
+from config import DEFAULT_MODEL, CHARACTER_REFERENCES_DIR
 
 
 # Character reference portrait prompts
@@ -111,7 +111,7 @@ NEGATIVE_PROMPT = "photograph, photo, photorealistic, realistic photo, 3d render
 
 def load_character_metadata(character_name: str) -> dict:
     """Load character metadata from JSON file."""
-    metadata_path = Path(f"../character_references/{character_name}/metadata.json")
+    metadata_path = Path(f"{CHARACTER_REFERENCES_DIR}/{character_name}/metadata.json")
     if not metadata_path.exists():
         raise FileNotFoundError(f"Metadata not found for character: {character_name}")
 
@@ -121,7 +121,7 @@ def load_character_metadata(character_name: str) -> dict:
 
 def save_character_metadata(character_name: str, metadata: dict):
     """Save updated character metadata to JSON file."""
-    metadata_path = Path(f"../character_references/{character_name}/metadata.json")
+    metadata_path = Path(f"{CHARACTER_REFERENCES_DIR}/{character_name}/metadata.json")
     with open(metadata_path, 'w') as f:
         json.dump(metadata, f, indent=2)
 
@@ -148,7 +148,7 @@ def generate_character_references(
 
     # Load character metadata
     metadata = load_character_metadata(character_name)
-    character_dir = Path(f"../character_references/{character_name}")
+    character_dir = Path(f"{CHARACTER_REFERENCES_DIR}/{character_name}")
 
     # Get character prompts
     char_data = CHARACTER_PROMPTS[character_name]

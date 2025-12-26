@@ -140,7 +140,7 @@ def process_sentence(
             image_filename = current_image_filename
             log_message(log_file, f"✓ Reusing image: {image_filename} ({detection_reason})")
         else:
-            log_message(log_file, f"→ New image needed: {detection_reason}")
+            log_message(log_file, f"-> New image needed: {detection_reason}")
             detector.update_state(visual_state)
 
     # Generate filename (same for all methods)
@@ -206,7 +206,7 @@ def process_sentence(
             cost_tracker=cost_tracker
         )
         if not prompt:
-            log_message(log_file, f"✗ Failed to generate prompt with {args.llm}, falling back to keyword method")
+            log_message(log_file, f"Failed to generate prompt with {args.llm}, falling back to keyword method")
             prompt = generate_prompt(sentence.content, scene_context=sentence.scene_context)
         elif args.llm == "haiku" and input_tokens > 0:
             log_message(log_file, f"Tokens: {input_tokens} in / {output_tokens} out")
@@ -237,7 +237,7 @@ def process_sentence(
     try:
         # Generate image
         start_time = datetime.now()
-        log_message(log_file, f"⟳ Generating image...")
+        log_message(log_file, f">> Generating image...")
 
         # Calculate seed based on chapter, scene, and sentence for variety
         seed = 42 + (sentence.chapter_num * 1000) + (sentence.scene_num * 100) + sentence.sentence_num
@@ -249,12 +249,12 @@ def process_sentence(
             characters = extract_characters(sentence.content)
             # Map character names to lowercase for metadata lookup
             char_mapping = {
-                'Emma': 'emma', 'Emma Chen': 'emma',
-                'Tyler': 'tyler', 'Tyler Chen': 'tyler',
-                'Elena': 'elena', 'Elena Volkov': 'elena',
-                'Maxim': 'maxim', 'Maxim Orlov': 'maxim',
-                'Amara': 'amara', 'Amara Okafor': 'amara',
-                'Wei': 'wei', 'Wei Chen': 'wei'
+                'emma': 'emma', 'emma chen': 'emma',
+                'tyler': 'tyler', 'tyler chen': 'tyler',
+                'elena': 'elena', 'elena volkov': 'elena',
+                'maxim': 'maxim', 'maxim orlov': 'maxim',
+                'amara': 'amara', 'amara okafor': 'amara',
+                'wei': 'wei', 'wei chen': 'wei'
             }
             # Use first character found (primary character in sentence)
             for char in characters:
@@ -264,7 +264,7 @@ def process_sentence(
 
         # Generate image with or without character reference
         if character_name:
-            log_message(log_file, f"→ Using character reference: {character_name}")
+            log_message(log_file, f"-> Using character reference: {character_name}")
             image = generator.generate_with_character_ref(
                 prompt=prompt,
                 negative_prompt=negative_prompt,
@@ -303,7 +303,7 @@ def process_sentence(
         return (True, filename)
 
     except Exception as e:
-        log_message(log_file, f"✗ ERROR generating image: {str(e)}")
+        log_message(log_file, f"ERROR generating image: {str(e)}")
         # Save prompt anyway for manual retry
         method_suffix = f"_{args.llm.upper()}" if args.llm != "keyword" else ""
         save_prompt_to_cache(filename, prompt, negative_prompt, method_suffix=method_suffix)
@@ -522,7 +522,7 @@ def main():
                         detector_by_chapter[chapter_num] = VisualChangeDetector()
                         metadata_by_chapter[chapter_num] = ImageMappingMetadata(chapter_num)
                         current_image_by_chapter[chapter_num] = None
-                        log_message(log_file, f"→ Initialized smart detection for Chapter {chapter_num}")
+                        log_message(log_file, f"-> Initialized smart detection for Chapter {chapter_num}")
 
                 # Get detector/metadata for this chapter
                 detector = detector_by_chapter.get(chapter_num) if args.enable_smart_detection else None
