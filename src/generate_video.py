@@ -82,12 +82,13 @@ class VideoGenerator:
         logger.info(f"Output directory: {self.output_dir}")
         logger.info(f"Temp directory: {self.temp_dir}")
 
-    def find_sentence_pairs(self, chapter_num: int) -> List[Tuple[Path, Path]]:
+    def find_sentence_pairs(self, chapter_num: int, first_scene_only: bool = False) -> List[Tuple[Path, Path]]:
         """
         Find matching image and audio file pairs for a chapter (sentence-level).
 
         Args:
             chapter_num: Chapter number (1-12)
+            first_scene_only: If True, only return pairs from scene 1
 
         Returns:
             List of (image_path, audio_path) tuples, sorted by scene and sentence number
@@ -96,7 +97,10 @@ class VideoGenerator:
         pairs = []
 
         # Find all audio files for this chapter (sentence-level files have "sent_" in the name)
-        audio_files = sorted(self.audio_dir.glob(f"{chapter_str}_scene_*_sent_*.wav"))
+        if first_scene_only:
+            audio_files = sorted(self.audio_dir.glob(f"{chapter_str}_scene_01_sent_*.wav"))
+        else:
+            audio_files = sorted(self.audio_dir.glob(f"{chapter_str}_scene_*_sent_*.wav"))
 
         for audio_file in audio_files:
             # Construct corresponding image filename
@@ -109,7 +113,8 @@ class VideoGenerator:
             else:
                 logger.warning(f"Missing image for audio: {audio_file.name}")
 
-        logger.info(f"Found {len(pairs)} sentence pairs for chapter {chapter_num}")
+        scene_info = "scene 1 only" if first_scene_only else "all scenes"
+        logger.info(f"Found {len(pairs)} sentence pairs for chapter {chapter_num} ({scene_info})")
         return pairs
 
     def resize_image_to_fit(self, image_path: Path) -> ImageClip:
@@ -176,21 +181,33 @@ class VideoGenerator:
 
         return video_clip
 
-    def generate_chapter_video(self, chapter_num: int, output_filename: str = None) -> Path:
+    def generate_chapter_video(self, chapter_num: int, output_filename: str = None, first_scene_only: bool = False) -> Path:
         """
         Generate video for a complete chapter.
 
         Args:
             chapter_num: Chapter number (1-12)
             output_filename: Optional custom output filename
+            first_scene_only: If True, only process the first scene
 
         Returns:
             Path to the generated video file
         """
+        # Determine output filename first to check if it exists
+        if output_filename is None:
+            output_filename = f"The_Obsolescence_Chapter_{chapter_num:02d}.mp4"
+
+        output_path = self.output_dir / output_filename
+
+        # Check if file already exists
+        if output_path.exists():
+            logger.info(f"Video already exists, skipping: {output_path}")
+            return output_path
+
         logger.info(f"Generating video for Chapter {chapter_num}")
 
         # Find all sentence pairs for this chapter
-        sentence_pairs = self.find_sentence_pairs(chapter_num)
+        sentence_pairs = self.find_sentence_pairs(chapter_num, first_scene_only=first_scene_only)
 
         if not sentence_pairs:
             logger.error(f"No sentence pairs found for chapter {chapter_num}")
@@ -212,12 +229,6 @@ class VideoGenerator:
         # Concatenate all clips
         logger.info("Concatenating clips...")
         final_video = concatenate_videoclips(clips, method="compose")
-
-        # Determine output filename
-        if output_filename is None:
-            output_filename = f"The_Obsolescence_Chapter_{chapter_num:02d}.mp4"
-
-        output_path = self.output_dir / output_filename
 
         # Write video file
         logger.info(f"Writing video to {output_path}")
@@ -256,12 +267,25 @@ class VideoGenerator:
         Returns:
             Path to the generated video file
         """
+        # Determine output filename first to check if it exists
+        if output_filename is None:
+            chapter_range = f"{min(chapter_nums):02d}-{max(chapter_nums):02d}"
+            output_filename = f"The_Obsolescence_Chapters_{chapter_range}.mp4"
+
+        output_path = self.output_dir / output_filename
+
+        # Check if file already exists
+        if output_path.exists():
+            logger.info(f"Video already exists, skipping: {output_path}")
+            return output_path
+
         logger.info(f"Generating multi-chapter video for chapters: {chapter_nums}")
 
         all_clips = []
 
         for chapter_num in chapter_nums:
-            sentence_pairs = self.find_sentence_pairs(chapter_num)
+            # Multiple chapters mode: process all scenes
+            sentence_pairs = self.find_sentence_pairs(chapter_num, first_scene_only=False)
 
             if not sentence_pairs:
                 logger.warning(f"No sentence pairs found for chapter {chapter_num}, skipping")
@@ -284,13 +308,6 @@ class VideoGenerator:
         # Concatenate all clips
         logger.info(f"Concatenating {len(all_clips)} total clips...")
         final_video = concatenate_videoclips(all_clips, method="compose")
-
-        # Determine output filename
-        if output_filename is None:
-            chapter_range = f"{min(chapter_nums):02d}-{max(chapter_nums):02d}"
-            output_filename = f"The_Obsolescence_Chapters_{chapter_range}.mp4"
-
-        output_path = self.output_dir / output_filename
 
         # Write video file
         logger.info(f"Writing video to {output_path}")
@@ -372,17 +389,17 @@ def main():
 
     try:
         if args.chapter:
-            # Single chapter
-            generator.generate_chapter_video(args.chapter, args.output_filename)
+            # Single chapter - process first scene only
+            generator.generate_chapter_video(args.chapter, args.output_filename, first_scene_only=True)
 
         elif args.chapters:
             if args.combine:
                 # Multiple chapters in one video
                 generator.generate_multi_chapter_video(args.chapters, args.output_filename)
             else:
-                # Multiple chapters as separate videos
+                # Multiple chapters as separate videos - process all scenes
                 for chapter_num in args.chapters:
-                    generator.generate_chapter_video(chapter_num)
+                    generator.generate_chapter_video(chapter_num, first_scene_only=False)
 
         elif args.all:
             # Find all available chapters (looking for sentence-level files)
@@ -401,9 +418,9 @@ def main():
                 # All chapters in one video
                 generator.generate_multi_chapter_video(available_chapters, args.output_filename)
             else:
-                # Each chapter as separate video
+                # Each chapter as separate video - process all scenes
                 for chapter_num in available_chapters:
-                    generator.generate_chapter_video(chapter_num)
+                    generator.generate_chapter_video(chapter_num, first_scene_only=False)
 
         logger.info("All videos generated successfully!")
 

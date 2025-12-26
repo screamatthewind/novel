@@ -214,13 +214,15 @@ def parse_chapter(filepath: str) -> List[Scene]:
     return scenes
 
 
-def parse_all_chapters(chapter_numbers: List[int] = None) -> List[Scene]:
+def parse_all_chapters(chapter_numbers: List[int] = None, first_scene_only: bool = False) -> List[Scene]:
     """
     Parse all chapter files and return all scenes.
 
     Args:
         chapter_numbers: Optional list of specific chapter numbers to parse.
                         If None, parses all chapters.
+        first_scene_only: If True and only one chapter is specified, return only the first scene.
+                         Ignored when multiple chapters are specified.
 
     Returns:
         List of all Scene objects from all chapters
@@ -249,6 +251,11 @@ def parse_all_chapters(chapter_numbers: List[int] = None) -> List[Scene]:
     for filepath in chapter_files:
         scenes = parse_chapter(filepath)
         all_scenes.extend(scenes)
+
+    # Filter to first scene only if requested and only one chapter
+    if first_scene_only and chapter_numbers and len(chapter_numbers) == 1:
+        # Keep only the first scene from the single chapter
+        all_scenes = [scene for scene in all_scenes if scene.scene_num == 1]
 
     return all_scenes
 

@@ -294,7 +294,12 @@ def main():
 
     # Parse chapters
     log_message(log_file, "\nParsing chapters...")
-    scenes = parse_all_chapters(chapter_numbers=args.chapters)
+    # If only one chapter specified, process only first scene
+    first_scene_only = args.chapters is not None and len(args.chapters) == 1
+    scenes = parse_all_chapters(chapter_numbers=args.chapters, first_scene_only=first_scene_only)
+
+    if first_scene_only and scenes:
+        log_message(log_file, f"Single chapter mode: Processing first scene only")
 
     if not scenes:
         log_message(log_file, "ERROR: No scenes found to process")
