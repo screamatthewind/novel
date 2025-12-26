@@ -12,7 +12,13 @@ from datetime import datetime
 from pathlib import Path
 
 from scene_parser import parse_all_chapters, Scene, parse_scene_sentences, Sentence
-from prompt_generator import generate_prompt, generate_filename, get_negative_prompt
+from prompt_generator import (
+    generate_prompt,
+    generate_filename,
+    get_negative_prompt,
+    generate_prompt_with_llm,
+    generate_prompts_comparison
+)
 from config import (
     OUTPUT_DIR,
     LOG_DIR,
@@ -22,6 +28,7 @@ from config import (
     DEFAULT_WIDTH,
     DEFAULT_HEIGHT
 )
+from cost_tracker import CostTracker
 
 
 def setup_logging() -> str:
@@ -55,7 +62,7 @@ def log_message(log_file: str, message: str, print_to_console: bool = True):
         print(message)
 
 
-def save_prompt_to_cache(filename: str, prompt: str, negative_prompt: str):
+def save_prompt_to_cache(filename: str, prompt: str, negative_prompt: str, method_suffix: str = ""):
     """
     Save prompt to cache file for future reference.
 
@@ -63,9 +70,10 @@ def save_prompt_to_cache(filename: str, prompt: str, negative_prompt: str):
         filename: Image filename (e.g., 'chapter_01_scene_02_emma_factory.png')
         prompt: Positive prompt
         negative_prompt: Negative prompt
+        method_suffix: Optional suffix to add before .txt (e.g., "_OLLAMA", "_HAIKU", "_KEYWORD")
     """
-    # Create cache filename (replace .png with .txt)
-    cache_filename = filename.replace('.png', '.txt')
+    # Create cache filename (replace .png with method suffix + .txt)
+    cache_filename = filename.replace('.png', f'{method_suffix}.txt')
     cache_path = os.path.join(PROMPT_CACHE_DIR, cache_filename)
 
     with open(cache_path, 'w', encoding='utf-8') as f:
@@ -81,7 +89,8 @@ def process_sentence(
     generator,  # SDXLGenerator or None for dry-run
     log_file: str,
     args: argparse.Namespace,
-    dry_run: bool = False
+    dry_run: bool = False,
+    cost_tracker: CostTracker = None
 ) -> bool:
     """
     Process a single sentence: generate prompt, create image, save files.
@@ -96,10 +105,14 @@ def process_sentence(
     Returns:
         True if successful, False if error occurred
     """
-    # Generate prompt and filename
-    # Pass scene_context to ensure consistent setting across sentences in the scene
-    prompt = generate_prompt(sentence.content, scene_context=sentence.scene_context)
-    negative_prompt = get_negative_prompt()
+    # Log sentence info
+    log_message(
+        log_file,
+        f"\n{'='*80}\nChapter {sentence.chapter_num}, Scene {sentence.scene_num}, Sentence {sentence.sentence_num} ({sentence.word_count} words)"
+    )
+    log_message(log_file, f"Sentence: {sentence.content}")
+
+    # Generate filename (same for all methods)
     filename = generate_filename(
         sentence.chapter_num,
         sentence.scene_num,
@@ -107,13 +120,51 @@ def process_sentence(
         sentence.sentence_num,
         scene_context=sentence.scene_context
     )
-    output_path = os.path.join(OUTPUT_DIR, filename)
 
-    # Log sentence info
-    log_message(
-        log_file,
-        f"\n{'='*80}\nChapter {sentence.chapter_num}, Scene {sentence.scene_num}, Sentence {sentence.sentence_num} ({sentence.word_count} words)"
-    )
+    # Handle comparison mode - generate prompts with all methods
+    if args.llm == "compare":
+        log_message(log_file, "Mode: COMPARISON (keyword, ollama, haiku)")
+        prompts = generate_prompts_comparison(sentence.content, scene_context=sentence.scene_context, cost_tracker=cost_tracker)
+        negative_prompt = get_negative_prompt()
+
+        # Save all prompts to cache
+        for method, prompt in prompts.items():
+            if method == "tokens":
+                continue  # Skip tokens dict
+            if prompt:
+                suffix = f"_{method.upper()}"
+                save_prompt_to_cache(filename, prompt, negative_prompt, method_suffix=suffix)
+                log_message(log_file, f"[{method.upper()}] Prompt: {prompt}")
+            else:
+                log_message(log_file, f"[{method.upper()}] Failed to generate prompt")
+
+        # Log token usage if haiku was used
+        if "tokens" in prompts and prompts["tokens"]["input"] > 0:
+            log_message(log_file, f"[HAIKU] Tokens: {prompts['tokens']['input']} in / {prompts['tokens']['output']} out")
+
+        log_message(log_file, f"✓ Comparison prompts saved for: {filename}")
+        return True
+
+    # Single method: generate prompt with specified method
+    if args.llm in ["ollama", "haiku"]:
+        log_message(log_file, f"Mode: LLM ({args.llm})")
+        prompt, input_tokens, output_tokens = generate_prompt_with_llm(
+            sentence.content,
+            scene_context=sentence.scene_context,
+            method=args.llm,
+            cost_tracker=cost_tracker
+        )
+        if not prompt:
+            log_message(log_file, f"✗ Failed to generate prompt with {args.llm}, falling back to keyword method")
+            prompt = generate_prompt(sentence.content, scene_context=sentence.scene_context)
+        elif args.llm == "haiku" and input_tokens > 0:
+            log_message(log_file, f"Tokens: {input_tokens} in / {output_tokens} out")
+    else:
+        # Default: keyword-based
+        log_message(log_file, "Mode: KEYWORD")
+        prompt = generate_prompt(sentence.content, scene_context=sentence.scene_context)
+
+    negative_prompt = get_negative_prompt()
     log_message(log_file, f"Filename: {filename}")
     log_message(log_file, f"Prompt: {prompt}")
 
@@ -123,6 +174,7 @@ def process_sentence(
         return True
 
     # Check if image already exists
+    output_path = os.path.join(OUTPUT_DIR, filename)
     if os.path.exists(output_path):
         log_message(log_file, f"⊙ Image already exists, skipping: {filename}")
         return True
@@ -149,7 +201,8 @@ def process_sentence(
         image.save(output_path)
 
         # Save prompt to cache
-        save_prompt_to_cache(filename, prompt, negative_prompt)
+        method_suffix = f"_{args.llm.upper()}" if args.llm != "keyword" else ""
+        save_prompt_to_cache(filename, prompt, negative_prompt, method_suffix=method_suffix)
 
         # Log success
         elapsed = (datetime.now() - start_time).total_seconds()
@@ -163,7 +216,8 @@ def process_sentence(
     except Exception as e:
         log_message(log_file, f"✗ ERROR generating image: {str(e)}")
         # Save prompt anyway for manual retry
-        save_prompt_to_cache(filename, prompt, negative_prompt)
+        method_suffix = f"_{args.llm.upper()}" if args.llm != "keyword" else ""
+        save_prompt_to_cache(filename, prompt, negative_prompt, method_suffix=method_suffix)
         return False
 
 
@@ -192,6 +246,14 @@ def main():
         '--dry-run',
         action='store_true',
         help='Show prompts without generating images'
+    )
+
+    parser.add_argument(
+        '--llm',
+        type=str,
+        choices=['keyword', 'ollama', 'haiku', 'compare'],
+        default='keyword',
+        help='Prompt generation method: keyword (default), ollama (local LLM), haiku (Claude API), compare (all three)'
     )
 
     parser.add_argument(
@@ -280,9 +342,19 @@ def main():
     # Dry run mode - just show prompts
     if args.dry_run:
         log_message(log_file, "\n=== DRY RUN MODE ===\n")
-        for sentence in all_sentences[:10]:  # Show first 10 sentences
-            process_sentence(sentence, None, log_file, args, dry_run=True)
-        log_message(log_file, f"\nDry run complete. Would generate {len(all_sentences)} images.")
+
+        # Create cost tracker for dry run (if using haiku)
+        session_name = f"dry_run_chapters_{'_'.join(map(str, args.chapters)) if args.chapters else 'all'}"
+        with CostTracker(session_name) as cost_tracker:
+            for sentence in all_sentences[:10]:  # Show first 10 sentences
+                process_sentence(sentence, None, log_file, args, dry_run=True, cost_tracker=cost_tracker)
+
+            log_message(log_file, f"\nDry run complete. Would generate {len(all_sentences)} images.")
+
+            # Print cost summary if haiku was used
+            if args.llm in ["haiku", "compare"] and cost_tracker.session_api_calls > 0:
+                cost_tracker.print_summary()
+
         return
 
     # Load SDXL model
@@ -291,43 +363,50 @@ def main():
     generator = SDXLGenerator()
     generator.load_model()
 
-    # Process sentences
-    log_message(log_file, f"\nProcessing {len(all_sentences)} sentences...")
-    log_message(log_file, f"Estimated time: {len(all_sentences) * 6 / 60:.1f} hours\n")
+    # Create cost tracker for this session
+    session_name = f"generate_images_chapters_{'_'.join(map(str, args.chapters)) if args.chapters else 'all'}"
+    with CostTracker(session_name) as cost_tracker:
+        # Process sentences
+        log_message(log_file, f"\nProcessing {len(all_sentences)} sentences...")
+        log_message(log_file, f"Estimated time: {len(all_sentences) * 6 / 60:.1f} hours\n")
 
-    success_count = 0
-    error_count = 0
+        success_count = 0
+        error_count = 0
 
-    try:
-        for i, sentence in enumerate(all_sentences, start=1):
-            log_message(log_file, f"\n--- Sentence {i}/{len(all_sentences)} ---")
+        try:
+            for i, sentence in enumerate(all_sentences, start=1):
+                log_message(log_file, f"\n--- Sentence {i}/{len(all_sentences)} ---")
 
-            success = process_sentence(sentence, generator, log_file, args)
+                success = process_sentence(sentence, generator, log_file, args, cost_tracker=cost_tracker)
 
-            if success:
-                success_count += 1
-            else:
-                error_count += 1
+                if success:
+                    success_count += 1
+                else:
+                    error_count += 1
 
-    except KeyboardInterrupt:
-        log_message(log_file, "\n\n⚠ Generation interrupted by user")
+        except KeyboardInterrupt:
+            log_message(log_file, "\n\n⚠ Generation interrupted by user")
 
-    finally:
-        # Cleanup
-        log_message(log_file, "\nCleaning up...")
-        generator.unload_model()
+        finally:
+            # Cleanup
+            log_message(log_file, "\nCleaning up...")
+            generator.unload_model()
 
-        # Final summary
-        log_message(log_file, "\n" + "="*80)
-        log_message(log_file, "Generation Summary")
-        log_message(log_file, "="*80)
-        log_message(log_file, f"Total sentences: {len(all_sentences)}")
-        log_message(log_file, f"Successful: {success_count}")
-        log_message(log_file, f"Errors: {error_count}")
-        log_message(log_file, f"Images saved to: {OUTPUT_DIR}")
-        log_message(log_file, f"Prompts cached to: {PROMPT_CACHE_DIR}")
-        log_message(log_file, f"Log saved to: {log_file}")
-        log_message(log_file, "="*80)
+            # Final summary
+            log_message(log_file, "\n" + "="*80)
+            log_message(log_file, "Generation Summary")
+            log_message(log_file, "="*80)
+            log_message(log_file, f"Total sentences: {len(all_sentences)}")
+            log_message(log_file, f"Successful: {success_count}")
+            log_message(log_file, f"Errors: {error_count}")
+            log_message(log_file, f"Images saved to: {OUTPUT_DIR}")
+            log_message(log_file, f"Prompts cached to: {PROMPT_CACHE_DIR}")
+            log_message(log_file, f"Log saved to: {log_file}")
+            log_message(log_file, "="*80)
+
+            # Print cost summary if haiku was used
+            if args.llm in ["haiku", "compare"] and cost_tracker.session_api_calls > 0:
+                cost_tracker.print_summary()
 
 
 if __name__ == "__main__":

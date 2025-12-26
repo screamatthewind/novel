@@ -28,6 +28,9 @@ logs/*.log
 prompt_cache/*.txt
 !prompt_cache/.gitkeep
 
+# Cost tracking (store locally, not in repo)
+.costs/
+
 # Audio generation outputs
 audio/*.wav
 audio/*.mp3
@@ -70,3 +73,6 @@ desktop.ini
 *.bak
 temp/*
 !temp/.gitkeep
+
+# Output folder
+output/

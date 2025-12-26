@@ -4,6 +4,12 @@ Configuration settings for novel scene image generation system.
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+# Look for .env in project root (parent of src/)
+env_path = Path(__file__).parent.parent / '.env'
+load_dotenv(dotenv_path=env_path)
 
 # Paths (relative to project root)
 CHAPTER_DIR = "../docs/manuscript"
@@ -110,3 +116,18 @@ CHARACTER_SPEAKERS = {
     "diane": "Tanja Adelina",  # Professional female voice
     "ramirez": "Claribel Dervla",  # Default voice
 }
+
+# LLM configuration for prompt generation
+# Ollama settings (local LLM)
+OLLAMA_BASE_URL = "http://localhost:11434"
+OLLAMA_MODEL = "llama3.1:8b"
+
+# Anthropic Claude settings (API-based LLM)
+# Set ANTHROPIC_API_KEY environment variable to use Claude Haiku
+ANTHROPIC_MODEL = "claude-3-5-haiku-20241022"
+ANTHROPIC_MAX_TOKENS = 200  # Prompts are short, 200 tokens is plenty
+
+# Claude Haiku 3.5 pricing (as of January 2025)
+# Source: https://platform.claude.com/docs/en/about-claude/pricing
+HAIKU_INPUT_COST_PER_MILLION = 0.80   # $0.80 per million input tokens
+HAIKU_OUTPUT_COST_PER_MILLION = 4.00  # $4.00 per million output tokens

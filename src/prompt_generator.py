@@ -1,11 +1,13 @@
 """
 Prompt generator for converting scene content into SDXL image generation prompts.
-Uses rule-based extraction of visual elements from scene text.
+Supports both keyword-based (legacy) and LLM-based prompt generation.
 """
 
 import re
-from typing import Tuple
-from config import BASE_STYLE, NEGATIVE_PROMPT
+import os
+import json
+from typing import Tuple, Optional
+from config import BASE_STYLE, NEGATIVE_PROMPT, OLLAMA_BASE_URL, OLLAMA_MODEL, ANTHROPIC_MODEL, ANTHROPIC_MAX_TOKENS
 
 
 # Character descriptions for visual consistency
@@ -296,7 +298,7 @@ def count_tokens(prompt: str) -> int:
         # Rough estimate: ~1.3 tokens per word on average
         word_count = len(prompt.split())
         estimated_tokens = int(word_count * 1.3)
-        print(f"  ⚠ transformers library not available, estimating {estimated_tokens} tokens")
+        print(f"  WARNING: transformers library not available, estimating {estimated_tokens} tokens")
         return estimated_tokens
 
 
@@ -315,7 +317,7 @@ def validate_prompt_length(prompt: str, max_tokens: int = 77) -> Tuple[bool, int
     is_valid = token_count <= max_tokens
 
     if not is_valid:
-        print(f"  ⚠ WARNING: Prompt has {token_count} tokens (limit: {max_tokens})")
+        print(f"  WARNING: WARNING: Prompt has {token_count} tokens (limit: {max_tokens})")
         print(f"  Prompt will be truncated by SDXL!")
 
     return is_valid, token_count
@@ -351,6 +353,244 @@ def generate_filename(chapter_num: int, scene_num: int, scene_content: str, sent
 def get_negative_prompt() -> str:
     """Return the standard negative prompt for all images."""
     return NEGATIVE_PROMPT
+
+
+# ============================================================================
+# LLM-BASED PROMPT GENERATION
+# ============================================================================
+
+def generate_prompt_with_ollama(sentence: str, scene_context: str = None) -> Optional[str]:
+    """
+    Generate SDXL prompt using Ollama (local LLM).
+
+    Args:
+        sentence: The specific sentence to generate prompt for
+        scene_context: Full scene text for continuity
+
+    Returns:
+        Generated prompt string, or None if failed
+    """
+    try:
+        import requests
+    except ImportError:
+        print("  WARNING: requests library not available. Install with: pip install requests")
+        return None
+
+    # Build LLM prompt
+    llm_prompt = _build_llm_prompt(sentence, scene_context)
+
+    # Call Ollama API
+    try:
+        response = requests.post(
+            f"{OLLAMA_BASE_URL}/api/generate",
+            json={
+                "model": OLLAMA_MODEL,
+                "prompt": llm_prompt,
+                "stream": False
+            },
+            timeout=120
+        )
+        response.raise_for_status()
+        result = response.json()
+        generated_prompt = result.get("response", "").strip()
+
+        if not generated_prompt:
+            print("  WARNING: Ollama returned empty response")
+            return None
+
+        return generated_prompt
+
+    except requests.exceptions.ConnectionError:
+        print(f"  WARNING: Could not connect to Ollama at {OLLAMA_BASE_URL}")
+        print(f"  Make sure Ollama is running and model is downloaded: ollama pull {OLLAMA_MODEL}")
+        return None
+    except Exception as e:
+        print(f"  WARNING: Ollama error: {str(e)[:100]}")
+        return None
+
+
+def generate_prompt_with_haiku(sentence: str, scene_context: str = None, cost_tracker=None) -> tuple:
+    """
+    Generate SDXL prompt using Claude Haiku (Anthropic API).
+
+    Args:
+        sentence: The specific sentence to generate prompt for
+        scene_context: Full scene text for continuity
+        cost_tracker: Optional CostTracker instance to record usage
+
+    Returns:
+        Tuple of (generated_prompt, input_tokens, output_tokens)
+        Returns (None, 0, 0) if failed
+    """
+    try:
+        import anthropic
+    except ImportError:
+        print("  WARNING: anthropic library not available. Install with: pip install anthropic")
+        return None, 0, 0
+
+    # Check for API key (loaded from .env file via config.py)
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        print("  WARNING: ANTHROPIC_API_KEY not found")
+        print("  Add it to .env file in project root: ANTHROPIC_API_KEY=your_key_here")
+        return None, 0, 0
+
+    # Build LLM prompt
+    llm_prompt = _build_llm_prompt(sentence, scene_context)
+
+    # Call Claude API
+    try:
+        client = anthropic.Anthropic(api_key=api_key)
+        message = client.messages.create(
+            model=ANTHROPIC_MODEL,
+            max_tokens=ANTHROPIC_MAX_TOKENS,
+            messages=[
+                {"role": "user", "content": llm_prompt}
+            ]
+        )
+
+        generated_prompt = message.content[0].text.strip()
+
+        # Extract token usage from response
+        input_tokens = message.usage.input_tokens
+        output_tokens = message.usage.output_tokens
+
+        # Track costs if tracker provided
+        if cost_tracker:
+            cost_tracker.add_api_call(input_tokens, output_tokens)
+
+        if not generated_prompt:
+            print("  WARNING: Claude returned empty response")
+            return None, input_tokens, output_tokens
+
+        return generated_prompt, input_tokens, output_tokens
+
+    except Exception as e:
+        print(f"  WARNING: Claude API error: {e}")
+        return None, 0, 0
+
+
+def _build_llm_prompt(sentence: str, scene_context: str = None) -> str:
+    """
+    Build the prompt to send to the LLM for generating SDXL prompts.
+
+    Args:
+        sentence: The specific sentence to generate prompt for
+        scene_context: Full scene text for continuity
+
+    Returns:
+        Formatted LLM prompt string
+    """
+    # Get scene context snippet (first 300 chars for context without overwhelming)
+    context_snippet = ""
+    if scene_context:
+        context_snippet = scene_context[:300].strip()
+        if len(scene_context) > 300:
+            context_snippet += "..."
+
+    # Get character descriptions for characters in scene
+    characters_in_scene = extract_characters(sentence)
+    if scene_context:
+        characters_in_scene.extend(extract_characters(scene_context))
+    characters_in_scene = list(set(characters_in_scene))  # Remove duplicates
+
+    char_desc_text = ""
+    if characters_in_scene:
+        char_desc_lines = [f"- {char.title()}: {CHARACTER_DESCRIPTIONS.get(char, 'unknown')}"
+                          for char in characters_in_scene]
+        char_desc_text = "\n".join(char_desc_lines)
+
+    # Build the LLM prompt
+    llm_prompt = f"""You are generating image prompts for Stable Diffusion XL to illustrate a novel.
+
+Given this sentence from the novel:
+"{sentence}"
+"""
+
+    if context_snippet:
+        llm_prompt += f"""
+Scene context (for continuity):
+"{context_snippet}"
+"""
+
+    if char_desc_text:
+        llm_prompt += f"""
+Character visual descriptions:
+{char_desc_text}
+"""
+
+    llm_prompt += f"""
+Generate a natural language SDXL prompt (under 77 tokens) that:
+1. Focuses on what's happening in THIS specific sentence
+2. Includes key objects/details mentioned in the sentence
+3. Describes character expression/posture specific to this moment
+4. Only mentions setting if it's central to the sentence
+5. Uses this artistic style: {BASE_STYLE}
+
+Return ONLY the prompt text, nothing else. Do not include explanations or meta-commentary."""
+
+    return llm_prompt
+
+
+def generate_prompt_with_llm(sentence: str, scene_context: str = None, method: str = "ollama", cost_tracker=None) -> tuple:
+    """
+    Generate SDXL prompt using specified LLM method.
+
+    Args:
+        sentence: The specific sentence to generate prompt for
+        scene_context: Full scene text for continuity
+        method: Which LLM to use ("ollama" or "haiku")
+        cost_tracker: Optional CostTracker instance (for haiku only)
+
+    Returns:
+        For haiku: Tuple of (generated_prompt, input_tokens, output_tokens)
+        For ollama: Tuple of (generated_prompt, 0, 0)
+        Returns (None, 0, 0) if failed
+    """
+    if method == "ollama":
+        prompt = generate_prompt_with_ollama(sentence, scene_context)
+        return prompt, 0, 0
+    elif method == "haiku":
+        return generate_prompt_with_haiku(sentence, scene_context, cost_tracker)
+    else:
+        print(f"  WARNING: Unknown LLM method: {method}")
+        return None, 0, 0
+
+
+def generate_prompts_comparison(sentence: str, scene_context: str = None, cost_tracker=None) -> dict:
+    """
+    Generate prompts using all methods (keyword, ollama, haiku) for comparison.
+
+    Args:
+        sentence: The specific sentence to generate prompt for
+        scene_context: Full scene text for continuity
+        cost_tracker: Optional CostTracker instance for haiku
+
+    Returns:
+        Dictionary with keys: "keyword", "ollama", "haiku", "tokens"
+        Each prompt value is the generated prompt (or None if failed)
+        "tokens" contains dict with "input" and "output" for haiku usage
+    """
+    results = {}
+    tokens = {"input": 0, "output": 0}
+
+    # Keyword-based (original method)
+    print("  Generating keyword-based prompt...")
+    results["keyword"] = generate_prompt(sentence, scene_context)
+
+    # Ollama
+    print("  Generating Ollama prompt...")
+    results["ollama"] = generate_prompt_with_ollama(sentence, scene_context)
+
+    # Claude Haiku
+    print("  Generating Haiku prompt...")
+    haiku_prompt, input_tokens, output_tokens = generate_prompt_with_haiku(sentence, scene_context, cost_tracker)
+    results["haiku"] = haiku_prompt
+    tokens["input"] = input_tokens
+    tokens["output"] = output_tokens
+
+    results["tokens"] = tokens
+    return results
 
 
 def main():
