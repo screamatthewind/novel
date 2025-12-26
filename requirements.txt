@@ -42,5 +42,9 @@ imageio>=2.31.1            # Image I/O for MoviePy
 imageio-ffmpeg>=0.6.0      # FFmpeg binaries for MoviePy
 python-dotenv>=1.0.0       # Environment variable management (MoviePy dependency)
 
+# IP-Adapter FaceID for character consistency
+insightface>=0.7.3         # Face detection and embedding for IP-Adapter
+onnxruntime-gpu>=1.16.0    # ONNX Runtime GPU support for InsightFace
+
 # Development Tools
 debugpy>=1.8.0             # VSCode Python debugger

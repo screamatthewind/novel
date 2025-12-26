@@ -230,7 +230,8 @@ class VideoGenerator:
             preset=PRESET,
             ffmpeg_params=['-crf', str(CRF)],
             threads=4,
-            logger='bar'  # Show progress bar
+            logger='bar',  # Show progress bar
+            temp_audiofile=str(self.temp_dir / 'audio.mp4')
         )
 
         # Clean up
@@ -302,7 +303,8 @@ class VideoGenerator:
             preset=PRESET,
             ffmpeg_params=['-crf', str(CRF)],
             threads=4,
-            logger='bar'
+            logger='bar',
+            temp_audiofile=str(self.temp_dir / 'audio.mp4')
         )
 
         # Clean up

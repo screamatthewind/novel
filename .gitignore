@@ -1,57 +1,22 @@
+# Environment variables
+.env
+.env.local
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-venv/
-env/
-ENV/
 *.egg-info/
 dist/
 build/
 
-# Environment variables
-.env
-
-# Image generation outputs
-images/*.png
-images/*.jpg
-images/*.jpeg
-!images/.gitkeep
-
-# Logs
-logs/*.log
-!logs/.gitkeep
-
-# Prompt cache
-prompt_cache/*.txt
-!prompt_cache/.gitkeep
-
-# Cost tracking (store locally, not in repo)
-.costs/
-
-# Audio generation outputs
-audio/*.wav
-audio/*.mp3
-!audio/.gitkeep
-
-# Audio cache
-audio_cache/*.json
-!audio_cache/.gitkeep
-
-# Video generation outputs
-videos/*.mp4
-videos/*.avi
-videos/*.mov
-!videos/.gitkeep
-
-# Test outputs
-test_generation.png
-
-# HuggingFace model cache
-.cache/
-huggingface/
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
 
 # IDE
 .vscode/
@@ -60,10 +25,23 @@ huggingface/
 *.swo
 *~
 
-# Video files (anywhere in repo)
-*.mp4
+# Generated content
+images/
+audio/
+videos/
+character_references/
+output/
 
-# OS
+# Cache directories
+prompt_cache/
+audio_cache/
+temp/
+logs/
+
+# Package version files (these seem to be accidental files)
+=*.*.*/
+
+# OS files
 .DS_Store
 Thumbs.db
 desktop.ini
@@ -71,8 +49,7 @@ desktop.ini
 # Temporary files
 *.tmp
 *.bak
-temp/*
-!temp/.gitkeep
+*.log
 
-# Output folder
-output/
+# MoviePy temporary audio files in src/
+src/*TEMP_MPY*.mp4

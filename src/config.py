@@ -131,3 +131,17 @@ ANTHROPIC_MAX_TOKENS = 200  # Prompts are short, 200 tokens is plenty
 # Source: https://platform.claude.com/docs/en/about-claude/pricing
 HAIKU_INPUT_COST_PER_MILLION = 0.80   # $0.80 per million input tokens
 HAIKU_OUTPUT_COST_PER_MILLION = 4.00  # $4.00 per million output tokens
+
+# Visual change detection settings (for smart image generation)
+ENABLE_SMART_DETECTION = False  # Opt-in initially, set to True once validated
+FORCE_NEW_IMAGE_AT_SCENE_START = True  # Always generate new image at scene boundaries
+IMAGE_MAPPING_DIR = "../audio_cache"  # Directory for image-audio mapping metadata
+
+# IP-Adapter settings (for character consistency)
+CHARACTER_REFERENCES_DIR = "../character_references"
+IP_ADAPTER_MODEL = "h94/IP-Adapter"
+IP_ADAPTER_SUBFOLDER = "sdxl_models"
+IP_ADAPTER_WEIGHT_NAME = "ip-adapter-plus-face_sdxl_vit-h.safetensors"
+IP_ADAPTER_SCALE_DEFAULT = 0.75  # How strongly to apply IP-Adapter (0.0-1.0)
+FACEID_SCALE_DEFAULT = 0.6  # How strongly to apply FaceID guidance (0.0-1.0)
+ENABLE_IP_ADAPTER = False  # Opt-in initially, set to True once validated
