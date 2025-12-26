@@ -28,6 +28,18 @@ VIDEO_DIR = "../videos"
 # Temporary directories
 TEMP_DIR = "../temp"
 
+# Video generation parameters
+VIDEO_WIDTH = 1080
+VIDEO_HEIGHT = 1920
+VIDEO_FPS = 30
+VIDEO_CODEC_CPU = 'libx264'
+VIDEO_CODEC_GPU = 'h264_nvenc'
+VIDEO_PRESET_CPU = 'medium'
+VIDEO_PRESET_GPU = 'p5'  # NVENC preset p5 ≈ x264 'medium'
+VIDEO_CRF = 18
+VIDEO_AUDIO_CODEC = 'aac'
+ENABLE_GPU_ENCODING = True  # Auto-fallback to CPU if unavailable
+
 # Character reference directories
 CHARACTER_REFERENCES_DIR = "../character_references"
 

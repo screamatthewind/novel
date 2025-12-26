@@ -24,6 +24,7 @@ import logging
 import os
 import sys
 import tempfile
+import time
 from pathlib import Path
 from typing import List, Tuple
 from moviepy import ImageClip, AudioFileClip, concatenate_videoclips, CompositeVideoClip, ColorClip
@@ -40,27 +41,62 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Video output specs (portrait format for vertical video)
-# Images are 1024x1024, will be centered on 1080x1920 canvas with black bars
-YOUTUBE_WIDTH = 1080
-YOUTUBE_HEIGHT = 1920
-YOUTUBE_FPS = 30
-VIDEO_CODEC = 'libx264'
-AUDIO_CODEC = 'aac'
-PRESET = 'medium'  # Options: ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow
-CRF = 18  # Constant Rate Factor: 0 (lossless) to 51 (worst), 18-23 is visually lossless
+
+def check_nvenc_availability() -> tuple[bool, str]:
+    """
+    Check if NVENC GPU encoding is available.
+
+    Returns:
+        Tuple of (is_available, diagnostic_message)
+    """
+    try:
+        import torch
+        if not torch.cuda.is_available():
+            return False, "CUDA not available"
+        gpu_name = torch.cuda.get_device_name(0)
+        return True, f"NVENC available on {gpu_name}"
+    except ImportError:
+        return False, "PyTorch not installed"
+
+
+# Import video configuration from config.py
+try:
+    from config import (
+        VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_FPS,
+        VIDEO_CODEC_CPU, VIDEO_CODEC_GPU,
+        VIDEO_PRESET_CPU, VIDEO_PRESET_GPU,
+        VIDEO_CRF, VIDEO_AUDIO_CODEC, ENABLE_GPU_ENCODING
+    )
+    YOUTUBE_WIDTH = VIDEO_WIDTH
+    YOUTUBE_HEIGHT = VIDEO_HEIGHT
+    YOUTUBE_FPS = VIDEO_FPS
+    AUDIO_CODEC = VIDEO_AUDIO_CODEC
+except ImportError:
+    # Fallback to hardcoded values if config.py not available
+    logger.warning("Could not import from config.py, using hardcoded defaults")
+    YOUTUBE_WIDTH = 1080
+    YOUTUBE_HEIGHT = 1920
+    YOUTUBE_FPS = 30
+    VIDEO_CODEC_CPU = 'libx264'
+    VIDEO_CODEC_GPU = 'h264_nvenc'
+    VIDEO_PRESET_CPU = 'medium'
+    VIDEO_PRESET_GPU = 'p5'
+    VIDEO_CRF = 18
+    AUDIO_CODEC = 'aac'
+    ENABLE_GPU_ENCODING = True
 
 
 class VideoGenerator:
     """Generate video from scene images and audio files."""
 
-    def __init__(self, project_root: Path, output_dir: Path):
+    def __init__(self, project_root: Path, output_dir: Path, enable_gpu: bool = True):
         """
         Initialize the video generator.
 
         Args:
             project_root: Root directory of the project
             output_dir: Directory to save generated videos
+            enable_gpu: Enable GPU-accelerated encoding (auto-falls back to CPU if unavailable)
         """
         self.project_root = project_root
         self.images_dir = project_root / 'images'
@@ -76,6 +112,21 @@ class VideoGenerator:
         os.environ['TMPDIR'] = str(self.temp_dir)
         os.environ['TEMP'] = str(self.temp_dir)
         os.environ['TMP'] = str(self.temp_dir)
+
+        # Detect GPU encoding capability
+        self.gpu_encoding_enabled = False
+        if enable_gpu:
+            nvenc_available, nvenc_message = check_nvenc_availability()
+            if nvenc_available:
+                self.gpu_encoding_enabled = True
+                logger.info(f"GPU encoding enabled: {nvenc_message}")
+                logger.info(f"Using codec: {VIDEO_CODEC_GPU}, preset: {VIDEO_PRESET_GPU}")
+            else:
+                logger.warning(f"GPU encoding disabled: {nvenc_message}")
+                logger.info(f"Falling back to CPU encoding: codec={VIDEO_CODEC_CPU}, preset={VIDEO_PRESET_CPU}")
+        else:
+            logger.info("GPU encoding disabled by configuration")
+            logger.info(f"Using CPU encoding: codec={VIDEO_CODEC_CPU}, preset={VIDEO_PRESET_CPU}")
 
         logger.info(f"Images directory: {self.images_dir}")
         logger.info(f"Audio directory: {self.audio_dir}")
@@ -181,6 +232,37 @@ class VideoGenerator:
 
         return video_clip
 
+    def _get_encoding_params(self) -> dict:
+        """
+        Get FFmpeg encoding parameters based on GPU availability.
+
+        Returns:
+            Dictionary with codec, preset, ffmpeg_params, and threads
+        """
+        if self.gpu_encoding_enabled:
+            # NVENC GPU encoding
+            return {
+                'codec': VIDEO_CODEC_GPU,
+                'preset': VIDEO_PRESET_GPU,
+                'ffmpeg_params': [
+                    '-cq', str(VIDEO_CRF),  # Constant quality mode (like CRF for x264)
+                    '-rc', 'vbr_hq',  # Variable bitrate high quality mode
+                    '-rc-lookahead', '32',  # Look ahead 32 frames for better quality
+                    '-spatial-aq', '1',  # Enable spatial adaptive quantization
+                    '-temporal-aq', '1',  # Enable temporal adaptive quantization
+                    '-gpu', '0',  # Use first GPU
+                ],
+                'threads': None  # GPU encoding doesn't use CPU threads parameter
+            }
+        else:
+            # CPU encoding (libx264)
+            return {
+                'codec': VIDEO_CODEC_CPU,
+                'preset': VIDEO_PRESET_CPU,
+                'ffmpeg_params': ['-crf', str(VIDEO_CRF)],
+                'threads': 4
+            }
+
     def generate_chapter_video(self, chapter_num: int, output_filename: str = None, first_scene_only: bool = False) -> Path:
         """
         Generate video for a complete chapter.
@@ -234,17 +316,26 @@ class VideoGenerator:
         logger.info(f"Writing video to {output_path}")
         logger.info(f"Total duration: {final_video.duration:.2f}s ({final_video.duration/60:.2f} minutes)")
 
+        # Get encoding parameters
+        encoding_params = self._get_encoding_params()
+        logger.info(f"Encoding with: codec={encoding_params['codec']}, preset={encoding_params['preset']}")
+
+        encode_start = time.time()
         final_video.write_videofile(
             str(output_path),
             fps=YOUTUBE_FPS,
-            codec=VIDEO_CODEC,
+            codec=encoding_params['codec'],
             audio_codec=AUDIO_CODEC,
-            preset=PRESET,
-            ffmpeg_params=['-crf', str(CRF)],
-            threads=4,
+            preset=encoding_params['preset'],
+            ffmpeg_params=encoding_params['ffmpeg_params'],
+            threads=encoding_params['threads'],
             logger='bar',  # Show progress bar
             temp_audiofile=str(self.temp_dir / 'audio.mp4')
         )
+
+        encode_time = time.time() - encode_start
+        encode_fps = final_video.duration * YOUTUBE_FPS / encode_time if encode_time > 0 else 0
+        logger.info(f"Encoding completed in {encode_time:.2f}s ({encode_fps:.2f} fps)")
 
         # Clean up
         final_video.close()
@@ -313,17 +404,26 @@ class VideoGenerator:
         logger.info(f"Writing video to {output_path}")
         logger.info(f"Total duration: {final_video.duration:.2f}s ({final_video.duration/60:.2f} minutes)")
 
+        # Get encoding parameters
+        encoding_params = self._get_encoding_params()
+        logger.info(f"Encoding with: codec={encoding_params['codec']}, preset={encoding_params['preset']}")
+
+        encode_start = time.time()
         final_video.write_videofile(
             str(output_path),
             fps=YOUTUBE_FPS,
-            codec=VIDEO_CODEC,
+            codec=encoding_params['codec'],
             audio_codec=AUDIO_CODEC,
-            preset=PRESET,
-            ffmpeg_params=['-crf', str(CRF)],
-            threads=4,
+            preset=encoding_params['preset'],
+            ffmpeg_params=encoding_params['ffmpeg_params'],
+            threads=encoding_params['threads'],
             logger='bar',
             temp_audiofile=str(self.temp_dir / 'audio.mp4')
         )
+
+        encode_time = time.time() - encode_start
+        encode_fps = final_video.duration * YOUTUBE_FPS / encode_time if encode_time > 0 else 0
+        logger.info(f"Encoding completed in {encode_time:.2f}s ({encode_fps:.2f} fps)")
 
         # Clean up
         final_video.close()
@@ -376,6 +476,11 @@ def main():
         action='store_true',
         help='Combine multiple chapters into a single video file'
     )
+    parser.add_argument(
+        '--no-gpu',
+        action='store_true',
+        help='Disable GPU encoding and use CPU (libx264) instead'
+    )
 
     args = parser.parse_args()
 
@@ -385,7 +490,7 @@ def main():
     output_dir = project_root / args.output_dir
 
     # Create video generator
-    generator = VideoGenerator(project_root, output_dir)
+    generator = VideoGenerator(project_root, output_dir, enable_gpu=not args.no_gpu)
 
     try:
         if args.chapter:
