@@ -11,7 +11,7 @@ from typing import Dict, Optional
 class NovelContext:
     """Parses Novel Bible for canonical character descriptions."""
 
-    def __init__(self, bible_path: str = "../docs/reference/The_Obsolescence_Novel_Bible.md"):
+    def __init__(self, bible_path: str = "../book/reference/The_Obsolescence_Novel_Bible.md"):
         """
         Initialize novel context parser.
 

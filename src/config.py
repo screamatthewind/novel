@@ -12,7 +12,7 @@ env_path = Path(__file__).parent.parent / '.env'
 load_dotenv(dotenv_path=env_path)
 
 # Paths (relative to project root)
-CHAPTER_DIR = "../docs/manuscript"
+CHAPTER_DIR = "../book/manuscript"
 OUTPUT_DIR = "../images"
 LOG_DIR = "../logs"
 PROMPT_CACHE_DIR = "../prompt_cache"

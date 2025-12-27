@@ -13,27 +13,27 @@ This is a creative writing project for a novel titled "The Obsolescence".
 ## Project Overview
 
 ### Novel Documents
-- **[docs/reference/The_Obsolescence_Novel_Bible.md](docs/reference/The_Obsolescence_Novel_Bible.md)** - World-building reference, character profiles, and core concepts
-- **[docs/reference/The_Obsolescence_Novel_Outline.md](docs/reference/The_Obsolescence_Novel_Outline.md)** - Story structure and chapter-by-chapter outline
-- **[docs/manuscript/](docs/manuscript/)** - Individual chapter manuscripts (All 12 chapters complete)
+- **[book/reference/The_Obsolescence_Novel_Bible.md](book/reference/The_Obsolescence_Novel_Bible.md)** - World-building reference, character profiles, and core concepts
+- **[book/reference/The_Obsolescence_Novel_Outline.md](book/reference/The_Obsolescence_Novel_Outline.md)** - Story structure and chapter-by-chapter outline
+- **[book/manuscript/](book/manuscript/)** - Individual chapter manuscripts (All 12 chapters complete)
 
 ### Image Generation, Audio & Video System
 - **[src/](src/)** - Python scripts for generating scene images (Stable Diffusion XL), audio (Coqui TTS), and videos (MoviePy)
 - **[images/](images/)** - Generated scene images
 - **[audio/](audio/)** - Generated scene audio files
 - **[videos/](videos/)** - Generated YouTube-ready videos
-- **[docs/project/](docs/project/)** - Image, audio, and video generation documentation
-- **[docs/project/TROUBLESHOOTING.md](docs/project/TROUBLESHOOTING.md)** - Troubleshooting guide for common issues
+- **[technical_docs/](technical_docs/)** - Image, audio, and video generation documentation
+- **[technical_docs/TROUBLESHOOTING.md](technical_docs/TROUBLESHOOTING.md)** - Troubleshooting guide for common issues
 - **[venv/](venv/)** - Python virtual environment (**ALWAYS use this for all Python commands**)
 
 ## Directory Structure
 
 ```
 novel/
-├── docs/
+├── book/
 │   ├── manuscript/          # Chapter files (The_Obsolescence_Chapter_*.md)
-│   ├── reference/           # Novel Bible and Outline
-│   └── project/             # Project documentation and plans
+│   └── reference/           # Novel Bible and Outline
+├── technical_docs/          # Project documentation and guides
 ├── src/                     # Python scripts for image, audio, and video generation
 ├── images/                  # Generated scene images
 ├── audio/                   # Generated scene audio files
