@@ -1,0 +1,47 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 4,
+  "sentence_content": "\"Looking good, Ramirez,\" she said, handing the tablet back.",
+  "characters_present": [
+    "Emma Chen",
+    "Ramirez"
+  ],
+  "character_roles": {
+    "Emma Chen": "acting/speaking",
+    "Ramirez": "receiving/listening"
+  },
+  "camera_framing": "medium shot",
+  "camera_angle": "level",
+  "camera_movement": null,
+  "composition": "Two-person interaction centered on tablet exchange",
+  "visual_focus": "tablet being handed back",
+  "depth_cues": "industrial workspace background",
+  "expressions": {
+    "Emma Chen": "pleased/approving",
+    "Ramirez": "attentive/professional"
+  },
+  "body_language": {
+    "Emma Chen": "extending hand with tablet",
+    "Ramirez": "receiving tablet"
+  },
+  "movement": "tablet being passed between characters",
+  "props": [
+    "tablet"
+  ],
+  "clothing_state": null,
+  "spatial_context": "manufacturing floor, Line 3 area",
+  "special_techniques": [],
+  "mood": "professional satisfaction",
+  "tone": "collaborative",
+  "lighting_suggestion": "industrial, bright overhead lighting",
+  "continuity_from_previous": "post-inspection moment, positive production assessment",
+  "continuity_to_next": "discussion of Ramirez's suggested modification",
+  "confidence": 0.95,
+  "analysis_timestamp": "2025-12-27T00:39:33.835797",
+  "api_tokens": {
+    "input": 928,
+    "output": 320
+  },
+  "attribute_changes": []
+}

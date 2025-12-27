@@ -1,0 +1,48 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 2,
+  "sentence_content": "Production was ahead of schedule.",
+  "characters_present": [
+    "Emma Chen",
+    "Ramirez"
+  ],
+  "character_roles": {
+    "Emma Chen": "acting",
+    "Ramirez": "referenced/present"
+  },
+  "camera_framing": "medium shot",
+  "camera_angle": "level",
+  "camera_movement": null,
+  "composition": "Technical environment with human-machine interaction focal point",
+  "visual_focus": "Line supervisor's tablet showing production metrics",
+  "depth_cues": "foreground: Emma, midground: tablet, background: manufacturing line",
+  "expressions": {
+    "Emma Chen": "satisfied/pleased smile"
+  },
+  "body_language": {
+    "Emma Chen": "confident, leaning/standing near Ramirez"
+  },
+  "movement": "minimal, transitional moment",
+  "props": [
+    "line supervisor's tablet",
+    "welding stations"
+  ],
+  "clothing_state": "professional industrial work attire",
+  "spatial_context": "manufacturing floor, Line 3 area",
+  "special_techniques": [
+    "technical workflow visualization"
+  ],
+  "mood": "professional satisfaction",
+  "tone": "matter-of-fact technical achievement",
+  "lighting_suggestion": "industrial overhead lighting, slightly cool-toned",
+  "continuity_from_previous": "Emma checking tablet, standing near Ramirez",
+  "continuity_to_next": "About to return tablet, preparing to speak",
+  "confidence": 0.95,
+  "analysis_timestamp": "2025-12-27T00:38:31.572826",
+  "api_tokens": {
+    "input": 908,
+    "output": 367
+  },
+  "attribute_changes": []
+}

@@ -8,16 +8,19 @@ import os
 import json
 from typing import Tuple, Optional
 from config import BASE_STYLE, NEGATIVE_PROMPT, OLLAMA_BASE_URL, OLLAMA_MODEL, ANTHROPIC_MODEL, ANTHROPIC_MAX_TOKENS
+from character_attributes import (
+    CHARACTER_CANONICAL_ATTRIBUTES,
+    get_full_description,
+    get_compressed_description
+)
 
 
 # Character descriptions for visual consistency
 # Optimized for SDXL 77-token limit while maintaining consistency
+# Legacy mode (non-storyboard): Use 8-token compressed descriptions
 CHARACTER_DESCRIPTIONS = {
-    "emma": "Asian American woman 40s, dark hair, business attire, analytical",
-    "maxim": "Eastern European man 40s, factory work clothes, tired resilient",
-    "elena": "woman 60s, gray hair, sharp eyes, Eastern European, analytical",
-    "tyler": "Asian American teen 16, casual clothes, earbuds, phone",
-    "amara": "African woman 50s, Kenyan, professional attire, fierce"
+    char: get_compressed_description(char, max_tokens=8)
+    for char in CHARACTER_CANONICAL_ATTRIBUTES.keys()
 }
 
 # Setting keywords to detect
@@ -593,6 +596,174 @@ def generate_prompts_comparison(sentence: str, scene_context: str = None, cost_t
 
     results["tokens"] = tokens
     return results
+
+
+# ============================================================================
+# STORYBOARD-INFORMED PROMPT GENERATION
+# ============================================================================
+
+def generate_storyboard_informed_prompt(sentence_content: str, storyboard_analysis, scene_context: str = None, attribute_manager=None) -> str:
+    """
+    Generate SDXL prompt from storyboard analysis.
+
+    Token Budget Strategy (77 tokens total):
+    - 25-30 tokens: Character description (from attribute manager if available)
+    - 8 tokens: Camera angle/framing
+    - 8 tokens: Primary action/pose
+    - 5 tokens: Mood/expression
+    - 15 tokens: Style (BASE_STYLE)
+    - 6-11 tokens: Buffer
+
+    Progressive compression if over 77 tokens:
+    1. Remove mood
+    2. Remove action
+    3. Compress character to face + clothing (20 tokens)
+    4. Compress character to face only (8 tokens)
+
+    Prompt Template:
+    {camera_framing} {camera_angle}. {character_desc} {expression} {action}.
+    {composition}. {mood}. {BASE_STYLE}
+
+    Args:
+        sentence_content: The sentence text
+        storyboard_analysis: StoryboardAnalysis object with detailed visual info
+        scene_context: Optional scene context (not heavily used, storyboard has better info)
+        attribute_manager: Optional AttributeStateManager for current character attributes
+
+    Returns:
+        Complete SDXL prompt optimized for 77-token limit
+    """
+    prompt_parts = []
+
+    # Camera framing and angle (8 tokens budget)
+    camera_part = f"{storyboard_analysis.camera_framing}, {storyboard_analysis.camera_angle}"
+    prompt_parts.append(camera_part)
+
+    # Character description with expression (25-30 tokens budget if using attribute manager)
+    if storyboard_analysis.characters_present:
+        primary_char = storyboard_analysis.characters_present[0].lower()
+
+        # Use attribute manager if available for detailed, consistent descriptions
+        if attribute_manager:
+            char_state = attribute_manager.get_current_attributes(primary_char)
+            if char_state:
+                char_desc = char_state.to_prompt_string()  # ~25-30 tokens
+            else:
+                # Fallback to canonical if character not in manager
+                char_desc = get_compressed_description(primary_char, max_tokens=28)
+                if not char_desc:
+                    char_desc = CHARACTER_DESCRIPTIONS.get(primary_char, primary_char)
+        else:
+            # Legacy mode: use short 8-token descriptions
+            char_desc = CHARACTER_DESCRIPTIONS.get(primary_char, primary_char)
+
+        # Add expression if available
+        if storyboard_analysis.expressions and primary_char in storyboard_analysis.expressions:
+            expression = storyboard_analysis.expressions[primary_char]
+            char_part = f"{char_desc}, {expression}"
+        else:
+            char_part = char_desc
+
+        prompt_parts.append(char_part)
+
+    # Action/body language (8 tokens budget)
+    if storyboard_analysis.movement:
+        prompt_parts.append(storyboard_analysis.movement)
+    elif storyboard_analysis.body_language and storyboard_analysis.characters_present:
+        primary_char = storyboard_analysis.characters_present[0].lower()
+        if primary_char in storyboard_analysis.body_language:
+            prompt_parts.append(storyboard_analysis.body_language[primary_char])
+
+    # Composition and visual focus (10 tokens budget)
+    if storyboard_analysis.visual_focus:
+        prompt_parts.append(f"focus on {storyboard_analysis.visual_focus}")
+    elif storyboard_analysis.composition:
+        # Take first part of composition (truncate if too long)
+        comp = storyboard_analysis.composition.split('.')[0][:50]
+        prompt_parts.append(comp)
+
+    # Setting/spatial context (8 tokens budget)
+    if storyboard_analysis.spatial_context:
+        # Extract key location words (remove verbose descriptions)
+        location = storyboard_analysis.spatial_context.split(',')[0][:40]
+        prompt_parts.append(f"in {location}")
+
+    # Mood and lighting (8 tokens budget)
+    mood_parts = []
+    if storyboard_analysis.mood:
+        mood_parts.append(storyboard_analysis.mood)
+    if storyboard_analysis.lighting_suggestion:
+        mood_parts.append(storyboard_analysis.lighting_suggestion)
+
+    if mood_parts:
+        mood_text = ", ".join(mood_parts)[:50]  # Truncate if too long
+        prompt_parts.append(mood_text)
+
+    # Combine all parts
+    base_description = ". ".join(prompt_parts) + "."
+
+    # Add style specification (15 tokens budget)
+    full_prompt = f"{base_description} {BASE_STYLE}"
+
+    # Validate token count and trim if necessary
+    is_valid, token_count = validate_prompt_length(full_prompt, max_tokens=77)
+
+    if not is_valid:
+        # Progressive compression strategy
+        # 1. Remove mood
+        # 2. Remove action
+        # 3. Compress character to face + clothing (20 tokens)
+        # 4. Compress character to face only (8 tokens)
+
+        prompt_parts_trimmed = []
+
+        # Always keep camera
+        prompt_parts_trimmed.append(camera_part)
+
+        # Always keep character (start with compressed version)
+        if storyboard_analysis.characters_present:
+            primary_char = storyboard_analysis.characters_present[0].lower()
+
+            # Try progressively compressed character descriptions
+            if attribute_manager:
+                char_state = attribute_manager.get_current_attributes(primary_char)
+                if char_state:
+                    # Try 20-token version first
+                    char_desc = char_state.to_compressed_string(max_tokens=20)
+                else:
+                    char_desc = get_compressed_description(primary_char, max_tokens=20)
+                    if not char_desc:
+                        char_desc = CHARACTER_DESCRIPTIONS.get(primary_char, primary_char)
+            else:
+                char_desc = CHARACTER_DESCRIPTIONS.get(primary_char, primary_char)
+
+            prompt_parts_trimmed.append(char_desc)
+
+        # Add back elements one by one until we approach limit
+        remaining_parts = []
+        if storyboard_analysis.expressions and storyboard_analysis.characters_present:
+            primary_char = storyboard_analysis.characters_present[0].lower()
+            if primary_char in storyboard_analysis.expressions:
+                remaining_parts.append(storyboard_analysis.expressions[primary_char])
+
+        if storyboard_analysis.visual_focus:
+            remaining_parts.append(f"focus on {storyboard_analysis.visual_focus}")
+
+        if storyboard_analysis.mood:
+            remaining_parts.append(storyboard_analysis.mood.split(',')[0])
+
+        # Add remaining parts until we hit token limit
+        for part in remaining_parts:
+            test_prompt = ". ".join(prompt_parts_trimmed + [part]) + f". {BASE_STYLE}"
+            test_valid, test_count = validate_prompt_length(test_prompt, max_tokens=77)
+            if test_valid:
+                prompt_parts_trimmed.append(part)
+            else:
+                break  # Stop adding, we've hit the limit
+
+        full_prompt = ". ".join(prompt_parts_trimmed) + f". {BASE_STYLE}"
+
+    return full_prompt
 
 
 def main():

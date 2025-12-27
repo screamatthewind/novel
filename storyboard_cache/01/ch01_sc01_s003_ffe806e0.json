@@ -1,0 +1,47 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 3,
+  "sentence_content": "The new automated welding stations on Line 3 had been finicky when they first arrived\u2014temperamental in ways the old equipment never was\u2014but she'd worked with the operators to dial in the settings, adjust the timing, make the machines dance with the people instead of against them.",
+  "characters_present": [
+    "Emma Chen",
+    "Ramirez"
+  ],
+  "character_roles": {
+    "Emma Chen": "acting/observing",
+    "Ramirez": "referenced/working"
+  },
+  "camera_framing": "wide industrial shot",
+  "camera_angle": "slightly elevated",
+  "camera_movement": null,
+  "composition": "industrial manufacturing floor with mechanical and human elements balanced",
+  "visual_focus": "automated welding stations, human-machine interaction",
+  "depth_cues": "foreground machines, midground workers, background factory infrastructure",
+  "expressions": {
+    "Emma Chen": "subtle satisfaction/professional pride"
+  },
+  "body_language": {
+    "Emma Chen": "confident, analytical posture"
+  },
+  "movement": "subtle machine rhythmic motion, workers adjusting equipment",
+  "props": [
+    "line supervisor's tablet",
+    "automated welding stations",
+    "industrial control panels"
+  ],
+  "clothing_state": null,
+  "spatial_context": "manufacturing floor, Line 3 area",
+  "special_techniques": [],
+  "mood": "precise, technical, collaborative",
+  "tone": "professional problem-solving",
+  "lighting_suggestion": "bright industrial fluorescent, high contrast",
+  "continuity_from_previous": "Emma reviewing production progress",
+  "continuity_to_next": "Emma about to praise Ramirez's modification",
+  "confidence": 0.95,
+  "analysis_timestamp": "2025-12-27T00:39:03.205579",
+  "api_tokens": {
+    "input": 964,
+    "output": 347
+  },
+  "attribute_changes": []
+}

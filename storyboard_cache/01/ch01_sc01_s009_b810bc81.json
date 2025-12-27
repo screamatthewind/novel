@@ -1,0 +1,50 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 9,
+  "sentence_content": "They hate when the floor proves them wrong.\"\n\nShe moved through the Hartwell Manufacturing facility with the easy confidence of someone who'd earned her place.",
+  "characters_present": [
+    "Emma Chen",
+    "Ramirez"
+  ],
+  "character_roles": {
+    "Emma Chen": "acting/speaking",
+    "Ramirez": "acting/listening"
+  },
+  "camera_framing": "medium tracking shot",
+  "camera_angle": "slightly low angle",
+  "camera_movement": "horizontal tracking with subject",
+  "composition": "industrial space with machinery in background, human figures in foreground",
+  "visual_focus": "Emma's confident stride through manufacturing space",
+  "depth_cues": "machinery in background, floor stretching into distance",
+  "expressions": {
+    "Emma Chen": "professional, subtly pleased",
+    "Ramirez": "attentive"
+  },
+  "body_language": {
+    "Emma Chen": "purposeful stride, head slightly raised",
+    "Ramirez": "listening posture"
+  },
+  "movement": "walking through manufacturing floor",
+  "props": [
+    "line supervisor's tablet",
+    "welding stations"
+  ],
+  "clothing_state": "professional work attire",
+  "spatial_context": "Hartwell Manufacturing facility, industrial interior",
+  "special_techniques": [
+    "depth of field focusing on Emma"
+  ],
+  "mood": "confident, methodical",
+  "tone": "professional achievement",
+  "lighting_suggestion": "industrial fluorescent, slightly cool-toned",
+  "continuity_from_previous": "tablet interaction with Ramirez",
+  "continuity_to_next": "potential dialogue or further exploration of manufacturing floor",
+  "confidence": 0.95,
+  "analysis_timestamp": "2025-12-27T00:39:08.032518",
+  "api_tokens": {
+    "input": 927,
+    "output": 392
+  },
+  "attribute_changes": []
+}

@@ -5,7 +5,8 @@
       "Bash(pip uninstall:*)",
       "Bash(pip install:*)",
       "Bash(where.exe:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(ls:*)"
     ]
   }
 }

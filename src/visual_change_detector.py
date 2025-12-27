@@ -193,6 +193,179 @@ class VisualChangeDetector:
         }
         self.sentence_count = 0
 
+    def analyze_with_storyboard(
+        self,
+        sentence: Sentence,
+        storyboard
+    ) -> Tuple[bool, str]:
+        """
+        Enhanced image reuse decision based on storyboard analysis.
+
+        Decision rules (in priority order):
+        1. First sentence in scene → New image
+        2. Special techniques (flashback, montage) → New image
+        3. Character entry/exit → New image
+        4. Camera angle change → New image
+        5. Camera framing change → New image
+        6. Expression/mood dramatically different → New image
+        7. Spatial position change → New image
+        8. Same framing, characters, mood → Reuse
+
+        Args:
+            sentence: Sentence object
+            storyboard: StoryboardAnalysis object with detailed visual info
+
+        Returns:
+            Tuple of (needs_new_image: bool, reason: str)
+        """
+        # First sentence always needs image
+        if self.sentence_count == 0:
+            self.sentence_count += 1
+            return (True, "first_sentence")
+
+        # Track what changed
+        changes = []
+
+        # 1. Special techniques (highest priority)
+        if storyboard.special_techniques:
+            return (True, f"special_technique: {', '.join(storyboard.special_techniques)}")
+
+        # 2. Character presence change
+        prev_chars = set(self.current_state.get('characters', []))
+        new_chars = set(storyboard.characters_present)
+
+        if prev_chars != new_chars:
+            # Character entered or exited
+            if new_chars - prev_chars:
+                changes.append(f"character_entry: {', '.join(new_chars - prev_chars)}")
+            if prev_chars - new_chars:
+                changes.append(f"character_exit: {', '.join(prev_chars - new_chars)}")
+
+        # 3. Camera angle change (significant visual shift)
+        if self.current_state.get('camera_angle') != storyboard.camera_angle:
+            if self.current_state.get('camera_angle'):  # Not first image
+                changes.append(f"camera_angle: {self.current_state.get('camera_angle')} → {storyboard.camera_angle}")
+
+        # 4. Camera framing change (significant visual shift)
+        if self.current_state.get('camera_framing') != storyboard.camera_framing:
+            if self.current_state.get('camera_framing'):  # Not first image
+                changes.append(f"camera_framing: {self.current_state.get('camera_framing')} → {storyboard.camera_framing}")
+
+        # 5. Spatial context change (location change)
+        if self.current_state.get('spatial_context') != storyboard.spatial_context:
+            if self.current_state.get('spatial_context'):  # Not first image
+                changes.append(f"location: {storyboard.spatial_context}")
+
+        # 6. Expression/mood change (check if dramatic)
+        if storyboard.characters_present:
+            primary_char = storyboard.characters_present[0]
+            old_expression = self.current_state.get('expressions', {}).get(primary_char)
+            new_expression = storyboard.expressions.get(primary_char)
+
+            if old_expression and new_expression:
+                # Check if expressions are dramatically different
+                if self._is_dramatic_expression_change(old_expression, new_expression):
+                    changes.append(f"expression: {old_expression} → {new_expression}")
+
+        # 7. Mood change (atmospheric)
+        if self.current_state.get('mood') != storyboard.mood:
+            if self.current_state.get('mood'):  # Not first image
+                # Only count dramatic mood shifts
+                if self._is_dramatic_mood_change(self.current_state.get('mood'), storyboard.mood):
+                    changes.append(f"mood: {storyboard.mood}")
+
+        # Decision logic
+        if changes:
+            # Any significant change warrants new image
+            self.sentence_count += 1
+            return (True, ", ".join(changes))
+
+        # No significant changes - reuse image
+        return (False, "no_significant_change")
+
+    def update_storyboard_state(self, storyboard):
+        """
+        Update state from storyboard analysis.
+
+        Args:
+            storyboard: StoryboardAnalysis object
+        """
+        self.current_state = {
+            'characters': storyboard.characters_present.copy(),
+            'camera_angle': storyboard.camera_angle,
+            'camera_framing': storyboard.camera_framing,
+            'spatial_context': storyboard.spatial_context,
+            'expressions': storyboard.expressions.copy() if storyboard.expressions else {},
+            'mood': storyboard.mood,
+        }
+
+    def _is_dramatic_expression_change(self, old_expr: str, new_expr: str) -> bool:
+        """
+        Check if expression change is dramatic enough for new image.
+
+        Args:
+            old_expr: Previous expression
+            new_expr: New expression
+
+        Returns:
+            True if change is dramatic
+        """
+        # Define expression categories
+        positive_expressions = ['happy', 'smiling', 'pleased', 'satisfied', 'content', 'relieved']
+        negative_expressions = ['sad', 'angry', 'frustrated', 'worried', 'anxious', 'shocked', 'horrified', 'disgusted']
+        neutral_expressions = ['neutral', 'calm', 'thoughtful', 'focused', 'concentrated']
+
+        def get_expression_category(expr):
+            expr_lower = expr.lower()
+            if any(word in expr_lower for word in positive_expressions):
+                return 'positive'
+            elif any(word in expr_lower for word in negative_expressions):
+                return 'negative'
+            else:
+                return 'neutral'
+
+        old_category = get_expression_category(old_expr)
+        new_category = get_expression_category(new_expr)
+
+        # Category change is dramatic
+        return old_category != new_category
+
+    def _is_dramatic_mood_change(self, old_mood: str, new_mood: str) -> bool:
+        """
+        Check if mood change is dramatic enough for new image.
+
+        Args:
+            old_mood: Previous mood
+            new_mood: New mood
+
+        Returns:
+            True if change is dramatic
+        """
+        # Define mood categories
+        tense_moods = ['tense', 'anxious', 'urgent', 'dramatic', 'suspenseful', 'threatening']
+        calm_moods = ['calm', 'peaceful', 'serene', 'gentle', 'soft', 'quiet']
+        dark_moods = ['dark', 'ominous', 'foreboding', 'grim', 'bleak']
+        hopeful_moods = ['hopeful', 'optimistic', 'bright', 'warm', 'uplifting']
+
+        def get_mood_category(mood):
+            mood_lower = mood.lower()
+            if any(word in mood_lower for word in tense_moods):
+                return 'tense'
+            elif any(word in mood_lower for word in calm_moods):
+                return 'calm'
+            elif any(word in mood_lower for word in dark_moods):
+                return 'dark'
+            elif any(word in mood_lower for word in hopeful_moods):
+                return 'hopeful'
+            else:
+                return 'neutral'
+
+        old_category = get_mood_category(old_mood)
+        new_category = get_mood_category(new_mood)
+
+        # Category change is dramatic
+        return old_category != new_category
+
 
 def main():
     """Test visual change detection logic."""

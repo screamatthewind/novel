@@ -1,0 +1,43 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 7,
+  "sentence_content": "Just needed someone to listen.\"\n\nEmma laughed.",
+  "characters_present": [
+    "Emma Chen"
+  ],
+  "character_roles": {
+    "Emma Chen": "acting"
+  },
+  "camera_framing": "close-up",
+  "camera_angle": "slightly low",
+  "camera_movement": null,
+  "composition": "Focused on Emma's face during laughter",
+  "visual_focus": "Emma's facial expression during laugh",
+  "depth_cues": "shallow foreground",
+  "expressions": {
+    "Emma Chen": "light, spontaneous amusement"
+  },
+  "body_language": {
+    "Emma Chen": "relaxed, shoulders potentially moving with laugh"
+  },
+  "movement": "laughing",
+  "props": [],
+  "clothing_state": "previous state (work attire)",
+  "spatial_context": "manufacturing floor",
+  "special_techniques": [
+    "emotional reveal"
+  ],
+  "mood": "momentary relief/unexpected humor",
+  "tone": "candid, spontaneous",
+  "lighting_suggestion": "workplace fluorescent, soft shadows",
+  "continuity_from_previous": "Professional interaction with Ramirez",
+  "continuity_to_next": "Potential emotional subtext",
+  "confidence": 0.85,
+  "analysis_timestamp": "2025-12-27T00:38:56.365452",
+  "api_tokens": {
+    "input": 936,
+    "output": 293
+  },
+  "attribute_changes": []
+}

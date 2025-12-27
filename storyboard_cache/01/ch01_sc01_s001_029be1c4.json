@@ -1,0 +1,45 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 1,
+  "sentence_content": "CHAPTER ONE\n\nAhead of Schedule\n\nEmma Chen checked the line supervisor's tablet and smiled.",
+  "characters_present": [
+    "Emma Chen",
+    "Ramirez"
+  ],
+  "character_roles": {
+    "Emma Chen": "acting",
+    "Ramirez": "implied presence"
+  },
+  "camera_framing": "medium shot",
+  "camera_angle": "slightly low, empowering",
+  "camera_movement": null,
+  "composition": "technical workspace with industrial background",
+  "visual_focus": "tablet screen and Emma's hand",
+  "depth_cues": "foreground: Emma, midground: tablet, background: industrial workspace",
+  "expressions": {
+    "Emma Chen": "subtle, pleased smile"
+  },
+  "body_language": {
+    "Emma Chen": "professional, confident stance"
+  },
+  "movement": "checking tablet, handing back",
+  "props": [
+    "line supervisor's tablet"
+  ],
+  "clothing_state": "professional work attire",
+  "spatial_context": "industrial manufacturing floor",
+  "special_techniques": [],
+  "mood": "professional satisfaction",
+  "tone": "technical precision",
+  "lighting_suggestion": "bright, even industrial lighting",
+  "continuity_from_previous": "scene start",
+  "continuity_to_next": "interaction with Ramirez",
+  "confidence": 0.95,
+  "analysis_timestamp": "2025-12-27T00:38:19.010328",
+  "api_tokens": {
+    "input": 915,
+    "output": 326
+  },
+  "attribute_changes": []
+}

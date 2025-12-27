@@ -43,6 +43,10 @@ ENABLE_GPU_ENCODING = True  # Auto-fallback to CPU if unavailable
 # Character reference directories
 CHARACTER_REFERENCES_DIR = "../character_references"
 
+# Storyboard directories (defined early for use in ensure directories section)
+STORYBOARD_CACHE_DIR = "../storyboard_cache"
+STORYBOARD_REPORT_DIR = "../storyboard_reports"
+
 # Ensure directories exist
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(LOG_DIR, exist_ok=True)
@@ -53,6 +57,8 @@ os.makedirs(VOICES_DIR, exist_ok=True)
 os.makedirs(VIDEO_DIR, exist_ok=True)
 os.makedirs(TEMP_DIR, exist_ok=True)
 os.makedirs(CHARACTER_REFERENCES_DIR, exist_ok=True)
+os.makedirs(STORYBOARD_CACHE_DIR, exist_ok=True)
+os.makedirs(STORYBOARD_REPORT_DIR, exist_ok=True)
 
 # Model settings
 DEFAULT_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
@@ -164,3 +170,15 @@ ENABLE_IP_ADAPTER = True  # Enable by default for character consistency
 # Multi-reference settings (for improved character consistency)
 MAX_REFERENCE_IMAGES = 5  # Use up to 5 references (research-backed optimum)
 REFERENCE_EMBEDDING_AVERAGING = True  # Average multiple reference embeddings for robust representation
+
+# Storyboard analysis settings
+ENABLE_STORYBOARD = True  # Enabled by default for character attribute consistency
+
+# Storyboard analyzer settings
+STORYBOARD_MODEL = "claude-3-5-haiku-20241022"  # Use Haiku for cost-effective analysis
+STORYBOARD_MAX_TOKENS = 500  # Allow detailed analysis responses
+STORYBOARD_BATCH_SIZE = 10  # Process in batches to manage API rate limits
+
+# Visual history settings
+TRACK_SCENE_VISUAL_HISTORY = True  # Track visual continuity across sentences
+SCENE_RESET_AT_BOUNDARIES = True  # Reset visual history at '* * *' scene separators
