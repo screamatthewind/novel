@@ -25,6 +25,10 @@ ENV/
 *.swo
 *~
 
+# Claude Code local memory (personal preferences)
+CLAUDE.local.md
+.claude/CLAUDE.local.md
+
 # Generated content
 images/
 audio/
