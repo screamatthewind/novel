@@ -213,9 +213,9 @@ Current settings (0.75/0.6) provide good balance between consistency and scene f
 
 ## Documentation
 
-- **Bug Fixes**: `technical_docs/Character_Reference_Bug_Fixes_2025-12-26.md`
-- **Implementation**: `technical_docs/Phase_2_IP_Adapter_Summary.md`
-- **8-Image System**: `technical_docs/Character_References_8_Image_Implementation.md`
+- **Implementation Details**: `technical_docs/Phase_2_IP_Adapter_Summary.md`
+- **Project Status**: `technical_docs/PROJECT_STATUS.md`
+- **Troubleshooting**: `technical_docs/TROUBLESHOOTING.md`
 
 ---
 

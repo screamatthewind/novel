@@ -1,0 +1,46 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 14,
+  "sentence_content": "Her phone buzzed.",
+  "characters_present": [
+    "Emma Chen"
+  ],
+  "character_roles": {
+    "Emma Chen": "experiencing"
+  },
+  "camera_framing": "close-up",
+  "camera_angle": "level",
+  "camera_movement": null,
+  "composition": "Focus on hand/phone with subtle industrial background",
+  "visual_focus": "phone/phone screen",
+  "depth_cues": "foreground: phone, midground: Emma's hand, background: industrial workspace",
+  "expressions": {
+    "Emma Chen": "neutral/momentarily interrupted"
+  },
+  "body_language": {
+    "Emma Chen": "potentially mid-motion, previously interacting with tablet"
+  },
+  "movement": "minimal, subtle phone vibration",
+  "props": [
+    "phone",
+    "previous tablet"
+  ],
+  "clothing_state": "work attire, likely professional",
+  "spatial_context": "industrial workspace/manufacturing floor",
+  "special_techniques": [
+    "shallow depth of field"
+  ],
+  "mood": "alert, slightly interrupted",
+  "tone": "professional/matter-of-fact",
+  "lighting_suggestion": "industrial overhead lighting, slightly cool-toned",
+  "continuity_from_previous": "just finished discussing production with line supervisor",
+  "continuity_to_next": "preparing to engage with phone notification",
+  "confidence": 0.85,
+  "analysis_timestamp": "2025-12-27T02:45:54.583629",
+  "api_tokens": {
+    "input": 878,
+    "output": 322
+  },
+  "attribute_changes": []
+}

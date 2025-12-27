@@ -1,0 +1,48 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 5,
+  "sentence_content": "\"That modification you suggested for the bracket feed\u2014it's working.\"\n\nRamirez grinned.",
+  "characters_present": [
+    "Ramirez",
+    "Emma Chen"
+  ],
+  "character_roles": {
+    "Ramirez": "speaking/confirming",
+    "Emma Chen": "listening/responding"
+  },
+  "camera_framing": "medium two-shot",
+  "camera_angle": "eye level",
+  "camera_movement": null,
+  "composition": "Centered on technical workspace with characters in industrial setting",
+  "visual_focus": "Ramirez's grin, technical tablet",
+  "depth_cues": "",
+  "expressions": {
+    "Ramirez": "broad, satisfied grin",
+    "Emma Chen": "pleased, professional smile"
+  },
+  "body_language": {
+    "Ramirez": "leaning forward, confident posture",
+    "Emma Chen": "professional stance, returning tablet"
+  },
+  "movement": null,
+  "props": [
+    "line supervisor's tablet",
+    "automated welding stations"
+  ],
+  "clothing_state": null,
+  "spatial_context": "Industrial manufacturing floor, Line 3 area",
+  "special_techniques": [],
+  "mood": "collaborative, triumphant",
+  "tone": "technical achievement",
+  "lighting_suggestion": "bright industrial lighting, slight metallic highlights",
+  "continuity_from_previous": "Technical discussion about machine modifications",
+  "continuity_to_next": "Ongoing conversation about production improvements",
+  "confidence": 0.92,
+  "analysis_timestamp": "2025-12-27T02:41:45.140805",
+  "api_tokens": {
+    "input": 895,
+    "output": 323
+  },
+  "attribute_changes": []
+}

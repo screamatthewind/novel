@@ -1,0 +1,47 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 8,
+  "sentence_content": "\"Don't let engineering hear you say that.",
+  "characters_present": [
+    "Emma Chen",
+    "Ramirez"
+  ],
+  "character_roles": {
+    "Emma Chen": "speaking",
+    "Ramirez": "spoken to"
+  },
+  "camera_framing": "medium close-up",
+  "camera_angle": "slightly low angle",
+  "camera_movement": null,
+  "composition": "Intimate workplace conversation, industrial background",
+  "visual_focus": "Emma's face, expression of subtle caution/humor",
+  "depth_cues": "",
+  "expressions": {
+    "Emma Chen": "knowing, slightly conspiratorial"
+  },
+  "body_language": {
+    "Emma Chen": "leaning in, confidential tone"
+  },
+  "movement": "subtle conversational gesture",
+  "props": [
+    "tablet"
+  ],
+  "clothing_state": null,
+  "spatial_context": "manufacturing floor, near automated welding stations",
+  "special_techniques": [
+    "implied fourth wall break"
+  ],
+  "mood": "playful professional tension",
+  "tone": "insider workplace humor",
+  "lighting_suggestion": "industrial fluorescent, slightly harsh",
+  "continuity_from_previous": "concludes previous interaction about production progress",
+  "continuity_to_next": "hints at internal workplace dynamics",
+  "confidence": 0.85,
+  "analysis_timestamp": "2025-12-27T02:43:05.138363",
+  "api_tokens": {
+    "input": 882,
+    "output": 304
+  },
+  "attribute_changes": []
+}

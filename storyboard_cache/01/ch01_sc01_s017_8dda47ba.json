@@ -1,0 +1,48 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 17,
+  "sentence_content": "Good luck.*\n\nThen, because he was sixteen and would pretend he didn't care: *Love you.*\n\nHe sent back an eye-roll emoji.",
+  "characters_present": [
+    "unnamed son",
+    "Emma (implied sender)"
+  ],
+  "character_roles": {
+    "unnamed son": "receiver",
+    "Emma": "sender"
+  },
+  "camera_framing": "close-up on mobile screen",
+  "camera_angle": "level",
+  "camera_movement": null,
+  "composition": "focused on text message interaction",
+  "visual_focus": "emoji response",
+  "depth_cues": "",
+  "expressions": {
+    "unnamed son": "performative indifference",
+    "Emma": "caring"
+  },
+  "body_language": {
+    "unnamed son": "eye-rolling gesture implied"
+  },
+  "movement": "text message sent",
+  "props": [
+    "mobile phone/device"
+  ],
+  "clothing_state": null,
+  "spatial_context": "implied distant communication",
+  "special_techniques": [
+    "emoji as emotional shorthand"
+  ],
+  "mood": "affectionate but teenage-awkward",
+  "tone": "subtle familial communication",
+  "lighting_suggestion": "",
+  "continuity_from_previous": null,
+  "continuity_to_next": "potential further text exchange",
+  "confidence": 0.85,
+  "analysis_timestamp": "2025-12-27T02:47:12.444487",
+  "api_tokens": {
+    "input": 906,
+    "output": 263
+  },
+  "attribute_changes": []
+}

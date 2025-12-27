@@ -2,6 +2,26 @@
 
 All notable changes to The Obsolescence novel generation project.
 
+## [2025-12-27] - Documentation Cleanup
+
+### Changed
+- **Cleaned up technical_docs/ folder** (21 files → 11 files, 48% reduction)
+  - Removed 10 obsolete files (session summaries, bug fix docs, redundant documentation)
+  - Kept core operational guides: PROJECT_STATUS, TROUBLESHOOTING, storyboard docs, phase summaries, cost tracking
+  - Updated Character_References_Quick_Guide.md to reference current docs only
+
+### Removed Files
+- Session summaries: `SESSION_SUMMARY.md`, `Session_Summary_20251226.md`, `consistency_update_summary.md`
+- Bug fix docs: `Character_Reference_Bug_Fixes_2025-12-26.md`, `Character_Prompts_Updated_20251226.md`
+- Completed work: `completed-2025-12-27-project-cleanup-restructure.md`, `Pipeline_Scripts_Cleanup_2025-12-26.md`
+- Redundant/obsolete: `Fix_Summary_2025-12-26_TTS_CUDA.md`, `Character_References_8_Image_Implementation.md`, `LLM_Prompt_Generation_Setup.md`
+
+### Rationale
+- Session summaries are historical records; information preserved in git history
+- Bug fix documentation superseded by fixes in code
+- Redundant information consolidated into core docs (TROUBLESHOOTING.md, Phase summaries)
+- LLM prompt generation superseded by storyboard analysis (now default method)
+
 ## [2025-12-27] - Character Clothing Consistency Fix
 
 ### Fixed

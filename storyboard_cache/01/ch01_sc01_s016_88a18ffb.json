@@ -1,0 +1,48 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 16,
+  "sentence_content": "You coming?*\n\nShe typed back: *Wouldn't miss it.",
+  "characters_present": [
+    "Emma Chen",
+    "Ramirez"
+  ],
+  "character_roles": {
+    "Emma Chen": "acting/speaking",
+    "Ramirez": "referenced/present"
+  },
+  "camera_framing": "medium shot",
+  "camera_angle": "level",
+  "camera_movement": null,
+  "composition": "intimate digital communication frame",
+  "visual_focus": "mobile device/text message screen",
+  "depth_cues": "foreground digital interaction",
+  "expressions": {
+    "Emma Chen": "subtle anticipatory smile"
+  },
+  "body_language": {
+    "Emma Chen": "poised, professional stance"
+  },
+  "movement": "typing on mobile device",
+  "props": [
+    "mobile phone/device"
+  ],
+  "clothing_state": "professional work attire",
+  "spatial_context": "industrial workplace/factory floor",
+  "special_techniques": [
+    "split screen",
+    "message bubble overlay"
+  ],
+  "mood": "professional excitement",
+  "tone": "crisp, efficient communication",
+  "lighting_suggestion": "industrial fluorescent, slightly cool tones",
+  "continuity_from_previous": "aftermath of successful production optimization",
+  "continuity_to_next": "preparing for potential meetup/next interaction",
+  "confidence": 0.85,
+  "analysis_timestamp": "2025-12-27T02:46:46.840475",
+  "api_tokens": {
+    "input": 889,
+    "output": 332
+  },
+  "attribute_changes": []
+}

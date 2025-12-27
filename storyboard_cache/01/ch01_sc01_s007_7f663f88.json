@@ -1,0 +1,43 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 7,
+  "sentence_content": "Just needed someone to listen.\"\n\nEmma laughed.",
+  "characters_present": [
+    "Emma"
+  ],
+  "character_roles": {
+    "Emma": "acting"
+  },
+  "camera_framing": "close-up",
+  "camera_angle": "level",
+  "camera_movement": null,
+  "composition": "Emma centered, focus on facial expression",
+  "visual_focus": "Emma's laugh",
+  "depth_cues": "minimal background",
+  "expressions": {
+    "Emma": "amused, releasing tension"
+  },
+  "body_language": {
+    "Emma": "relaxed shoulders, open posture"
+  },
+  "movement": "laughing",
+  "props": [],
+  "clothing_state": "professional work attire",
+  "spatial_context": "industrial work environment",
+  "special_techniques": [
+    "emotional release moment"
+  ],
+  "mood": "light, relieved",
+  "tone": "personal, vulnerable",
+  "lighting_suggestion": "soft, natural workplace lighting",
+  "continuity_from_previous": "technical conversation about production line",
+  "continuity_to_next": "potential conversation follow-up",
+  "confidence": 0.85,
+  "analysis_timestamp": "2025-12-27T02:42:37.842602",
+  "api_tokens": {
+    "input": 906,
+    "output": 272
+  },
+  "attribute_changes": []
+}

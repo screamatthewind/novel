@@ -1,0 +1,45 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 18,
+  "sentence_content": "She smiled.",
+  "characters_present": [
+    "Emma Chen"
+  ],
+  "character_roles": {
+    "Emma Chen": "acting"
+  },
+  "camera_framing": "close-up",
+  "camera_angle": "level",
+  "camera_movement": null,
+  "composition": "Face-centered, soft human reaction moment",
+  "visual_focus": "Emma's facial expression",
+  "depth_cues": "foreground focused on facial reaction",
+  "expressions": {
+    "Emma Chen": "subtle, satisfied smile"
+  },
+  "body_language": {
+    "Emma Chen": "relaxed, confident posture"
+  },
+  "movement": "minimal, transitional smile",
+  "props": [
+    "tablet"
+  ],
+  "clothing_state": null,
+  "spatial_context": "industrial manufacturing floor",
+  "special_techniques": [
+    "emotion reveal through minimal gesture"
+  ],
+  "mood": "professional satisfaction",
+  "tone": "understated triumph",
+  "lighting_suggestion": "bright, industrial overhead lighting",
+  "continuity_from_previous": null,
+  "continuity_to_next": "preparing to speak with Ramirez",
+  "confidence": 0.95,
+  "analysis_timestamp": "2025-12-27T02:47:38.065230",
+  "api_tokens": {
+    "input": 876,
+    "output": 249
+  },
+  "attribute_changes": []
+}

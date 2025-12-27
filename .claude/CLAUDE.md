@@ -48,6 +48,16 @@ novel/
 
 ## Recent Changes
 
+### 2025-12-27: Documentation Cleanup
+- **Action**: Cleaned up `technical_docs/` folder (21 files → 11 files, 48% reduction)
+- **Removed**: Session summaries, bug fix docs, and obsolete/redundant documentation
+- **Kept**: Core operational guides (PROJECT_STATUS, TROUBLESHOOTING, storyboard docs, phase summaries, cost tracking)
+- **Rationale**:
+  - Session summaries are historical; information preserved in git history
+  - Bug fixes documented in code and TROUBLESHOOTING.md
+  - LLM prompt generation superseded by storyboard analysis (now default)
+- **See**: [CHANGELOG.md](../CHANGELOG.md) for full list of removed files
+
 ### 2025-12-27: Fixed Character Clothing Consistency
 - **Issue**: Clothing colors/styles changed randomly between sentences in same scene
 - **Cause**: Character name mismatch ("Emma Chen" vs "emma") prevented attribute lookups

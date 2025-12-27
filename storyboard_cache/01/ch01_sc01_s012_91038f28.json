@@ -1,0 +1,46 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 12,
+  "sentence_content": "It was a good job.",
+  "characters_present": [
+    "Emma Chen"
+  ],
+  "character_roles": {
+    "Emma Chen": "acting"
+  },
+  "camera_framing": "medium shot",
+  "camera_angle": "slightly low, empowering",
+  "camera_movement": null,
+  "composition": "Centered on Emma, industrial background showing manufacturing line",
+  "visual_focus": "Emma's satisfied expression",
+  "depth_cues": "foreground: Emma, midground: welding stations, background: factory floor",
+  "expressions": {
+    "Emma Chen": "satisfied, professional smile"
+  },
+  "body_language": {
+    "Emma Chen": "confident posture, upright stance"
+  },
+  "movement": "subtle turning motion after checking tablet",
+  "props": [
+    "tablet",
+    "welding stations"
+  ],
+  "clothing_state": "professional industrial workwear",
+  "spatial_context": "manufacturing floor, Line 3",
+  "special_techniques": [
+    "shallow depth of field to highlight Emma"
+  ],
+  "mood": "accomplished, professional pride",
+  "tone": "matter-of-fact technical positivity",
+  "lighting_suggestion": "industrial fluorescent, slightly warm",
+  "continuity_from_previous": null,
+  "continuity_to_next": "transition to dialogue with Ramirez",
+  "confidence": 0.85,
+  "analysis_timestamp": "2025-12-27T02:45:01.220536",
+  "api_tokens": {
+    "input": 879,
+    "output": 320
+  },
+  "attribute_changes": []
+}

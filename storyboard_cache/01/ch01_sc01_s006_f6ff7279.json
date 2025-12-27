@@ -1,0 +1,51 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 6,
+  "sentence_content": "\"Told you the machine was smarter than the manual.",
+  "characters_present": [
+    "Emma Chen",
+    "Ramirez"
+  ],
+  "character_roles": {
+    "Emma Chen": "speaking",
+    "Ramirez": "spoken to/implied listener"
+  },
+  "camera_framing": "medium shot",
+  "camera_angle": "slightly low angle",
+  "camera_movement": null,
+  "composition": "technical workspace with machines in background",
+  "visual_focus": "speaker's confident expression",
+  "depth_cues": "welding stations in midground, machinery creating industrial depth",
+  "expressions": {
+    "Emma Chen": "subtle, knowing smirk",
+    "Ramirez": "implied attentive listening"
+  },
+  "body_language": {
+    "Emma Chen": "relaxed, confident posture",
+    "Ramirez": "implied professional stance"
+  },
+  "movement": "minimal, conversational",
+  "props": [
+    "tablet",
+    "welding stations",
+    "industrial control panel"
+  ],
+  "clothing_state": null,
+  "spatial_context": "manufacturing floor, Line 3",
+  "special_techniques": [
+    "implied technical mastery"
+  ],
+  "mood": "technical satisfaction",
+  "tone": "professional triumph",
+  "lighting_suggestion": "bright industrial lighting, slight blue-white technical tone",
+  "continuity_from_previous": null,
+  "continuity_to_next": null,
+  "confidence": 0.85,
+  "analysis_timestamp": "2025-12-27T02:42:12.556383",
+  "api_tokens": {
+    "input": 885,
+    "output": 327
+  },
+  "attribute_changes": []
+}

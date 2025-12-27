@@ -1,0 +1,47 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 10,
+  "sentence_content": "Twelve years, starting as a line supervisor herself, learning every station, every quirk, every personality.",
+  "characters_present": [
+    "Emma Chen"
+  ],
+  "character_roles": {
+    "Emma Chen": "reflecting/remembering"
+  },
+  "camera_framing": "close-up/medium",
+  "camera_angle": "slightly low, introspective",
+  "camera_movement": null,
+  "composition": "Internal memory sequence, soft focus background suggesting past scenes",
+  "visual_focus": "Emma's contemplative expression",
+  "depth_cues": "memory layers - foreground Emma, background blurred factory/work stations",
+  "expressions": {
+    "Emma Chen": "reflective, knowing smile"
+  },
+  "body_language": {
+    "Emma Chen": "subtle reminiscent posture, slight head tilt"
+  },
+  "movement": "minimal, memory-based mental movement",
+  "props": [
+    "line supervisor memories",
+    "work stations"
+  ],
+  "clothing_state": null,
+  "spatial_context": "Mental landscape of past work experiences",
+  "special_techniques": [
+    "memory montage",
+    "overlapping imagery"
+  ],
+  "mood": "nostalgic professional pride",
+  "tone": "retrospective professional narrative",
+  "lighting_suggestion": "soft, memory-like diffused lighting",
+  "continuity_from_previous": null,
+  "continuity_to_next": "Setting up Emma's professional expertise background",
+  "confidence": 0.95,
+  "analysis_timestamp": "2025-12-27T02:44:04.514422",
+  "api_tokens": {
+    "input": 895,
+    "output": 296
+  },
+  "attribute_changes": []
+}

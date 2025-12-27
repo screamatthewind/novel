@@ -1,0 +1,46 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 11,
+  "sentence_content": "Now she was operations manager, the person who translated between the executives who wanted numbers and the workers who made products.",
+  "characters_present": [
+    "Emma Chen"
+  ],
+  "character_roles": {
+    "Emma Chen": "acting/describing"
+  },
+  "camera_framing": "medium shot",
+  "camera_angle": "slightly elevated",
+  "camera_movement": null,
+  "composition": "Professional hierarchical visualization with Emma central",
+  "visual_focus": "Emma as central interpreter/bridge figure",
+  "depth_cues": "implied vertical organizational layers",
+  "expressions": {
+    "Emma Chen": "professional, confident"
+  },
+  "body_language": {
+    "Emma Chen": "poised, authoritative"
+  },
+  "movement": null,
+  "props": [
+    "organizational chart",
+    "conceptual communication channels"
+  ],
+  "clothing_state": null,
+  "spatial_context": "industrial workplace/office environment",
+  "special_techniques": [
+    "metaphorical visual overlay showing communication channels"
+  ],
+  "mood": "pragmatic, strategic",
+  "tone": "matter-of-fact professional description",
+  "lighting_suggestion": "soft office lighting, highlighting Emma's central position",
+  "continuity_from_previous": null,
+  "continuity_to_next": "suggesting Emma's active management role",
+  "confidence": 0.85,
+  "analysis_timestamp": "2025-12-27T02:44:32.856227",
+  "api_tokens": {
+    "input": 896,
+    "output": 257
+  },
+  "attribute_changes": []
+}

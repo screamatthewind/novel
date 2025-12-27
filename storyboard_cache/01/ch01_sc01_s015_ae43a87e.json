@@ -1,0 +1,45 @@
+{
+  "chapter_num": 1,
+  "scene_num": 1,
+  "sentence_num": 15,
+  "sentence_content": "A text from Tyler: *Game tonight, 7pm.",
+  "characters_present": [
+    "Emma Chen",
+    "Tyler"
+  ],
+  "character_roles": {
+    "Emma Chen": "receiving message",
+    "Tyler": "sender of text message"
+  },
+  "camera_framing": "close-up on phone screen",
+  "camera_angle": "level",
+  "camera_movement": null,
+  "composition": "centered phone screen with message",
+  "visual_focus": "phone screen text message",
+  "depth_cues": "foreground message, background implied workplace",
+  "expressions": {
+    "Emma Chen": "subtle interest/acknowledgment"
+  },
+  "body_language": {},
+  "movement": null,
+  "props": [
+    "mobile phone"
+  ],
+  "clothing_state": null,
+  "spatial_context": "industrial workplace/factory floor",
+  "special_techniques": [
+    "text message graphic overlay"
+  ],
+  "mood": "casual, anticipatory",
+  "tone": "matter-of-fact",
+  "lighting_suggestion": "bright, clinical industrial lighting",
+  "continuity_from_previous": null,
+  "continuity_to_next": "anticipation of game details",
+  "confidence": 0.85,
+  "analysis_timestamp": "2025-12-27T02:46:20.624856",
+  "api_tokens": {
+    "input": 907,
+    "output": 250
+  },
+  "attribute_changes": []
+}
