@@ -9,39 +9,42 @@
   ],
   "character_roles": {
     "Emma Chen": "acting/speaking",
-    "Ramirez": "receiving/listening"
+    "Ramirez": "receiving/referenced"
   },
-  "camera_framing": "medium shot",
-  "camera_angle": "level",
+  "camera_framing": "medium two-shot",
+  "camera_angle": "slightly low, emphasizing interaction",
   "camera_movement": null,
-  "composition": "Two-person interaction centered on tablet exchange",
-  "visual_focus": "tablet being handed back",
-  "depth_cues": "industrial workspace background",
+  "composition": "Technical workspace with interpersonal focus",
+  "visual_focus": "tablet exchange between characters",
+  "depth_cues": "foreground interaction, midground industrial setting",
   "expressions": {
-    "Emma Chen": "pleased/approving",
-    "Ramirez": "attentive/professional"
+    "Emma Chen": "positive/approving smile",
+    "Ramirez": "professional/attentive"
   },
   "body_language": {
-    "Emma Chen": "extending hand with tablet",
-    "Ramirez": "receiving tablet"
+    "Emma Chen": "leaning forward, extending tablet",
+    "Ramirez": "receiving tablet, likely standing near welding station"
   },
-  "movement": "tablet being passed between characters",
+  "movement": "tablet hand-off",
   "props": [
-    "tablet"
+    "tablet",
+    "potential welding equipment in background"
   ],
-  "clothing_state": null,
-  "spatial_context": "manufacturing floor, Line 3 area",
-  "special_techniques": [],
+  "clothing_state": "professional industrial work attire",
+  "spatial_context": "manufacturing floor/industrial workspace",
+  "special_techniques": [
+    "subtle depth of field"
+  ],
   "mood": "professional satisfaction",
   "tone": "collaborative",
-  "lighting_suggestion": "industrial, bright overhead lighting",
-  "continuity_from_previous": "post-inspection moment, positive production assessment",
-  "continuity_to_next": "discussion of Ramirez's suggested modification",
-  "confidence": 0.95,
-  "analysis_timestamp": "2025-12-27T00:39:33.835797",
+  "lighting_suggestion": "bright, industrial overhead lighting",
+  "continuity_from_previous": "Production review context",
+  "continuity_to_next": "Elaboration on Ramirez's modification",
+  "confidence": 0.85,
+  "analysis_timestamp": "2025-12-27T02:41:15.325360",
   "api_tokens": {
-    "input": 928,
-    "output": 320
+    "input": 890,
+    "output": 379
   },
   "attribute_changes": []
 }

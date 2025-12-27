@@ -97,12 +97,12 @@ Converts storyboard analysis into optimized 77-token SDXL prompts:
 This reduces unnecessary image generation while ensuring visual changes are captured.
 
 ### 5. [src/generate_scene_images.py](../../src/generate_scene_images.py)
-**Added command-line arguments**:
-- `--enable-storyboard` - Enable storyboard analysis
+**Command-line arguments**:
 - `--storyboard-cache-dir` - Custom cache directory
 - `--rebuild-storyboard` - Force cache rebuild
 
 **Integration**:
+- Storyboard analysis is always enabled by default
 - Initializes `StoryboardAnalyzer`, `NovelContext`, and `SceneVisualHistory`
 - Calls storyboard analysis for each sentence
 - Uses storyboard-informed prompts when available
@@ -110,14 +110,13 @@ This reduces unnecessary image generation while ensuring visual changes are capt
 - Reports storyboard costs at end of run
 
 ### 6. [src/config.py](../../src/config.py)
-**Added settings**:
+**Settings**:
 ```python
 # Storyboard directories
 STORYBOARD_CACHE_DIR = "../storyboard_cache"
 STORYBOARD_REPORT_DIR = "../storyboard_reports"
 
-# Storyboard analysis settings
-ENABLE_STORYBOARD = False  # Opt-in (use --enable-storyboard flag)
+# Storyboard analyzer settings (always enabled)
 STORYBOARD_MODEL = "claude-3-5-haiku-20241022"
 STORYBOARD_MAX_TOKENS = 500
 STORYBOARD_BATCH_SIZE = 10
@@ -143,16 +142,14 @@ Creates cache and report directories automatically on import.
 cd src
 ../venv/Scripts/python generate_scene_images.py \
   --chapters 1 \
-  --enable-storyboard \
   --dry-run
 ```
 
-### Generate Images with Storyboard
+### Generate Images (Storyboard always enabled)
 ```bash
 cd src
 ../venv/Scripts/python generate_scene_images.py \
   --chapters 1 \
-  --enable-storyboard \
   --enable-ip-adapter
 ```
 
@@ -161,16 +158,14 @@ cd src
 cd src
 ../venv/Scripts/python generate_scene_images.py \
   --chapters 1 \
-  --enable-storyboard \
   --rebuild-storyboard
 ```
 
-### Generate All Chapters with Storyboard
+### Generate All Chapters
 ```bash
 cd src
 ../venv/Scripts/python generate_scene_images.py \
   --chapters 1 2 3 4 5 6 7 8 9 10 11 12 \
-  --enable-storyboard \
   --enable-ip-adapter
 ```
 
@@ -179,7 +174,7 @@ cd src
 **Test Command**:
 ```bash
 cd src
-../venv/Scripts/python generate_scene_images.py --chapters 1 --enable-storyboard --rebuild-storyboard --dry-run
+../venv/Scripts/python generate_scene_images.py --chapters 1 --rebuild-storyboard --dry-run
 ```
 
 **Results** (Chapter 1, Scene 1 - 10 sentences):
@@ -224,9 +219,9 @@ illustration..."
 ## Architecture Flow
 
 ```
-1. User runs: generate_scene_images.py --chapters 1 --enable-storyboard
+1. User runs: generate_scene_images.py --chapters 1
 
-2. Initialize components:
+2. Initialize components (storyboard always enabled):
    - StoryboardAnalyzer (with cache)
    - NovelContext (parse Novel Bible)
    - SceneVisualHistory (per chapter)
@@ -257,7 +252,7 @@ illustration..."
 3. **Smarter Image Reuse**: Composition-based detection reduces unnecessary generation
 4. **Minimal Cost**: Aggressive caching keeps costs under $0.25 for entire 12-chapter novel
 5. **Fully Automatic**: No manual intervention required
-6. **Backward Compatible**: Existing workflows unchanged (opt-in with `--enable-storyboard`)
+6. **Always Enabled**: Storyboard analysis is now the default for all image generation
 
 ## Known Issues
 

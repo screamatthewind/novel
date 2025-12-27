@@ -2,6 +2,34 @@
 
 Common issues and solutions for the novel generation system.
 
+## Inconsistent Clothing/Appearance Between Sentences (FIXED 2025-12-27)
+
+**Symptoms:**
+- Character clothing colors/styles change randomly between consecutive sentences in the same scene
+- Emma appears in different outfits from sentence to sentence (navy blazer → gray sweater → etc.)
+- Inconsistent visual appearance despite using storyboard mode
+
+**Root Cause:**
+Character name mismatch between storyboard analyzer (returns "Emma Chen") and canonical attributes dictionary (uses "emma"). This caused:
+1. Attribute lookups to fail → `char_state` was `None`
+2. Fallback returned character name instead of description
+3. No clothing info in prompts → SDXL generated random clothing
+
+**Solution (Applied):**
+Fixed in commit 2025-12-27:
+- Added `normalize_character_name()` function in [src/prompt_generator.py](../src/prompt_generator.py)
+- Enhanced `to_compressed_string()` to always include clothing (even at extreme compression)
+- Fixed dry-run mode to pass `attribute_manager` parameter
+- All prompts now include: "mid-40s Asian American woman, intelligent brown eyes, analytical expression, navy blue blazer white shirt black"
+
+**To Apply Fix to Existing Images:**
+```bash
+cd src
+../venv/Scripts/python.exe generate_scene_images.py --chapters 1 --rebuild-storyboard
+```
+
+This deletes old cache/images and regenerates with consistent clothing.
+
 ## TTS Model Loading Error
 
 **Error Message:**

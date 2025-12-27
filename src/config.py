@@ -171,9 +171,6 @@ ENABLE_IP_ADAPTER = True  # Enable by default for character consistency
 MAX_REFERENCE_IMAGES = 5  # Use up to 5 references (research-backed optimum)
 REFERENCE_EMBEDDING_AVERAGING = True  # Average multiple reference embeddings for robust representation
 
-# Storyboard analysis settings
-ENABLE_STORYBOARD = True  # Enabled by default for character attribute consistency
-
 # Storyboard analyzer settings
 STORYBOARD_MODEL = "claude-3-5-haiku-20241022"  # Use Haiku for cost-effective analysis
 STORYBOARD_MAX_TOKENS = 500  # Allow detailed analysis responses

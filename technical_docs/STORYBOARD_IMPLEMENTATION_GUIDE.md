@@ -155,23 +155,23 @@ def analyze_with_storyboard(
 ```
 
 ### 5. src/generate_scene_images.py (MODIFY)
-**Add Command-Line Arguments**:
+**Command-Line Arguments**:
 ```python
---enable-storyboard      # Enable storyboard analysis
 --storyboard-cache-dir   # Cache directory (default: ../storyboard_cache)
 --rebuild-storyboard     # Force rebuild cache (ignore existing)
 ```
 
+**Note:** Storyboard analysis is now enabled by default and always active.
+
 **Integration Flow**:
 ```python
-if args.enable_storyboard:
-    # Initialize
-    storyboard_analyzer = StoryboardAnalyzer(
-        cache_dir=args.storyboard_cache_dir,
-        rebuild_cache=args.rebuild_storyboard
-    )
-    novel_context = NovelContext()
-    scene_history = SceneVisualHistory()
+# Initialize (always active)
+storyboard_analyzer = StoryboardAnalyzer(
+    cache_dir=args.storyboard_cache_dir,
+    rebuild_cache=args.rebuild_storyboard
+)
+novel_context = NovelContext()
+scene_history = SceneVisualHistory()
 
     # Process each sentence
     for sentence in all_sentences:
@@ -207,9 +207,8 @@ if args.enable_storyboard:
 # Storyboard analysis settings
 STORYBOARD_CACHE_DIR = "../storyboard_cache"
 STORYBOARD_REPORT_DIR = "../storyboard_reports"
-ENABLE_STORYBOARD = False  # Opt-in
 
-# Storyboard analyzer settings
+# Storyboard analyzer settings (always enabled)
 STORYBOARD_MODEL = "claude-3-5-haiku-20241022"
 STORYBOARD_MAX_TOKENS = 500  # Detailed analysis
 STORYBOARD_BATCH_SIZE = 10
@@ -328,12 +327,11 @@ Storyboard Analysis:
 
 ## Usage Examples
 
-### Generate Images with Storyboard
+### Generate Images (Storyboard always enabled)
 ```bash
 cd src
 ../venv/Scripts/python generate_scene_images.py \
   --chapters 1 \
-  --enable-storyboard \
   --llm haiku
 ```
 
@@ -341,7 +339,6 @@ cd src
 ```bash
 ../venv/Scripts/python generate_scene_images.py \
   --chapters 1 \
-  --enable-storyboard \
   --dry-run
 ```
 
@@ -349,7 +346,6 @@ cd src
 ```bash
 ../venv/Scripts/python generate_scene_images.py \
   --chapters 1 \
-  --enable-storyboard \
   --rebuild-storyboard
 ```
 
@@ -357,7 +353,6 @@ cd src
 ```bash
 ../venv/Scripts/python generate_scene_images.py \
   --chapters 1 \
-  --enable-storyboard \
   --llm compare
 ```
 

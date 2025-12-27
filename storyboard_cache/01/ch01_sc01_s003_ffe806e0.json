@@ -9,39 +9,41 @@
   ],
   "character_roles": {
     "Emma Chen": "acting/observing",
-    "Ramirez": "referenced/working"
+    "Ramirez": "implied worker/operator"
   },
   "camera_framing": "wide industrial shot",
-  "camera_angle": "slightly elevated",
+  "camera_angle": "slightly low angle",
   "camera_movement": null,
-  "composition": "industrial manufacturing floor with mechanical and human elements balanced",
-  "visual_focus": "automated welding stations, human-machine interaction",
-  "depth_cues": "foreground machines, midground workers, background factory infrastructure",
+  "composition": "Industrial workspace with welding stations arranged in parallel, technical foreground",
+  "visual_focus": "automated welding stations, machinery in motion",
+  "depth_cues": "foreground machinery, midground operators, background factory infrastructure",
   "expressions": {
-    "Emma Chen": "subtle satisfaction/professional pride"
+    "Emma Chen": "satisfied/pleased"
   },
   "body_language": {
-    "Emma Chen": "confident, analytical posture"
+    "Emma Chen": "standing confidently, reviewing tablet"
   },
-  "movement": "subtle machine rhythmic motion, workers adjusting equipment",
+  "movement": "machinery welding, subtle human movement around stations",
   "props": [
+    "welding stations",
     "line supervisor's tablet",
-    "automated welding stations",
-    "industrial control panels"
+    "industrial machinery"
   ],
-  "clothing_state": null,
-  "spatial_context": "manufacturing floor, Line 3 area",
-  "special_techniques": [],
-  "mood": "precise, technical, collaborative",
+  "clothing_state": "professional industrial workwear",
+  "spatial_context": "manufacturing line, factory floor",
+  "special_techniques": [
+    "dynamic machine-human interaction visualization"
+  ],
+  "mood": "technical precision, collaborative efficiency",
   "tone": "professional problem-solving",
-  "lighting_suggestion": "bright industrial fluorescent, high contrast",
-  "continuity_from_previous": "Emma reviewing production progress",
-  "continuity_to_next": "Emma about to praise Ramirez's modification",
+  "lighting_suggestion": "bright industrial lighting, high contrast",
+  "continuity_from_previous": "scene opening",
+  "continuity_to_next": "dialogue with Ramirez",
   "confidence": 0.95,
-  "analysis_timestamp": "2025-12-27T00:39:03.205579",
+  "analysis_timestamp": "2025-12-27T02:40:44.606221",
   "api_tokens": {
-    "input": 964,
-    "output": 347
+    "input": 932,
+    "output": 353
   },
   "attribute_changes": []
 }

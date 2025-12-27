@@ -46,6 +46,19 @@ novel/
 └── venv/                    # Python virtual environment (**ALWAYS USE THIS**)
 ```
 
+## Recent Changes
+
+### 2025-12-27: Fixed Character Clothing Consistency
+- **Issue**: Clothing colors/styles changed randomly between sentences in same scene
+- **Cause**: Character name mismatch ("Emma Chen" vs "emma") prevented attribute lookups
+- **Fix**: Added character name normalization + enhanced compression to always include clothing
+- **Files Modified**:
+  - `src/prompt_generator.py` - Added `normalize_character_name()` function
+  - `src/attribute_state_manager.py` - Enhanced `to_compressed_string()` to always include clothing
+  - `src/generate_scene_images.py` - Fixed `attribute_manager` initialization in dry-run mode
+- **Result**: All prompts now include consistent clothing (e.g., "navy blue blazer white shirt black")
+- **See**: [CHANGELOG.md](../CHANGELOG.md) and [technical_docs/TROUBLESHOOTING.md](../technical_docs/TROUBLESHOOTING.md)
+
 ## Additional Instructions
 
 For detailed rules, see:

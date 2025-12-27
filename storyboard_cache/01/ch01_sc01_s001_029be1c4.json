@@ -9,37 +9,40 @@
   ],
   "character_roles": {
     "Emma Chen": "acting",
-    "Ramirez": "implied presence"
+    "Ramirez": "implied/referenced"
   },
   "camera_framing": "medium shot",
-  "camera_angle": "slightly low, empowering",
+  "camera_angle": "slightly low angle",
   "camera_movement": null,
-  "composition": "technical workspace with industrial background",
-  "visual_focus": "tablet screen and Emma's hand",
-  "depth_cues": "foreground: Emma, midground: tablet, background: industrial workspace",
+  "composition": "Technical industrial environment with Emma centrally framed",
+  "visual_focus": "tablet screen and Emma's smile",
+  "depth_cues": "industrial workspace with machinery in background",
   "expressions": {
-    "Emma Chen": "subtle, pleased smile"
+    "Emma Chen": "subtle, professional smile"
   },
   "body_language": {
-    "Emma Chen": "professional, confident stance"
+    "Emma Chen": "leaning forward, engaged professional posture"
   },
-  "movement": "checking tablet, handing back",
+  "movement": null,
   "props": [
+    "tablet",
     "line supervisor's tablet"
   ],
-  "clothing_state": "professional work attire",
-  "spatial_context": "industrial manufacturing floor",
-  "special_techniques": [],
+  "clothing_state": null,
+  "spatial_context": "manufacturing floor, Line 3 area",
+  "special_techniques": [
+    "highlight tablet screen details"
+  ],
   "mood": "professional satisfaction",
-  "tone": "technical precision",
-  "lighting_suggestion": "bright, even industrial lighting",
-  "continuity_from_previous": "scene start",
-  "continuity_to_next": "interaction with Ramirez",
-  "confidence": 0.95,
-  "analysis_timestamp": "2025-12-27T00:38:19.010328",
+  "tone": "technical competence",
+  "lighting_suggestion": "bright industrial lighting, slightly cool color temperature",
+  "continuity_from_previous": null,
+  "continuity_to_next": "preparing to speak to Ramirez",
+  "confidence": 0.9,
+  "analysis_timestamp": "2025-12-27T02:39:42.668231",
   "api_tokens": {
     "input": 915,
-    "output": 326
+    "output": 303
   },
   "attribute_changes": []
 }

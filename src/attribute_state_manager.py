@@ -108,11 +108,12 @@ class CharacterAttributeState:
         """
         Generate compressed description for tight token budgets.
 
-        Progressive compression:
-        - 25+ tokens: Full description
+        Progressive compression (ALWAYS includes clothing for consistency):
+        - 25+ tokens: Full description (face, hair, clothing, accessories)
         - 18+ tokens: Face + hair + clothing
         - 12+ tokens: Face + clothing
-        - <12 tokens: Face only
+        - 8+ tokens: Compressed face + key clothing colors/items
+        - <8 tokens: Face + minimal clothing (just colors)
 
         Args:
             max_tokens: Target token count (approximate)
@@ -121,8 +122,8 @@ class CharacterAttributeState:
             Compressed description string
 
         Example:
-            >>> state.to_compressed_string(max_tokens=12)
-            'mid-40s Asian American woman, navy blue fitted blazer, white shirt'
+            >>> state.to_compressed_string(max_tokens=8)
+            'mid-40s Asian American woman, navy blazer, white shirt'
         """
         if max_tokens >= 25:
             # Full description
@@ -135,9 +136,43 @@ class CharacterAttributeState:
             # Face + clothing only
             parts = [self.face, self.clothing]
             return ", ".join(parts)
+        elif max_tokens >= 8:
+            # Compressed: Extract key clothing colors/items from full clothing string
+            clothing_compressed = self._compress_clothing(max_words=6)
+            parts = [self.face, clothing_compressed]
+            return ", ".join(parts)
         else:
-            # Face only (minimum viable)
-            return self.face
+            # Minimum: Face + minimal clothing (just primary colors)
+            clothing_minimal = self._compress_clothing(max_words=3)
+            # Also compress face to just key features
+            face_minimal = self.face.split(',')[0]  # Take just first part (age/ethnicity/gender)
+            parts = [face_minimal, clothing_minimal]
+            return ", ".join(parts)
+
+    def _compress_clothing(self, max_words: int = 6) -> str:
+        """
+        Compress clothing description to key colors and items.
+
+        Args:
+            max_words: Maximum number of words to include
+
+        Returns:
+            Compressed clothing string
+
+        Example:
+            >>> # From "navy blue fitted blazer, crisp white button-up shirt, black slacks"
+            >>> state._compress_clothing(max_words=4)
+            'navy blazer, white shirt'
+        """
+        # Extract key clothing words (colors and main items, skip modifiers)
+        skip_words = {'fitted', 'crisp', 'button-up', 'practical', 'simple', 'professional', 'worn'}
+        words = []
+
+        for word in self.clothing.replace(',', ' ').split():
+            if word.lower() not in skip_words and len(words) < max_words:
+                words.append(word)
+
+        return ' '.join(words)
 
     def update_attribute(self, attribute_type: str, new_value: str,
                         sentence_num: int, reason: str) -> bool:

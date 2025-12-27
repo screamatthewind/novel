@@ -64,6 +64,38 @@ ACTION_KEYWORDS = {
 }
 
 
+def normalize_character_name(full_name: str) -> str:
+    """
+    Normalize a character's full name to their canonical short name.
+
+    Handles variations like "Emma Chen" → "emma", "Elena Volkov" → "elena", etc.
+
+    Args:
+        full_name: Full character name (may include spaces, capitals)
+
+    Returns:
+        Normalized short name (lowercase, first name only)
+
+    Example:
+        >>> normalize_character_name("Emma Chen")
+        'emma'
+        >>> normalize_character_name("TYLER")
+        'tyler'
+    """
+    # Mapping of full names (and variations) to canonical short names
+    name_mapping = {
+        'emma': 'emma', 'emma chen': 'emma',
+        'tyler': 'tyler', 'tyler chen': 'tyler',
+        'elena': 'elena', 'elena volkov': 'elena',
+        'maxim': 'maxim', 'maxim orlov': 'maxim',
+        'amara': 'amara', 'amara okafor': 'amara',
+        'wei': 'wei', 'wei chen': 'wei'
+    }
+
+    normalized = full_name.lower().strip()
+    return name_mapping.get(normalized, normalized.split()[0])  # Default to first name
+
+
 def extract_characters(text: str) -> list:
     """Extract character names mentioned in the scene."""
     characters = []
@@ -641,7 +673,7 @@ def generate_storyboard_informed_prompt(sentence_content: str, storyboard_analys
 
     # Character description with expression (25-30 tokens budget if using attribute manager)
     if storyboard_analysis.characters_present:
-        primary_char = storyboard_analysis.characters_present[0].lower()
+        primary_char = normalize_character_name(storyboard_analysis.characters_present[0])
 
         # Use attribute manager if available for detailed, consistent descriptions
         if attribute_manager:
@@ -658,8 +690,15 @@ def generate_storyboard_informed_prompt(sentence_content: str, storyboard_analys
             char_desc = CHARACTER_DESCRIPTIONS.get(primary_char, primary_char)
 
         # Add expression if available
-        if storyboard_analysis.expressions and primary_char in storyboard_analysis.expressions:
-            expression = storyboard_analysis.expressions[primary_char]
+        # Check for both normalized and original name in expressions dict
+        expression = None
+        if storyboard_analysis.expressions:
+            expression = storyboard_analysis.expressions.get(
+                primary_char,
+                storyboard_analysis.expressions.get(storyboard_analysis.characters_present[0])
+            )
+
+        if expression:
             char_part = f"{char_desc}, {expression}"
         else:
             char_part = char_desc
@@ -670,9 +709,14 @@ def generate_storyboard_informed_prompt(sentence_content: str, storyboard_analys
     if storyboard_analysis.movement:
         prompt_parts.append(storyboard_analysis.movement)
     elif storyboard_analysis.body_language and storyboard_analysis.characters_present:
-        primary_char = storyboard_analysis.characters_present[0].lower()
-        if primary_char in storyboard_analysis.body_language:
-            prompt_parts.append(storyboard_analysis.body_language[primary_char])
+        primary_char_bodylang = normalize_character_name(storyboard_analysis.characters_present[0])
+        # Check for both normalized and original name in body_language dict
+        body_lang = storyboard_analysis.body_language.get(
+            primary_char_bodylang,
+            storyboard_analysis.body_language.get(storyboard_analysis.characters_present[0])
+        )
+        if body_lang:
+            prompt_parts.append(body_lang)
 
     # Composition and visual focus (10 tokens budget)
     if storyboard_analysis.visual_focus:
@@ -722,16 +766,17 @@ def generate_storyboard_informed_prompt(sentence_content: str, storyboard_analys
 
         # Always keep character (start with compressed version)
         if storyboard_analysis.characters_present:
-            primary_char = storyboard_analysis.characters_present[0].lower()
+            primary_char = normalize_character_name(storyboard_analysis.characters_present[0])
 
             # Try progressively compressed character descriptions
+            # Start with 8-token budget to ensure clothing is included
             if attribute_manager:
                 char_state = attribute_manager.get_current_attributes(primary_char)
                 if char_state:
-                    # Try 20-token version first
-                    char_desc = char_state.to_compressed_string(max_tokens=20)
+                    # Try 8-token version (face + compressed clothing)
+                    char_desc = char_state.to_compressed_string(max_tokens=8)
                 else:
-                    char_desc = get_compressed_description(primary_char, max_tokens=20)
+                    char_desc = get_compressed_description(primary_char, max_tokens=8)
                     if not char_desc:
                         char_desc = CHARACTER_DESCRIPTIONS.get(primary_char, primary_char)
             else:
@@ -742,9 +787,14 @@ def generate_storyboard_informed_prompt(sentence_content: str, storyboard_analys
         # Add back elements one by one until we approach limit
         remaining_parts = []
         if storyboard_analysis.expressions and storyboard_analysis.characters_present:
-            primary_char = storyboard_analysis.characters_present[0].lower()
-            if primary_char in storyboard_analysis.expressions:
-                remaining_parts.append(storyboard_analysis.expressions[primary_char])
+            primary_char_expr = normalize_character_name(storyboard_analysis.characters_present[0])
+            # Check for both normalized and original name in expressions dict
+            expression = storyboard_analysis.expressions.get(
+                primary_char_expr,
+                storyboard_analysis.expressions.get(storyboard_analysis.characters_present[0])
+            )
+            if expression:
+                remaining_parts.append(expression)
 
         if storyboard_analysis.visual_focus:
             remaining_parts.append(f"focus on {storyboard_analysis.visual_focus}")

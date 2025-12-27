@@ -32,7 +32,6 @@ from config import (
     ENABLE_SMART_DETECTION,
     IMAGE_MAPPING_DIR,
     ENABLE_IP_ADAPTER,
-    ENABLE_STORYBOARD,
     STORYBOARD_CACHE_DIR,
     STORYBOARD_REPORT_DIR
 )
@@ -488,13 +487,6 @@ def main():
     )
 
     parser.add_argument(
-        '--enable-storyboard',
-        action='store_true',
-        default=ENABLE_STORYBOARD,
-        help='Enable storyboard analysis for enhanced visual planning'
-    )
-
-    parser.add_argument(
         '--storyboard-cache-dir',
         type=str,
         help='Directory for storyboard analysis cache (default: from config)'
@@ -583,6 +575,32 @@ def main():
 
     log_message(log_file, f"Found {len(scenes)} scenes")
 
+    # Initialize storyboard analyzer early (before sentence parsing)
+    # This shows initialization messages before the sentence parsing step
+    from storyboard_analyzer import StoryboardAnalyzer
+
+    cache_dir = args.storyboard_cache_dir if args.storyboard_cache_dir else STORYBOARD_CACHE_DIR
+
+    log_message(log_file, "Storyboard analysis: ENABLED")
+    log_message(log_file, "Initializing storyboard analysis...")
+
+    # Delete cache and images BEFORE parsing sentences (if rebuild mode)
+    if args.rebuild_storyboard and args.chapters:
+        log_message(log_file, "Rebuild mode: Deleting storyboard cache and images for specified chapters...")
+        temp_analyzer = StoryboardAnalyzer(
+            cache_dir=cache_dir,
+            rebuild_cache=False,
+            images_dir=OUTPUT_DIR
+        )
+        for chapter_num in args.chapters:
+            cache_deleted, images_deleted = temp_analyzer.delete_chapter_cache_and_images(chapter_num)
+            log_message(log_file, f"  Chapter {chapter_num}: Deleted {cache_deleted} cache files, {images_deleted} image files")
+        log_message(log_file, "-> Cache and images cleared")
+
+    log_message(log_file, "-> Storyboard analyzer ready")
+    log_message(log_file, "")  # Blank line for readability
+    storyboard_analyzer_early = True
+
     # Parse scenes into sentences
     log_message(log_file, "Parsing sentences from scenes...")
     all_sentences = []
@@ -617,32 +635,26 @@ def main():
             metadata = ImageMappingMetadata(chapter_num=1)
             current_image = None
 
-            # Initialize storyboard analyzer if enabled
-            storyboard_analyzer = None
-            novel_context = None
-            scene_history = None
-            if args.enable_storyboard:
-                from storyboard_analyzer import StoryboardAnalyzer, SceneVisualHistory
-                from novel_context import NovelContext
+            # Initialize storyboard analyzer
+            from storyboard_analyzer import StoryboardAnalyzer, SceneVisualHistory
+            from novel_context import NovelContext
+            from attribute_state_manager import AttributeStateManager
 
+            # If not already initialized, initialize now
+            if not storyboard_analyzer_early:
                 log_message(log_file, "Initializing storyboard analysis...")
-                cache_dir = args.storyboard_cache_dir if args.storyboard_cache_dir else STORYBOARD_CACHE_DIR
-                storyboard_analyzer = StoryboardAnalyzer(
-                    cache_dir=cache_dir,
-                    rebuild_cache=args.rebuild_storyboard,
-                    images_dir=OUTPUT_DIR
-                )
-                novel_context = NovelContext()
-                scene_history = SceneVisualHistory()
+            cache_dir = args.storyboard_cache_dir if args.storyboard_cache_dir else STORYBOARD_CACHE_DIR
+            storyboard_analyzer = StoryboardAnalyzer(
+                cache_dir=cache_dir,
+                rebuild_cache=args.rebuild_storyboard,
+                images_dir=OUTPUT_DIR
+            )
+            novel_context = NovelContext()
+            scene_history = SceneVisualHistory()
+            # Initialize attribute manager for dry run (chapter 1 for demo)
+            attribute_manager = AttributeStateManager(chapter_num=1)
+            if not storyboard_analyzer_early:
                 log_message(log_file, "-> Storyboard analysis enabled")
-
-                # If rebuilding cache, delete cache and images for specified chapters
-                if args.rebuild_storyboard and args.chapters:
-                    log_message(log_file, "Rebuild mode: Deleting storyboard cache and images for specified chapters...")
-                    for chapter_num in args.chapters:
-                        cache_deleted, images_deleted = storyboard_analyzer.delete_chapter_cache_and_images(chapter_num)
-                        log_message(log_file, f"  Chapter {chapter_num}: Deleted {cache_deleted} cache files, {images_deleted} image files")
-                    log_message(log_file, "-> Cache and images cleared")
 
             for sentence in all_sentences[:10]:  # Show first 10 sentences
                 success, image_file = process_sentence(
@@ -651,7 +663,8 @@ def main():
                     current_image_filename=current_image, metadata=metadata,
                     storyboard_analyzer=storyboard_analyzer,
                     novel_context=novel_context,
-                    scene_history=scene_history
+                    scene_history=scene_history,
+                    attribute_manager=attribute_manager
                 )
                 if success and image_file:
                     current_image = image_file
@@ -666,8 +679,8 @@ def main():
             if args.llm in ["haiku", "compare"] and cost_tracker.session_api_calls > 0:
                 cost_tracker.print_summary()
 
-            # Print storyboard analysis cost summary if enabled
-            if args.enable_storyboard and storyboard_analyzer:
+            # Print storyboard analysis cost summary
+            if storyboard_analyzer:
                 total_cost, cost_report = storyboard_analyzer.get_cost_estimate()
                 log_message(log_file, "\n" + "="*80)
                 log_message(log_file, cost_report)
@@ -695,10 +708,6 @@ def main():
         log_message(log_file, f"\nProcessing {len(all_sentences)} sentences...")
         if args.enable_smart_detection:
             log_message(log_file, "Smart detection: ENABLED")
-        if args.enable_storyboard:
-            log_message(log_file, "Storyboard analysis: ENABLED")
-        if not args.enable_smart_detection and not args.enable_storyboard:
-            log_message(log_file, f"Estimated time: {len(all_sentences) * 6 / 60:.1f} hours\n")
 
         success_count = 0
         error_count = 0
@@ -708,39 +717,28 @@ def main():
         metadata_by_chapter = {}
         current_image_by_chapter = {}
 
-        # Initialize storyboard components if enabled
-        storyboard_analyzer = None
-        novel_context = None
+        # Initialize storyboard components
+        from storyboard_analyzer import StoryboardAnalyzer, SceneVisualHistory
+        from novel_context import NovelContext
+        from attribute_state_manager import AttributeStateManager
+
         scene_history_by_chapter = {}
         attribute_manager_by_chapter = {}  # Track attribute state per chapter
 
-        if args.enable_storyboard:
-            from storyboard_analyzer import StoryboardAnalyzer, SceneVisualHistory
-            from novel_context import NovelContext
-            from attribute_state_manager import AttributeStateManager
-
+        # Only log initialization if not already done early
+        if not storyboard_analyzer_early:
             log_message(log_file, "Initializing storyboard analysis...")
-            cache_dir = args.storyboard_cache_dir if args.storyboard_cache_dir else STORYBOARD_CACHE_DIR
+        cache_dir = args.storyboard_cache_dir if args.storyboard_cache_dir else STORYBOARD_CACHE_DIR
 
-            # If rebuilding cache, delete cache and images FIRST before creating analyzer
-            if args.rebuild_storyboard and args.chapters:
-                log_message(log_file, "Rebuild mode: Deleting storyboard cache and images for specified chapters...")
-                temp_analyzer = StoryboardAnalyzer(
-                    cache_dir=cache_dir,
-                    rebuild_cache=False,
-                    images_dir=OUTPUT_DIR
-                )
-                for chapter_num in args.chapters:
-                    cache_deleted, images_deleted = temp_analyzer.delete_chapter_cache_and_images(chapter_num)
-                    log_message(log_file, f"  Chapter {chapter_num}: Deleted {cache_deleted} cache files, {images_deleted} image files")
-                log_message(log_file, "-> Cache and images cleared")
-
-            storyboard_analyzer = StoryboardAnalyzer(
-                cache_dir=cache_dir,
-                rebuild_cache=args.rebuild_storyboard,
-                images_dir=OUTPUT_DIR
-            )
-            novel_context = NovelContext()
+        # Cache/images already deleted early if rebuild mode was active
+        # Just create the analyzer now
+        storyboard_analyzer = StoryboardAnalyzer(
+            cache_dir=cache_dir,
+            rebuild_cache=args.rebuild_storyboard,
+            images_dir=OUTPUT_DIR
+        )
+        novel_context = NovelContext()
+        if not storyboard_analyzer_early:
             log_message(log_file, "-> Storyboard analyzer ready")
 
         # Group sentences by chapter for metadata tracking
@@ -755,25 +753,24 @@ def main():
 
                 # Initialize detector/metadata for this chapter if needed
                 if chapter_num not in detector_by_chapter:
-                    if args.enable_smart_detection or args.enable_storyboard:
+                    if args.enable_smart_detection:
                         detector_by_chapter[chapter_num] = VisualChangeDetector()
                         metadata_by_chapter[chapter_num] = ImageMappingMetadata(chapter_num)
                         current_image_by_chapter[chapter_num] = None
                         log_message(log_file, f"-> Initialized detection for Chapter {chapter_num}")
 
-                    if args.enable_storyboard:
-                        from storyboard_analyzer import SceneVisualHistory
-                        from attribute_state_manager import AttributeStateManager
-                        scene_history_by_chapter[chapter_num] = SceneVisualHistory()
-                        attribute_manager_by_chapter[chapter_num] = AttributeStateManager(chapter_num)
-                        log_message(log_file, f"-> Initialized attribute manager for Chapter {chapter_num}")
+                    from storyboard_analyzer import SceneVisualHistory
+                    from attribute_state_manager import AttributeStateManager
+                    scene_history_by_chapter[chapter_num] = SceneVisualHistory()
+                    attribute_manager_by_chapter[chapter_num] = AttributeStateManager(chapter_num)
+                    log_message(log_file, f"-> Initialized attribute manager for Chapter {chapter_num}")
 
                 # Get detector/metadata for this chapter
-                detector = detector_by_chapter.get(chapter_num) if (args.enable_smart_detection or args.enable_storyboard) else None
-                metadata = metadata_by_chapter.get(chapter_num) if (args.enable_smart_detection or args.enable_storyboard) else None
+                detector = detector_by_chapter.get(chapter_num) if args.enable_smart_detection else None
+                metadata = metadata_by_chapter.get(chapter_num) if args.enable_smart_detection else None
                 current_image = current_image_by_chapter.get(chapter_num)
-                scene_history = scene_history_by_chapter.get(chapter_num) if args.enable_storyboard else None
-                attribute_manager = attribute_manager_by_chapter.get(chapter_num) if args.enable_storyboard else None
+                scene_history = scene_history_by_chapter.get(chapter_num)
+                attribute_manager = attribute_manager_by_chapter.get(chapter_num)
 
                 # Process sentence
                 success, image_file = process_sentence(
@@ -834,15 +831,15 @@ def main():
             if args.llm in ["haiku", "compare"] and cost_tracker.session_api_calls > 0:
                 cost_tracker.print_summary()
 
-            # Print storyboard analysis cost summary if enabled
-            if args.enable_storyboard and storyboard_analyzer:
+            # Print storyboard analysis cost summary
+            if storyboard_analyzer:
                 total_cost, cost_report = storyboard_analyzer.get_cost_estimate()
                 log_message(log_file, "\n" + "="*80)
                 log_message(log_file, cost_report)
                 log_message(log_file, "="*80)
 
-            # Print attribute change statistics if storyboard enabled
-            if args.enable_storyboard and attribute_manager_by_chapter:
+            # Print attribute change statistics
+            if attribute_manager_by_chapter:
                 log_message(log_file, "\n" + "="*80)
                 log_message(log_file, "Attribute Change Statistics")
                 log_message(log_file, "="*80)

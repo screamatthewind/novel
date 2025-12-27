@@ -8,41 +8,42 @@
     "Ramirez"
   ],
   "character_roles": {
-    "Emma Chen": "acting",
-    "Ramirez": "referenced/present"
+    "Emma Chen": "acting/observing",
+    "Ramirez": "referenced/implied present"
   },
   "camera_framing": "medium shot",
   "camera_angle": "level",
   "camera_movement": null,
-  "composition": "Technical environment with human-machine interaction focal point",
-  "visual_focus": "Line supervisor's tablet showing production metrics",
-  "depth_cues": "foreground: Emma, midground: tablet, background: manufacturing line",
+  "composition": "industrial workspace with focus on technical details",
+  "visual_focus": "production line tablet display",
+  "depth_cues": "foreground industrial workspace, midground machinery",
   "expressions": {
-    "Emma Chen": "satisfied/pleased smile"
+    "Emma Chen": "satisfied/pleased"
   },
   "body_language": {
-    "Emma Chen": "confident, leaning/standing near Ramirez"
+    "Emma Chen": "leaning, checking tablet"
   },
-  "movement": "minimal, transitional moment",
+  "movement": "minimal, observational",
   "props": [
     "line supervisor's tablet",
     "welding stations"
   ],
-  "clothing_state": "professional industrial work attire",
-  "spatial_context": "manufacturing floor, Line 3 area",
+  "clothing_state": null,
+  "spatial_context": "industrial manufacturing floor",
   "special_techniques": [
-    "technical workflow visualization"
+    "data overlay",
+    "technical detail emphasis"
   ],
   "mood": "professional satisfaction",
-  "tone": "matter-of-fact technical achievement",
-  "lighting_suggestion": "industrial overhead lighting, slightly cool-toned",
-  "continuity_from_previous": "Emma checking tablet, standing near Ramirez",
-  "continuity_to_next": "About to return tablet, preparing to speak",
-  "confidence": 0.95,
-  "analysis_timestamp": "2025-12-27T00:38:31.572826",
+  "tone": "technical/pragmatic",
+  "lighting_suggestion": "bright industrial lighting",
+  "continuity_from_previous": null,
+  "continuity_to_next": "dialogue with Ramirez",
+  "confidence": 0.85,
+  "analysis_timestamp": "2025-12-27T02:40:14.063322",
   "api_tokens": {
-    "input": 908,
-    "output": 367
+    "input": 879,
+    "output": 283
   },
   "attribute_changes": []
 }
