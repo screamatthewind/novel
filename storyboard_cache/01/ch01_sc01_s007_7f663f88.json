@@ -10,34 +10,35 @@
     "Emma Chen": "acting"
   },
   "camera_framing": "close-up",
-  "camera_angle": "slightly low",
+  "camera_angle": "level",
   "camera_movement": null,
-  "composition": "Focused on Emma's face during laughter",
-  "visual_focus": "Emma's facial expression during laugh",
-  "depth_cues": "shallow foreground",
+  "composition": "Focused on Emma's face during laugh",
+  "visual_focus": "Emma's facial expression",
+  "depth_cues": "minimal, face-forward",
   "expressions": {
-    "Emma Chen": "light, spontaneous amusement"
+    "Emma Chen": "spontaneous, lighthearted"
   },
   "body_language": {
-    "Emma Chen": "relaxed, shoulders potentially moving with laugh"
+    "Emma Chen": "relaxed, possibly leaning or turning slightly"
   },
   "movement": "laughing",
   "props": [],
-  "clothing_state": "previous state (work attire)",
-  "spatial_context": "manufacturing floor",
+  "clothing_state": null,
+  "spatial_context": "manufacturing floor, transitional moment",
   "special_techniques": [
-    "emotional reveal"
+    "emotional beat",
+    "character reaction shot"
   ],
-  "mood": "momentary relief/unexpected humor",
-  "tone": "candid, spontaneous",
-  "lighting_suggestion": "workplace fluorescent, soft shadows",
-  "continuity_from_previous": "Professional interaction with Ramirez",
-  "continuity_to_next": "Potential emotional subtext",
+  "mood": "momentary relief, interpersonal connection",
+  "tone": "informal, human",
+  "lighting_suggestion": "soft, industrial overhead lighting",
+  "continuity_from_previous": "professional interaction with Ramirez",
+  "continuity_to_next": "potential conversation or reaction",
   "confidence": 0.85,
-  "analysis_timestamp": "2025-12-27T00:38:56.365452",
+  "analysis_timestamp": "2025-12-27T00:40:57.593936",
   "api_tokens": {
     "input": 936,
-    "output": 293
+    "output": 284
   },
   "attribute_changes": []
 }

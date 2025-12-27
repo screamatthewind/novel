@@ -14,37 +14,35 @@
   "camera_framing": "medium two-shot",
   "camera_angle": "level",
   "camera_movement": null,
-  "composition": "Technical workspace with machinery in background",
-  "visual_focus": "Emma and Ramirez, with welding stations subtly visible",
+  "composition": "collaborative industrial space with machinery in background",
+  "visual_focus": "dialogue between characters with welding stations in peripheral view",
   "depth_cues": "",
   "expressions": {
     "Emma Chen": "confident/slightly triumphant",
-    "Ramirez": "likely respectful/attentive"
+    "Ramirez": "potentially pleased/vindicated"
   },
   "body_language": {
-    "Emma Chen": "relaxed, professional stance",
-    "Ramirez": "receptive posture"
+    "Emma Chen": "relaxed professional posture",
+    "Ramirez": "attentive listening stance"
   },
   "movement": null,
   "props": [
-    "tablet",
-    "welding stations"
+    "welding station",
+    "tablet"
   ],
   "clothing_state": null,
   "spatial_context": "manufacturing floor near Line 3",
-  "special_techniques": [
-    "show machine/human interaction subtly in background"
-  ],
+  "special_techniques": [],
   "mood": "professional satisfaction",
-  "tone": "technical/pragmatic",
-  "lighting_suggestion": "industrial overhead lighting, slightly cool-toned",
-  "continuity_from_previous": "Emma returning tablet to Ramirez after checking production metrics",
-  "continuity_to_next": "Potential further technical discussion",
-  "confidence": 0.85,
-  "analysis_timestamp": "2025-12-27T00:38:50.909108",
+  "tone": "matter-of-fact technical pride",
+  "lighting_suggestion": "industrial overhead lighting, slightly cool tones",
+  "continuity_from_previous": "Emma returning tablet after checking production progress",
+  "continuity_to_next": "ongoing technical discussion about machinery performance",
+  "confidence": 0.9,
+  "analysis_timestamp": "2025-12-27T00:40:32.431354",
   "api_tokens": {
-    "input": 914,
-    "output": 338
+    "input": 917,
+    "output": 313
   },
   "attribute_changes": []
 }

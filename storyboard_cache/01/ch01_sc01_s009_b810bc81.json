@@ -9,42 +9,41 @@
   ],
   "character_roles": {
     "Emma Chen": "acting/speaking",
-    "Ramirez": "acting/listening"
+    "Ramirez": "listening/referenced"
   },
   "camera_framing": "medium tracking shot",
-  "camera_angle": "slightly low angle",
-  "camera_movement": "horizontal tracking with subject",
-  "composition": "industrial space with machinery in background, human figures in foreground",
-  "visual_focus": "Emma's confident stride through manufacturing space",
-  "depth_cues": "machinery in background, floor stretching into distance",
+  "camera_angle": "level",
+  "camera_movement": "following movement across manufacturing floor",
+  "composition": "industrial space with machinery in background, human figure moving dynamically",
+  "visual_focus": "Emma Chen's confident stride",
+  "depth_cues": "machinery in midground, floor/walkways in foreground",
   "expressions": {
-    "Emma Chen": "professional, subtly pleased",
-    "Ramirez": "attentive"
+    "Emma Chen": "focused, slight professional smile"
   },
   "body_language": {
-    "Emma Chen": "purposeful stride, head slightly raised",
-    "Ramirez": "listening posture"
+    "Emma Chen": "confident walk, upright posture, purposeful movement"
   },
-  "movement": "walking through manufacturing floor",
+  "movement": "walking through manufacturing facility",
   "props": [
-    "line supervisor's tablet",
-    "welding stations"
+    "tablet",
+    "welding stations",
+    "industrial machinery"
   ],
-  "clothing_state": "professional work attire",
-  "spatial_context": "Hartwell Manufacturing facility, industrial interior",
+  "clothing_state": "professional work attire, possibly with safety elements",
+  "spatial_context": "Hartwell Manufacturing facility, near Line 3",
   "special_techniques": [
-    "depth of field focusing on Emma"
+    "dynamic movement tracking"
   ],
-  "mood": "confident, methodical",
-  "tone": "professional achievement",
-  "lighting_suggestion": "industrial fluorescent, slightly cool-toned",
-  "continuity_from_previous": "tablet interaction with Ramirez",
-  "continuity_to_next": "potential dialogue or further exploration of manufacturing floor",
+  "mood": "professional confidence",
+  "tone": "technical competence",
+  "lighting_suggestion": "industrial overhead lighting, slight cool tones",
+  "continuity_from_previous": "interaction with Ramirez about tablet data",
+  "continuity_to_next": "potential dialogue about machine modifications",
   "confidence": 0.95,
-  "analysis_timestamp": "2025-12-27T00:39:08.032518",
+  "analysis_timestamp": "2025-12-27T00:41:53.622633",
   "api_tokens": {
-    "input": 927,
-    "output": 392
+    "input": 931,
+    "output": 372
   },
   "attribute_changes": []
 }
