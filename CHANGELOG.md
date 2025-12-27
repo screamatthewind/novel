@@ -2,6 +2,58 @@
 
 All notable changes to The Obsolescence novel generation project.
 
+## [2025-12-27] - Character Selection Fix (Major)
+
+### Fixed
+- **Critical: Wrong characters appearing in images**
+  - Issue #1: Minor characters without descriptions (e.g., Ramirez) caused system to use undefined character names in prompts
+  - Issue #2: Referenced characters (e.g., Tyler in "text from Tyler") were incorrectly prioritized over acting characters
+  - Issue #3: Token compression code path had separate bug that reverted to old character selection logic
+
+### Root Cause
+- Prompt generator blindly selected `characters_present[0]` without considering character roles
+- No fallback logic when selected character lacked a description in `CHARACTER_CANONICAL_ATTRIBUTES`
+- Token compression path (line 841) had duplicate logic that wasn't updated with role filtering
+
+### Solution Implemented
+- Added `filter_acting_characters()` function with priority: Acting > Passive > Referenced
+- Character selection now skips characters without descriptions and falls back to next available character
+- Applied same filtering logic to BOTH normal prompt generation AND token compression path
+
+### Changes
+- **src/prompt_generator.py**:
+  - Lines 18-56: New `filter_acting_characters()` utility function
+  - Lines 717-771: Updated character selection with role filtering and description validation
+  - Lines 841-885: Fixed token compression path to use same filtering logic
+
+### Example Fixes
+- **Sentence 5 (Ramirez scene)**:
+  - Before: `"ramirez. broad, satisfied grin"` (no description)
+  - After: `"mid-40s Asian American woman, intelligent brown eyes, analytical expression. broad, satisfied grin"` (Emma's description)
+  - Ramirez (no description) skipped → Emma (passive role, has description) selected
+
+- **Sentence 15 (Tyler text)**:
+  - Correctly uses Emma (passive: receiving message) over Tyler (referenced: sender of message)
+  - Image shows Emma looking at phone, not Tyler
+
+### Character Priority Levels
+1. **Acting**: speaking, walking, examining, confirming (highest priority)
+2. **Passive**: receiving, listening, observing, watching (medium priority)
+3. **Referenced**: mentioned, sender of, off-screen (lowest priority)
+
+### Impact
+- Only defined characters (Emma, Tyler, Elena, Maxim, Amara) appear in images
+- Minor characters (Ramirez, Mark, Diane, etc.) gracefully fall back to defined characters in scene
+- Correct character context (e.g., Emma receiving Tyler's message, not Tyler himself)
+
+### Migration
+To regenerate prompts with correct character selection:
+```bash
+# Delete old prompts and regenerate
+rm prompt_cache/chapter_01_*.txt
+venv/Scripts/python.exe src/generate_scene_images.py --chapters 1 --dry-run
+```
+
 ## [2025-12-27] - Documentation Cleanup
 
 ### Changed

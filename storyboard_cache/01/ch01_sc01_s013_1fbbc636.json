@@ -3,43 +3,31 @@
   "scene_num": 1,
   "sentence_num": 13,
   "sentence_content": "She was good at it.",
-  "characters_present": [
-    "Emma Chen"
-  ],
-  "character_roles": {
-    "Emma Chen": "acting/self-evaluating"
-  },
-  "camera_framing": "close-up",
-  "camera_angle": "slightly low angle",
+  "characters_present": [],
+  "character_roles": {},
+  "camera_framing": "medium shot",
+  "camera_angle": "level",
   "camera_movement": null,
-  "composition": "Tight focus on Emma's subtle facial expression",
-  "visual_focus": "Emma's confident, knowing smile",
+  "composition": "",
+  "visual_focus": "",
   "depth_cues": "",
-  "expressions": {
-    "Emma Chen": "self-assured, subtle smile"
-  },
-  "body_language": {
-    "Emma Chen": "confident, relaxed posture"
-  },
+  "expressions": {},
+  "body_language": {},
   "movement": null,
-  "props": [
-    "line supervisor's tablet"
-  ],
+  "props": [],
   "clothing_state": null,
-  "spatial_context": "manufacturing floor/industrial workspace",
-  "special_techniques": [
-    "internal monologue visualization"
-  ],
-  "mood": "professional satisfaction",
-  "tone": "self-reflective",
-  "lighting_suggestion": "industrial overhead lighting, slightly warm tones",
-  "continuity_from_previous": "Directly following her technical problem-solving with welding stations",
-  "continuity_to_next": "Preparing to speak to Ramirez",
-  "confidence": 0.85,
-  "analysis_timestamp": "2025-12-27T02:45:27.359299",
+  "spatial_context": "",
+  "special_techniques": [],
+  "mood": "",
+  "tone": "",
+  "lighting_suggestion": "",
+  "continuity_from_previous": null,
+  "continuity_to_next": null,
+  "confidence": 0.0,
+  "analysis_timestamp": "2025-12-27T03:28:45.992914",
   "api_tokens": {
-    "input": 879,
-    "output": 276
+    "input": 0,
+    "output": 0
   },
   "attribute_changes": []
 }

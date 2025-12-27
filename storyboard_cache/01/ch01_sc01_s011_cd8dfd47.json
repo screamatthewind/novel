@@ -7,40 +7,41 @@
     "Emma Chen"
   ],
   "character_roles": {
-    "Emma Chen": "acting/describing"
+    "Emma Chen": "protagonist, operations manager"
   },
   "camera_framing": "medium shot",
-  "camera_angle": "slightly elevated",
+  "camera_angle": "level",
   "camera_movement": null,
-  "composition": "Professional hierarchical visualization with Emma central",
-  "visual_focus": "Emma as central interpreter/bridge figure",
-  "depth_cues": "implied vertical organizational layers",
+  "composition": "Emma centered, conceptual visualization of communication flow",
+  "visual_focus": "Emma as central translator figure",
+  "depth_cues": "layered representation with executives/workers in background planes",
   "expressions": {
     "Emma Chen": "professional, confident"
   },
   "body_language": {
-    "Emma Chen": "poised, authoritative"
+    "Emma Chen": "upright, authoritative posture"
   },
   "movement": null,
   "props": [
-    "organizational chart",
-    "conceptual communication channels"
+    "communication diagram",
+    "organizational chart"
   ],
   "clothing_state": null,
-  "spatial_context": "industrial workplace/office environment",
+  "spatial_context": "corporate/industrial setting",
   "special_techniques": [
-    "metaphorical visual overlay showing communication channels"
+    "metaphorical visual translation",
+    "communication flow diagram"
   ],
-  "mood": "pragmatic, strategic",
-  "tone": "matter-of-fact professional description",
-  "lighting_suggestion": "soft office lighting, highlighting Emma's central position",
-  "continuity_from_previous": null,
-  "continuity_to_next": "suggesting Emma's active management role",
+  "mood": "professional empowerment",
+  "tone": "analytical, strategic",
+  "lighting_suggestion": "soft office lighting, highlighting Emma",
+  "continuity_from_previous": "establishing Emma's professional role",
+  "continuity_to_next": "demonstrating her workplace competence",
   "confidence": 0.85,
-  "analysis_timestamp": "2025-12-27T02:44:32.856227",
+  "analysis_timestamp": "2025-12-27T03:27:49.630301",
   "api_tokens": {
     "input": 896,
-    "output": 257
+    "output": 290
   },
   "attribute_changes": []
 }

@@ -9,42 +9,40 @@
   ],
   "character_roles": {
     "Emma Chen": "acting/speaking",
-    "Ramirez": "receiving/referenced"
+    "Ramirez": "receiving/being spoken to"
   },
   "camera_framing": "medium two-shot",
-  "camera_angle": "slightly low, emphasizing interaction",
+  "camera_angle": "level",
   "camera_movement": null,
-  "composition": "Technical workspace with interpersonal focus",
-  "visual_focus": "tablet exchange between characters",
-  "depth_cues": "foreground interaction, midground industrial setting",
+  "composition": "Industrial workspace with characters in foreground, machinery in background",
+  "visual_focus": "tablet being handed between characters",
+  "depth_cues": "foreground interaction, midground machinery, background industrial space",
   "expressions": {
-    "Emma Chen": "positive/approving smile",
-    "Ramirez": "professional/attentive"
+    "Emma Chen": "pleased/professional smile",
+    "Ramirez": "implied positive/attentive"
   },
   "body_language": {
-    "Emma Chen": "leaning forward, extending tablet",
-    "Ramirez": "receiving tablet, likely standing near welding station"
+    "Emma Chen": "extending hand with tablet, leaning slightly forward",
+    "Ramirez": "receiving tablet"
   },
-  "movement": "tablet hand-off",
+  "movement": "tablet being handed over",
   "props": [
     "tablet",
-    "potential welding equipment in background"
+    "industrial machinery"
   ],
   "clothing_state": "professional industrial work attire",
-  "spatial_context": "manufacturing floor/industrial workspace",
-  "special_techniques": [
-    "subtle depth of field"
-  ],
-  "mood": "professional satisfaction",
-  "tone": "collaborative",
-  "lighting_suggestion": "bright, industrial overhead lighting",
-  "continuity_from_previous": "Production review context",
-  "continuity_to_next": "Elaboration on Ramirez's modification",
-  "confidence": 0.85,
-  "analysis_timestamp": "2025-12-27T02:41:15.325360",
+  "spatial_context": "industrial production line",
+  "special_techniques": [],
+  "mood": "collaborative/productive",
+  "tone": "professional acknowledgment",
+  "lighting_suggestion": "bright, even industrial lighting",
+  "continuity_from_previous": "initial scene establishing industrial workspace",
+  "continuity_to_next": "continuation of discussion about modification",
+  "confidence": 0.95,
+  "analysis_timestamp": "2025-12-27T03:24:17.486681",
   "api_tokens": {
     "input": 890,
-    "output": 379
+    "output": 369
   },
   "attribute_changes": []
 }

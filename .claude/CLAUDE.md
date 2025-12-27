@@ -48,26 +48,38 @@ novel/
 
 ## Recent Changes
 
+### 2025-12-27: Character Selection Fix (CRITICAL)
+- **Issue**: Wrong characters appearing in images due to multiple bugs in character selection logic
+- **Problems**:
+  1. Minor characters without descriptions (Ramirez, Mark, Diane) caused undefined character names in prompts → inconsistent/wrong faces
+  2. Referenced characters (Tyler in "text from Tyler") incorrectly prioritized over acting characters
+  3. Token compression code path had separate bug that bypassed role filtering
+- **Root Cause**: System blindly selected `characters_present[0]` without considering character roles or checking if character has a description
+- **Solution**:
+  - Added `filter_acting_characters()` with priority: Acting > Passive > Referenced
+  - Character selection now skips characters without descriptions, falls back to next available
+  - Applied same logic to BOTH normal generation AND token compression path
+- **Files Modified**:
+  - `src/prompt_generator.py`:
+    - Lines 18-56: New `filter_acting_characters()` utility
+    - Lines 717-771: Role-based character selection with description validation
+    - Lines 841-885: Fixed token compression to use same filtering
+- **Impact**: Only defined characters (Emma, Tyler, Elena, Maxim, Amara) appear in images; minor characters gracefully fall back
+- **Example**: Ramirez scene now uses Emma's description instead of undefined "ramirez"
+- **See**: [CHANGELOG.md](../CHANGELOG.md)
+
 ### 2025-12-27: Documentation Cleanup
 - **Action**: Cleaned up `technical_docs/` folder (21 files → 11 files, 48% reduction)
 - **Removed**: Session summaries, bug fix docs, and obsolete/redundant documentation
 - **Kept**: Core operational guides (PROJECT_STATUS, TROUBLESHOOTING, storyboard docs, phase summaries, cost tracking)
-- **Rationale**:
-  - Session summaries are historical; information preserved in git history
-  - Bug fixes documented in code and TROUBLESHOOTING.md
-  - LLM prompt generation superseded by storyboard analysis (now default)
-- **See**: [CHANGELOG.md](../CHANGELOG.md) for full list of removed files
+- **See**: [CHANGELOG.md](../CHANGELOG.md)
 
-### 2025-12-27: Fixed Character Clothing Consistency
+### 2025-12-27: Character Clothing Consistency Fix
 - **Issue**: Clothing colors/styles changed randomly between sentences in same scene
 - **Cause**: Character name mismatch ("Emma Chen" vs "emma") prevented attribute lookups
 - **Fix**: Added character name normalization + enhanced compression to always include clothing
-- **Files Modified**:
-  - `src/prompt_generator.py` - Added `normalize_character_name()` function
-  - `src/attribute_state_manager.py` - Enhanced `to_compressed_string()` to always include clothing
-  - `src/generate_scene_images.py` - Fixed `attribute_manager` initialization in dry-run mode
 - **Result**: All prompts now include consistent clothing (e.g., "navy blue blazer white shirt black")
-- **See**: [CHANGELOG.md](../CHANGELOG.md) and [technical_docs/TROUBLESHOOTING.md](../technical_docs/TROUBLESHOOTING.md)
+- **See**: [CHANGELOG.md](../CHANGELOG.md)
 
 ## Additional Instructions
 

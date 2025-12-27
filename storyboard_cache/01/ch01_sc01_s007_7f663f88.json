@@ -12,32 +12,32 @@
   "camera_framing": "close-up",
   "camera_angle": "level",
   "camera_movement": null,
-  "composition": "Emma centered, focus on facial expression",
-  "visual_focus": "Emma's laugh",
-  "depth_cues": "minimal background",
+  "composition": "Focused on Emma's face during laugh",
+  "visual_focus": "Emma's facial expression during laugh",
+  "depth_cues": "foreground focus on face, background hinting at industrial setting",
   "expressions": {
-    "Emma": "amused, releasing tension"
+    "Emma": "light, spontaneous amusement"
   },
   "body_language": {
-    "Emma": "relaxed shoulders, open posture"
+    "Emma": "open, relaxed posture suggesting relief"
   },
-  "movement": "laughing",
+  "movement": "slight laugh/chuckle",
   "props": [],
   "clothing_state": "professional work attire",
-  "spatial_context": "industrial work environment",
+  "spatial_context": "industrial workspace, likely near manufacturing line",
   "special_techniques": [
-    "emotional release moment"
+    "internal monologue visualization"
   ],
-  "mood": "light, relieved",
-  "tone": "personal, vulnerable",
-  "lighting_suggestion": "soft, natural workplace lighting",
-  "continuity_from_previous": "technical conversation about production line",
-  "continuity_to_next": "potential conversation follow-up",
+  "mood": "momentary release of tension",
+  "tone": "sardonic self-awareness",
+  "lighting_suggestion": "soft industrial lighting, neutral tones",
+  "continuity_from_previous": "transition from professional assessment to personal moment",
+  "continuity_to_next": "potential further emotional reveal",
   "confidence": 0.85,
-  "analysis_timestamp": "2025-12-27T02:42:37.842602",
+  "analysis_timestamp": "2025-12-27T03:25:48.228077",
   "api_tokens": {
     "input": 906,
-    "output": 272
+    "output": 314
   },
   "attribute_changes": []
 }

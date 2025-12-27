@@ -9,39 +9,39 @@
   ],
   "character_roles": {
     "Emma Chen": "speaking",
-    "Ramirez": "spoken to"
+    "Ramirez": "spoken to/referenced"
   },
-  "camera_framing": "medium close-up",
-  "camera_angle": "slightly low angle",
+  "camera_framing": "medium two-shot",
+  "camera_angle": "slightly low, professional perspective",
   "camera_movement": null,
-  "composition": "Intimate workplace conversation, industrial background",
-  "visual_focus": "Emma's face, expression of subtle caution/humor",
-  "depth_cues": "",
+  "composition": "Factory floor backdrop with industrial equipment in background",
+  "visual_focus": "Emma Chen's face during dialogue",
+  "depth_cues": "foreground: characters, midground: welding stations, background: factory floor",
   "expressions": {
     "Emma Chen": "knowing, slightly conspiratorial"
   },
   "body_language": {
-    "Emma Chen": "leaning in, confidential tone"
+    "Emma Chen": "leaning in, speaking in hushed/confidential tone"
   },
-  "movement": "subtle conversational gesture",
+  "movement": "subtle conversational positioning",
   "props": [
-    "tablet"
+    "supervisor's tablet"
   ],
-  "clothing_state": null,
-  "spatial_context": "manufacturing floor, near automated welding stations",
+  "clothing_state": "professional work attire",
+  "spatial_context": "industrial manufacturing floor",
   "special_techniques": [
-    "implied fourth wall break"
+    "implied tension"
   ],
-  "mood": "playful professional tension",
-  "tone": "insider workplace humor",
-  "lighting_suggestion": "industrial fluorescent, slightly harsh",
-  "continuity_from_previous": "concludes previous interaction about production progress",
-  "continuity_to_next": "hints at internal workplace dynamics",
+  "mood": "professional intimacy",
+  "tone": "cautionary/playful",
+  "lighting_suggestion": "harsh industrial fluorescent",
+  "continuity_from_previous": "moment after tablet review",
+  "continuity_to_next": "potential reveal of workplace dynamics",
   "confidence": 0.85,
-  "analysis_timestamp": "2025-12-27T02:43:05.138363",
+  "analysis_timestamp": "2025-12-27T03:26:18.771741",
   "api_tokens": {
     "input": 882,
-    "output": 304
+    "output": 348
   },
   "attribute_changes": []
 }

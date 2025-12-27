@@ -5,44 +5,47 @@
   "sentence_content": "You coming?*\n\nShe typed back: *Wouldn't miss it.",
   "characters_present": [
     "Emma Chen",
-    "Ramirez"
+    "Ramirez",
+    "unknown recipient of text"
   ],
   "character_roles": {
-    "Emma Chen": "acting/speaking",
-    "Ramirez": "referenced/present"
+    "Emma Chen": "acting/initiating communication",
+    "Ramirez": "referenced/present",
+    "unknown recipient": "responding via text"
   },
-  "camera_framing": "medium shot",
+  "camera_framing": "close-up on smartphone screen",
   "camera_angle": "level",
   "camera_movement": null,
-  "composition": "intimate digital communication frame",
-  "visual_focus": "mobile device/text message screen",
-  "depth_cues": "foreground digital interaction",
+  "composition": "Split focus between text message and character's reaction",
+  "visual_focus": "smartphone screen with text exchange",
+  "depth_cues": "",
   "expressions": {
-    "Emma Chen": "subtle anticipatory smile"
+    "Emma Chen": "subtle smile",
+    "unknown recipient": "implied enthusiasm"
   },
   "body_language": {
-    "Emma Chen": "poised, professional stance"
+    "Emma Chen": "casual, professional posture"
   },
-  "movement": "typing on mobile device",
+  "movement": null,
   "props": [
-    "mobile phone/device"
+    "smartphone",
+    "tablet"
   ],
-  "clothing_state": "professional work attire",
-  "spatial_context": "industrial workplace/factory floor",
+  "clothing_state": null,
+  "spatial_context": "industrial work environment",
   "special_techniques": [
-    "split screen",
-    "message bubble overlay"
+    "text message visual overlay"
   ],
-  "mood": "professional excitement",
-  "tone": "crisp, efficient communication",
-  "lighting_suggestion": "industrial fluorescent, slightly cool tones",
-  "continuity_from_previous": "aftermath of successful production optimization",
-  "continuity_to_next": "preparing for potential meetup/next interaction",
+  "mood": "anticipatory, slightly playful",
+  "tone": "professional but familiar",
+  "lighting_suggestion": "",
+  "continuity_from_previous": "workplace scene with production line context",
+  "continuity_to_next": "preparing for upcoming event/meeting",
   "confidence": 0.85,
-  "analysis_timestamp": "2025-12-27T02:46:46.840475",
+  "analysis_timestamp": "2025-12-27T03:30:07.175635",
   "api_tokens": {
     "input": 889,
-    "output": 332
+    "output": 300
   },
   "attribute_changes": []
 }

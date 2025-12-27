@@ -9,40 +9,40 @@
   ],
   "character_roles": {
     "Emma Chen": "acting",
-    "Ramirez": "implied/referenced"
+    "Ramirez": "referenced/implied present"
   },
   "camera_framing": "medium shot",
-  "camera_angle": "slightly low angle",
+  "camera_angle": "slightly low (empowering)",
   "camera_movement": null,
-  "composition": "Technical industrial environment with Emma centrally framed",
-  "visual_focus": "tablet screen and Emma's smile",
-  "depth_cues": "industrial workspace with machinery in background",
+  "composition": "Emma centered, industrial background with tablet in foreground",
+  "visual_focus": "Emma's hand on tablet, her smile",
+  "depth_cues": "foreground: tablet, midground: Emma, background: industrial workspace",
   "expressions": {
-    "Emma Chen": "subtle, professional smile"
+    "Emma Chen": "subtle, satisfied smile"
   },
   "body_language": {
-    "Emma Chen": "leaning forward, engaged professional posture"
+    "Emma Chen": "professional stance, confident posture"
   },
-  "movement": null,
+  "movement": "checking tablet, handing it back",
   "props": [
     "tablet",
-    "line supervisor's tablet"
+    "industrial line equipment"
   ],
-  "clothing_state": null,
-  "spatial_context": "manufacturing floor, Line 3 area",
+  "clothing_state": "professional work attire",
+  "spatial_context": "industrial manufacturing floor",
   "special_techniques": [
-    "highlight tablet screen details"
+    "visual emphasis on technological interaction"
   ],
   "mood": "professional satisfaction",
-  "tone": "technical competence",
-  "lighting_suggestion": "bright industrial lighting, slightly cool color temperature",
-  "continuity_from_previous": null,
-  "continuity_to_next": "preparing to speak to Ramirez",
-  "confidence": 0.9,
-  "analysis_timestamp": "2025-12-27T02:39:42.668231",
+  "tone": "competent, understated",
+  "lighting_suggestion": "bright, even industrial lighting",
+  "continuity_from_previous": "first scene, establishing shot",
+  "continuity_to_next": "dialogue with Ramirez",
+  "confidence": 0.95,
+  "analysis_timestamp": "2025-12-27T03:22:41.815403",
   "api_tokens": {
     "input": 915,
-    "output": 303
+    "output": 352
   },
   "attribute_changes": []
 }

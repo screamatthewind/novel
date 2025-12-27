@@ -9,43 +9,40 @@
   ],
   "character_roles": {
     "Emma Chen": "speaking",
-    "Ramirez": "spoken to/implied listener"
+    "Ramirez": "spoken to"
   },
-  "camera_framing": "medium shot",
-  "camera_angle": "slightly low angle",
+  "camera_framing": "medium two-shot",
+  "camera_angle": "slightly low industrial angle",
   "camera_movement": null,
-  "composition": "technical workspace with machines in background",
-  "visual_focus": "speaker's confident expression",
-  "depth_cues": "welding stations in midground, machinery creating industrial depth",
+  "composition": "industrial workspace with technological infrastructure",
+  "visual_focus": "interaction between human and machine/tablet",
+  "depth_cues": "foreground workers, midground welding stations, background factory floor",
   "expressions": {
-    "Emma Chen": "subtle, knowing smirk",
-    "Ramirez": "implied attentive listening"
+    "Emma Chen": "confident, slightly triumphant",
+    "Ramirez": "potentially vindicated"
   },
   "body_language": {
-    "Emma Chen": "relaxed, confident posture",
-    "Ramirez": "implied professional stance"
+    "Emma Chen": "relaxed, professional stance",
+    "Ramirez": "attentive"
   },
-  "movement": "minimal, conversational",
+  "movement": "subtle conversational positioning",
   "props": [
     "tablet",
-    "welding stations",
-    "industrial control panel"
+    "welding stations"
   ],
-  "clothing_state": null,
+  "clothing_state": "industrial work attire",
   "spatial_context": "manufacturing floor, Line 3",
-  "special_techniques": [
-    "implied technical mastery"
-  ],
-  "mood": "technical satisfaction",
-  "tone": "professional triumph",
-  "lighting_suggestion": "bright industrial lighting, slight blue-white technical tone",
-  "continuity_from_previous": null,
-  "continuity_to_next": null,
-  "confidence": 0.85,
-  "analysis_timestamp": "2025-12-27T02:42:12.556383",
+  "special_techniques": [],
+  "mood": "professional satisfaction",
+  "tone": "technical, slightly competitive",
+  "lighting_suggestion": "industrial overhead lighting, slightly harsh",
+  "continuity_from_previous": "opening of scene, establishing workplace dynamics",
+  "continuity_to_next": "ongoing technical discussion",
+  "confidence": 0.88,
+  "analysis_timestamp": "2025-12-27T03:25:19.189017",
   "api_tokens": {
     "input": 885,
-    "output": 327
+    "output": 355
   },
   "attribute_changes": []
 }

@@ -6,6 +6,15 @@
 
 All core systems are implemented and operational. Storyboard analysis is now the default prompt generation method.
 
+## Recent Critical Fix (2025-12-27)
+
+### Character Selection Bug - RESOLVED ✅
+- **Issue**: Wrong characters appearing in images (e.g., Emma in men's clothing, random faces for minor characters)
+- **Fix**: Implemented role-based character filtering with description validation
+- **File**: `src/prompt_generator.py` - Added `filter_acting_characters()` and updated both normal and token compression paths
+- **Impact**: Only defined characters (Emma, Tyler, Elena, Maxim, Amara) now appear in images; minor characters gracefully fall back
+- **Details**: See [Character_Selection_Fix_2025-12-27.md](Character_Selection_Fix_2025-12-27.md)
+
 ## Completed Phases
 
 ### ✅ Phase 1: Smart Visual Change Detection (Complete)

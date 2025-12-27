@@ -6,13 +6,54 @@ Supports both keyword-based (legacy) and LLM-based prompt generation.
 import re
 import os
 import json
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List, Dict
 from config import BASE_STYLE, NEGATIVE_PROMPT, OLLAMA_BASE_URL, OLLAMA_MODEL, ANTHROPIC_MODEL, ANTHROPIC_MAX_TOKENS
 from character_attributes import (
     CHARACTER_CANONICAL_ATTRIBUTES,
     get_full_description,
     get_compressed_description
 )
+
+
+def filter_acting_characters(characters_present: List[str], character_roles: Dict[str, str]) -> List[str]:
+    """
+    Filter characters to prioritize those actively performing actions over referenced characters.
+
+    Priority order:
+    1. Acting characters (speaking, walking, examining, etc.)
+    2. Passive characters (receiving, listening, observing, in background)
+    3. Referenced characters (mentioned, sender of message, off-screen)
+
+    Args:
+        characters_present: List of character names from storyboard
+        character_roles: Dict mapping character names to their roles
+
+    Returns:
+        Filtered list with acting characters first, or original list if no roles defined
+    """
+    if not character_roles:
+        return characters_present
+
+    # Keywords for categorizing character roles
+    referenced_keywords = ['mentioned', 'referenced', 'sender of', 'recipient of', 'off-screen']
+    passive_keywords = ['receiving', 'listening', 'observing', 'watching', 'in background']
+
+    acting_chars = []
+    passive_chars = []
+    referenced_chars = []
+
+    for char in characters_present:
+        role = character_roles.get(char, "").lower()
+
+        if any(keyword in role for keyword in referenced_keywords):
+            referenced_chars.append(char)
+        elif any(keyword in role for keyword in passive_keywords):
+            passive_chars.append(char)
+        else:
+            acting_chars.append(char)
+
+    # Return prioritized list: acting > passive > referenced
+    return acting_chars + passive_chars + referenced_chars
 
 
 # Character descriptions for visual consistency
@@ -673,37 +714,61 @@ def generate_storyboard_informed_prompt(sentence_content: str, storyboard_analys
 
     # Character description with expression (25-30 tokens budget if using attribute manager)
     if storyboard_analysis.characters_present:
-        primary_char = normalize_character_name(storyboard_analysis.characters_present[0])
+        # Filter to prioritize acting characters over referenced ones
+        filtered_chars = filter_acting_characters(
+            storyboard_analysis.characters_present,
+            storyboard_analysis.character_roles or {}
+        )
 
-        # Use attribute manager if available for detailed, consistent descriptions
-        if attribute_manager:
-            char_state = attribute_manager.get_current_attributes(primary_char)
-            if char_state:
-                char_desc = char_state.to_prompt_string()  # ~25-30 tokens
+        # Find first character with a description (skip minor characters without definitions)
+        primary_char = None
+        char_desc = None
+
+        for candidate in filtered_chars:
+            candidate_normalized = normalize_character_name(candidate)
+
+            # Check if this character has a description
+            if attribute_manager:
+                char_state = attribute_manager.get_current_attributes(candidate_normalized)
+                if char_state:
+                    primary_char = candidate_normalized
+                    char_desc = char_state.to_prompt_string()
+                    break
+                else:
+                    # Check canonical descriptions
+                    temp_desc = get_compressed_description(candidate_normalized, max_tokens=28)
+                    if temp_desc:
+                        primary_char = candidate_normalized
+                        char_desc = temp_desc
+                        break
             else:
-                # Fallback to canonical if character not in manager
-                char_desc = get_compressed_description(primary_char, max_tokens=28)
-                if not char_desc:
-                    char_desc = CHARACTER_DESCRIPTIONS.get(primary_char, primary_char)
-        else:
-            # Legacy mode: use short 8-token descriptions
-            char_desc = CHARACTER_DESCRIPTIONS.get(primary_char, primary_char)
+                # Legacy mode: check if character exists in descriptions
+                temp_desc = CHARACTER_DESCRIPTIONS.get(candidate_normalized)
+                if temp_desc and temp_desc != candidate_normalized:  # Has actual description, not just name
+                    primary_char = candidate_normalized
+                    char_desc = temp_desc
+                    break
 
-        # Add expression if available
-        # Check for both normalized and original name in expressions dict
-        expression = None
-        if storyboard_analysis.expressions:
-            expression = storyboard_analysis.expressions.get(
-                primary_char,
-                storyboard_analysis.expressions.get(storyboard_analysis.characters_present[0])
-            )
+        # Fallback: if no character has a description, skip character entirely
+        if not primary_char:
+            char_desc = None
 
-        if expression:
-            char_part = f"{char_desc}, {expression}"
-        else:
-            char_part = char_desc
+        # Add expression if available (only if we found a character with description)
+        if char_desc:
+            # Check for both normalized and original name in expressions dict
+            expression = None
+            if storyboard_analysis.expressions and primary_char:
+                expression = storyboard_analysis.expressions.get(
+                    primary_char,
+                    storyboard_analysis.expressions.get(storyboard_analysis.characters_present[0])
+                )
 
-        prompt_parts.append(char_part)
+            if expression:
+                char_part = f"{char_desc}, {expression}"
+            else:
+                char_part = char_desc
+
+            prompt_parts.append(char_part)
 
     # Action/body language (8 tokens budget)
     if storyboard_analysis.movement:
@@ -766,31 +831,47 @@ def generate_storyboard_informed_prompt(sentence_content: str, storyboard_analys
 
         # Always keep character (start with compressed version)
         if storyboard_analysis.characters_present:
-            primary_char = normalize_character_name(storyboard_analysis.characters_present[0])
+            # Use same filtering logic as above to prioritize acting characters
+            filtered_chars_trimmed = filter_acting_characters(
+                storyboard_analysis.characters_present,
+                storyboard_analysis.character_roles or {}
+            )
 
-            # Try progressively compressed character descriptions
-            # Start with 8-token budget to ensure clothing is included
-            if attribute_manager:
-                char_state = attribute_manager.get_current_attributes(primary_char)
-                if char_state:
-                    # Try 8-token version (face + compressed clothing)
-                    char_desc = char_state.to_compressed_string(max_tokens=8)
+            # Find first character with a description
+            trimmed_primary_char = None
+            trimmed_char_desc = None
+
+            for candidate in filtered_chars_trimmed:
+                candidate_normalized = normalize_character_name(candidate)
+
+                if attribute_manager:
+                    char_state = attribute_manager.get_current_attributes(candidate_normalized)
+                    if char_state:
+                        trimmed_primary_char = candidate_normalized
+                        trimmed_char_desc = char_state.to_compressed_string(max_tokens=8)
+                        break
+                    else:
+                        temp_desc = get_compressed_description(candidate_normalized, max_tokens=8)
+                        if temp_desc:
+                            trimmed_primary_char = candidate_normalized
+                            trimmed_char_desc = temp_desc
+                            break
                 else:
-                    char_desc = get_compressed_description(primary_char, max_tokens=8)
-                    if not char_desc:
-                        char_desc = CHARACTER_DESCRIPTIONS.get(primary_char, primary_char)
-            else:
-                char_desc = CHARACTER_DESCRIPTIONS.get(primary_char, primary_char)
+                    temp_desc = CHARACTER_DESCRIPTIONS.get(candidate_normalized)
+                    if temp_desc and temp_desc != candidate_normalized:
+                        trimmed_primary_char = candidate_normalized
+                        trimmed_char_desc = temp_desc
+                        break
 
-            prompt_parts_trimmed.append(char_desc)
+            if trimmed_char_desc:
+                prompt_parts_trimmed.append(trimmed_char_desc)
 
         # Add back elements one by one until we approach limit
         remaining_parts = []
-        if storyboard_analysis.expressions and storyboard_analysis.characters_present:
-            primary_char_expr = normalize_character_name(storyboard_analysis.characters_present[0])
-            # Check for both normalized and original name in expressions dict
+        if storyboard_analysis.expressions and trimmed_primary_char:
+            # Use the same character we selected above
             expression = storyboard_analysis.expressions.get(
-                primary_char_expr,
+                trimmed_primary_char,
                 storyboard_analysis.expressions.get(storyboard_analysis.characters_present[0])
             )
             if expression:

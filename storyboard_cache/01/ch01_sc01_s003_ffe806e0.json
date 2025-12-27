@@ -13,37 +13,35 @@
   },
   "camera_framing": "wide industrial shot",
   "camera_angle": "slightly low angle",
-  "camera_movement": null,
-  "composition": "Industrial workspace with welding stations arranged in parallel, technical foreground",
-  "visual_focus": "automated welding stations, machinery in motion",
-  "depth_cues": "foreground machinery, midground operators, background factory infrastructure",
+  "camera_movement": "slow tracking pan",
+  "composition": "Industrial workspace with welding stations, human workers integrated with machinery",
+  "visual_focus": "Automated welding stations, human-machine interaction",
+  "depth_cues": "Foreground: welding stations, Midground: workers, Background: factory floor",
   "expressions": {
-    "Emma Chen": "satisfied/pleased"
+    "Emma Chen": "pleased/satisfied"
   },
   "body_language": {
-    "Emma Chen": "standing confidently, reviewing tablet"
+    "Emma Chen": "confident stance, examining tablet"
   },
-  "movement": "machinery welding, subtle human movement around stations",
+  "movement": "Subtle worker movements, machine welding operations",
   "props": [
     "welding stations",
     "line supervisor's tablet",
-    "industrial machinery"
+    "welding equipment"
   ],
-  "clothing_state": "professional industrial workwear",
-  "spatial_context": "manufacturing line, factory floor",
-  "special_techniques": [
-    "dynamic machine-human interaction visualization"
-  ],
-  "mood": "technical precision, collaborative efficiency",
+  "clothing_state": null,
+  "spatial_context": "Manufacturing facility, Line 3 work area",
+  "special_techniques": [],
+  "mood": "technical precision, collaborative harmony",
   "tone": "professional problem-solving",
-  "lighting_suggestion": "bright industrial lighting, high contrast",
-  "continuity_from_previous": "scene opening",
-  "continuity_to_next": "dialogue with Ramirez",
+  "lighting_suggestion": "Industrial fluorescent, high contrast between machinery and human figures",
+  "continuity_from_previous": null,
+  "continuity_to_next": "Dialogue with Ramirez about tablet observations",
   "confidence": 0.95,
-  "analysis_timestamp": "2025-12-27T02:40:44.606221",
+  "analysis_timestamp": "2025-12-27T03:23:45.243992",
   "api_tokens": {
     "input": 932,
-    "output": 353
+    "output": 334
   },
   "attribute_changes": []
 }

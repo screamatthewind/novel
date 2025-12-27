@@ -9,39 +9,39 @@
   "character_roles": {
     "Emma Chen": "reflecting/remembering"
   },
-  "camera_framing": "close-up/medium",
-  "camera_angle": "slightly low, introspective",
+  "camera_framing": "close-up/medium shot",
+  "camera_angle": "slightly low, intimate perspective",
   "camera_movement": null,
-  "composition": "Internal memory sequence, soft focus background suggesting past scenes",
-  "visual_focus": "Emma's contemplative expression",
-  "depth_cues": "memory layers - foreground Emma, background blurred factory/work stations",
+  "composition": "Mental landscape visualization with overlapping industrial memories",
+  "visual_focus": "Memory fragments of industrial work progression",
+  "depth_cues": "Mental imagery layered like transparent industrial work zones",
   "expressions": {
-    "Emma Chen": "reflective, knowing smile"
+    "Emma Chen": "contemplative, nostalgic"
   },
   "body_language": {
-    "Emma Chen": "subtle reminiscent posture, slight head tilt"
+    "Emma Chen": "internal reflection, slight head tilt"
   },
-  "movement": "minimal, memory-based mental movement",
+  "movement": null,
   "props": [
-    "line supervisor memories",
-    "work stations"
+    "industrial workstations",
+    "factory line equipment"
   ],
   "clothing_state": null,
-  "spatial_context": "Mental landscape of past work experiences",
+  "spatial_context": "Mental retrospective of industrial workspace",
   "special_techniques": [
     "memory montage",
     "overlapping imagery"
   ],
-  "mood": "nostalgic professional pride",
-  "tone": "retrospective professional narrative",
+  "mood": "reflective, professional pride",
+  "tone": "experienced, confident",
   "lighting_suggestion": "soft, memory-like diffused lighting",
   "continuity_from_previous": null,
-  "continuity_to_next": "Setting up Emma's professional expertise background",
+  "continuity_to_next": "Establishing Emma's professional background",
   "confidence": 0.95,
-  "analysis_timestamp": "2025-12-27T02:44:04.514422",
+  "analysis_timestamp": "2025-12-27T03:27:20.712700",
   "api_tokens": {
     "input": 895,
-    "output": 296
+    "output": 273
   },
   "attribute_changes": []
 }

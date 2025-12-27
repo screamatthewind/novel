@@ -10,36 +10,36 @@
     "Emma Chen": "acting"
   },
   "camera_framing": "close-up",
-  "camera_angle": "level",
+  "camera_angle": "slightly low, empowering",
   "camera_movement": null,
-  "composition": "Face-centered, soft human reaction moment",
+  "composition": "Face centered, focus on smile and eyes",
   "visual_focus": "Emma's facial expression",
-  "depth_cues": "foreground focused on facial reaction",
+  "depth_cues": "tight facial framing",
   "expressions": {
-    "Emma Chen": "subtle, satisfied smile"
+    "Emma Chen": "subtle, pleased, professional satisfaction"
   },
   "body_language": {
     "Emma Chen": "relaxed, confident posture"
   },
-  "movement": "minimal, transitional smile",
+  "movement": "minimal facial movement, smile emerging",
   "props": [
     "tablet"
   ],
-  "clothing_state": null,
-  "spatial_context": "industrial manufacturing floor",
+  "clothing_state": "work attire, professional",
+  "spatial_context": "industrial setting, production floor",
   "special_techniques": [
-    "emotion reveal through minimal gesture"
+    "micro-expression capture"
   ],
-  "mood": "professional satisfaction",
+  "mood": "professional accomplishment",
   "tone": "understated triumph",
-  "lighting_suggestion": "bright, industrial overhead lighting",
+  "lighting_suggestion": "soft industrial lighting, slight highlight on face",
   "continuity_from_previous": null,
-  "continuity_to_next": "preparing to speak with Ramirez",
+  "continuity_to_next": "transition to dialogue with Ramirez",
   "confidence": 0.95,
-  "analysis_timestamp": "2025-12-27T02:47:38.065230",
+  "analysis_timestamp": "2025-12-27T03:31:03.594552",
   "api_tokens": {
     "input": 876,
-    "output": 249
+    "output": 295
   },
   "attribute_changes": []
 }

@@ -4,46 +4,43 @@
   "sentence_num": 2,
   "sentence_content": "Production was ahead of schedule.",
   "characters_present": [
-    "Emma Chen",
-    "Ramirez"
+    "Emma Chen"
   ],
   "character_roles": {
-    "Emma Chen": "acting/observing",
-    "Ramirez": "referenced/implied present"
+    "Emma Chen": "observing/analyzing"
   },
   "camera_framing": "medium shot",
-  "camera_angle": "level",
+  "camera_angle": "slightly low",
   "camera_movement": null,
-  "composition": "industrial workspace with focus on technical details",
-  "visual_focus": "production line tablet display",
-  "depth_cues": "foreground industrial workspace, midground machinery",
+  "composition": "Technical workspace with industrial equipment in background",
+  "visual_focus": "tablet screen showing production metrics",
+  "depth_cues": "foreground: Emma, midground: tablet, background: welding stations",
   "expressions": {
-    "Emma Chen": "satisfied/pleased"
+    "Emma Chen": "subtle satisfied smile"
   },
   "body_language": {
-    "Emma Chen": "leaning, checking tablet"
+    "Emma Chen": "confident, leaning forward slightly"
   },
-  "movement": "minimal, observational",
+  "movement": null,
   "props": [
     "line supervisor's tablet",
     "welding stations"
   ],
   "clothing_state": null,
-  "spatial_context": "industrial manufacturing floor",
+  "spatial_context": "industrial production floor",
   "special_techniques": [
-    "data overlay",
-    "technical detail emphasis"
+    "subtle metrics visualization"
   ],
   "mood": "professional satisfaction",
-  "tone": "technical/pragmatic",
-  "lighting_suggestion": "bright industrial lighting",
+  "tone": "technical precision",
+  "lighting_suggestion": "bright, even industrial lighting",
   "continuity_from_previous": null,
-  "continuity_to_next": "dialogue with Ramirez",
+  "continuity_to_next": "about to interact with Ramirez",
   "confidence": 0.85,
-  "analysis_timestamp": "2025-12-27T02:40:14.063322",
+  "analysis_timestamp": "2025-12-27T03:23:13.651450",
   "api_tokens": {
     "input": 879,
-    "output": 283
+    "output": 260
   },
   "attribute_changes": []
 }

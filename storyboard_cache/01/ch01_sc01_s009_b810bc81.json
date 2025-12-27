@@ -8,20 +8,20 @@
     "Ramirez"
   ],
   "character_roles": {
-    "Emma Chen": "acting/observing",
+    "Emma Chen": "acting/inspecting",
     "Ramirez": "referenced/working"
   },
   "camera_framing": "tracking medium shot",
-  "camera_angle": "level, slightly dynamic",
-  "camera_movement": "subtle tracking with Emma's movement",
-  "composition": "Industrial interior, machinery in background, Emma in motion",
-  "visual_focus": "Emma's confident stride through manufacturing space",
-  "depth_cues": "foreground: Emma, midground: production line, background: industrial machinery",
+  "camera_angle": "slightly low angle",
+  "camera_movement": null,
+  "composition": "industrial interior with machinery and human figures",
+  "visual_focus": "Emma walking confidently through manufacturing floor",
+  "depth_cues": "machinery in background, workers in midground, Emma in foreground",
   "expressions": {
     "Emma Chen": "confident, slight professional smile"
   },
   "body_language": {
-    "Emma Chen": "purposeful stride, relaxed shoulders, professional posture"
+    "Emma Chen": "purposeful stride, relaxed shoulders, authoritative posture"
   },
   "movement": "walking through manufacturing facility",
   "props": [
@@ -29,21 +29,19 @@
     "welding stations",
     "production line equipment"
   ],
-  "clothing_state": "professional work attire",
-  "spatial_context": "Hartwell Manufacturing facility, Line 3",
-  "special_techniques": [
-    "dynamic industrial environment tracking"
-  ],
-  "mood": "professional accomplishment",
+  "clothing_state": null,
+  "spatial_context": "Hartwell Manufacturing facility, industrial interior",
+  "special_techniques": [],
+  "mood": "professional determination",
   "tone": "technical competence",
-  "lighting_suggestion": "industrial fluorescent, slightly cool-toned",
-  "continuity_from_previous": "first scene moment",
-  "continuity_to_next": "interaction with Ramirez about tablet",
-  "confidence": 0.92,
-  "analysis_timestamp": "2025-12-27T02:43:34.615861",
+  "lighting_suggestion": "industrial overhead lighting, slightly harsh/bright",
+  "continuity_from_previous": null,
+  "continuity_to_next": "interaction with Ramirez about tablet and production settings",
+  "confidence": 0.95,
+  "analysis_timestamp": "2025-12-27T03:26:49.146167",
   "api_tokens": {
     "input": 904,
-    "output": 374
+    "output": 314
   },
   "attribute_changes": []
 }

@@ -9,40 +9,40 @@
   ],
   "character_roles": {
     "Ramirez": "speaking/confirming",
-    "Emma Chen": "listening/responding"
+    "Emma Chen": "listening/receiving feedback"
   },
   "camera_framing": "medium two-shot",
   "camera_angle": "eye level",
   "camera_movement": null,
-  "composition": "Centered on technical workspace with characters in industrial setting",
-  "visual_focus": "Ramirez's grin, technical tablet",
+  "composition": "Industrial workspace with technical equipment in background",
+  "visual_focus": "Ramirez's grin and reaction",
   "depth_cues": "",
   "expressions": {
-    "Ramirez": "broad, satisfied grin",
+    "Ramirez": "wide, proud grin",
     "Emma Chen": "pleased, professional smile"
   },
   "body_language": {
-    "Ramirez": "leaning forward, confident posture",
-    "Emma Chen": "professional stance, returning tablet"
+    "Ramirez": "relaxed, confident posture",
+    "Emma Chen": "attentive, professional stance"
   },
   "movement": null,
   "props": [
-    "line supervisor's tablet",
-    "automated welding stations"
+    "tablet",
+    "welding station equipment"
   ],
   "clothing_state": null,
-  "spatial_context": "Industrial manufacturing floor, Line 3 area",
+  "spatial_context": "industrial production line",
   "special_techniques": [],
-  "mood": "collaborative, triumphant",
-  "tone": "technical achievement",
-  "lighting_suggestion": "bright industrial lighting, slight metallic highlights",
-  "continuity_from_previous": "Technical discussion about machine modifications",
-  "continuity_to_next": "Ongoing conversation about production improvements",
-  "confidence": 0.92,
-  "analysis_timestamp": "2025-12-27T02:41:45.140805",
+  "mood": "professional satisfaction",
+  "tone": "collaborative achievement",
+  "lighting_suggestion": "bright, clean industrial lighting",
+  "continuity_from_previous": null,
+  "continuity_to_next": null,
+  "confidence": 0.85,
+  "analysis_timestamp": "2025-12-27T03:24:49.445910",
   "api_tokens": {
     "input": 895,
-    "output": 323
+    "output": 270
   },
   "attribute_changes": []
 }

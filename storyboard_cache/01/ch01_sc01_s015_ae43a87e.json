@@ -9,37 +9,41 @@
   ],
   "character_roles": {
     "Emma Chen": "receiving message",
-    "Tyler": "sender of text message"
+    "Tyler": "sending message"
   },
-  "camera_framing": "close-up on phone screen",
-  "camera_angle": "level",
+  "camera_framing": "close-up on smartphone screen",
+  "camera_angle": "slightly low",
   "camera_movement": null,
-  "composition": "centered phone screen with message",
-  "visual_focus": "phone screen text message",
-  "depth_cues": "foreground message, background implied workplace",
+  "composition": "centered smartphone screen with message overlay",
+  "visual_focus": "text message notification",
+  "depth_cues": "",
   "expressions": {
-    "Emma Chen": "subtle interest/acknowledgment"
+    "Emma Chen": "subtle anticipatory smile"
   },
-  "body_language": {},
+  "body_language": {
+    "Emma Chen": "focused, professional posture"
+  },
   "movement": null,
   "props": [
-    "mobile phone"
+    "smartphone",
+    "text message"
   ],
   "clothing_state": null,
-  "spatial_context": "industrial workplace/factory floor",
+  "spatial_context": "industrial workspace/factory floor",
   "special_techniques": [
-    "text message graphic overlay"
+    "text overlay",
+    "digital communication visual"
   ],
-  "mood": "casual, anticipatory",
-  "tone": "matter-of-fact",
-  "lighting_suggestion": "bright, clinical industrial lighting",
+  "mood": "anticipatory, casual",
+  "tone": "matter-of-fact communication",
+  "lighting_suggestion": "industrial fluorescent, slightly cool tones",
   "continuity_from_previous": null,
-  "continuity_to_next": "anticipation of game details",
+  "continuity_to_next": "preparing for evening plans",
   "confidence": 0.85,
-  "analysis_timestamp": "2025-12-27T02:46:20.624856",
+  "analysis_timestamp": "2025-12-27T03:29:40.371731",
   "api_tokens": {
     "input": 907,
-    "output": 250
+    "output": 281
   },
   "attribute_changes": []
 }
